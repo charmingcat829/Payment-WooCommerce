@@ -1,0 +1,30 @@
+{
+    "name": "tradesafe/woocommerce-gateway",
+    "description": "Process payments using the TradeSafe as a payments provider",
+    "homepage": "https://www.tradesafe.co.za/",
+    "type": "wordpress-plugin",
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "TradeSafe",
+            "email": "support@tradesafe.co.za"
+        }
+    ],
+    "require": {
+        "tradesafe/api": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "TradeSafe\\WooCommerce\\": "src/",
+            "TradeSafe\\": "vendor/tradesafe/src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../../../api/php"
+        }
+    ]
+}
