@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b5a05356b4c017d64e113cc9e08608c8",
+    "content-hash": "ac462f4011b8217c25139e58bb1b620b",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -481,13 +481,14 @@
             "name": "tradesafe/api",
             "version": "dev-master",
             "dist": {
-                "type": "path",
-                "url": "../../../../api/php",
-                "reference": "c96fd5ed51467f63c27543b61eddc98ea06f9851"
+                "type": "zip",
+                "url": "https://api.github.com/repos/tradesafe/tradesafe-api-php/zipball/e85aea23a95871a1594f9665cfcbfd9e2de13e37",
+                "reference": "e85aea23a95871a1594f9665cfcbfd9e2de13e37",
+                "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "guzzlehttp/guzzle": "^7.0",
+                "guzzlehttp/guzzle": "^6.0|^7.0",
                 "league/oauth2-client": "^2.5",
                 "php": ">=7.3.0"
             },
@@ -497,11 +498,7 @@
                     "TradeSafe\\Api\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "TradeSafe\\Api\\Test\\": "test/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Apache-2.0"
             ],
@@ -521,13 +518,11 @@
                 "payment",
                 "tradesafe"
             ],
-            "support": {
-                "source": "https://github.com/tradesafe/tradesafe-api-php",
-                "issues": "https://github.com/tradesafe/tradesafe-api-php/issues"
-            },
             "transport-options": {
+                "symlink": true,
                 "relative": true
-            }
+            },
+            "time": "2020-11-02T11:56:24+00:00"
         }
     ],
     "packages-dev": [],

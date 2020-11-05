@@ -37,7 +37,11 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
         $this->client_secret = $this->get_option('client_secret');
         $this->client_callback = $this->get_option('client_callback');
 
-        $this->base_url = 'https://api.tradesafe.co.za/';
+        $this->base_url = 'https://api-dev.tradesafe.dev';
+
+        if ($this->get_option('production')) {
+            $this->base_url = 'https://api.tradesafe.co.za';
+        }
 
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
         add_action('woocommerce_receipt_tradesafe', array($this, 'receipt_page'));
@@ -57,7 +61,10 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
         $is_available = false;
         $is_available_currency = in_array(get_woocommerce_currency(), $this->available_currencies);
 
-        if ($is_available_currency && get_option('tradesafe_client_id') && get_option('tradesafe_client_secret')) {
+        if ($is_available_currency
+            && get_option('tradesafe_client_id')
+            && get_option('tradesafe_client_secret')
+            && get_option('tradesafe_token')) {
             $is_available = true;
         }
 
@@ -67,6 +74,28 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
 
         if ("no" === $this->get_option('enabled') || null === $this->get_option('enabled')) {
             $is_available = false;
+        }
+
+        if (!is_admin()) {
+            $cart = WC()->cart->get_cart_contents();
+            $vendor = null;
+
+            foreach ($cart as $product) {
+                $vendor_id = get_post_field('post_author', $product['product_id']);
+
+                if (is_null($vendor)) {
+                    $vendor = $vendor_id;
+                }
+
+                if ($vendor !== $vendor_id) {
+                    $is_available = false;
+                }
+            }
+
+            $user = wp_get_current_user();
+            if ('' === get_user_meta($user->ID, 'tradesafe_token_id')) {
+                $is_available = false;
+            }
         }
 
         return $is_available;
@@ -109,30 +138,61 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
         </table> <?php
     }
 
-    public function payment_fields()
+    public function process_payment($order_id)
     {
-        print "???";
-    }
-
-    public function process_payment( $order_id ) {
         global $woocommerce;
 
-        $order = new WC_Order( $order_id );
+        $order = new WC_Order($order_id);
+
+        if (!$order->meta_exists('tradesafe_transaction_id')) {
+            $client = woocommerce_tradesafe_api();
+
+            $user = wp_get_current_user();
+
+            $transaction = $client->createTransaction([
+                'title' => 'Order ' . $order->get_id(),
+                'description' => 'WooCommerce Order ' . $order->get_order_key(),
+                'industry' => 'GENERAL_GOODS_SERVICES',
+                'value' => $order->get_total(),
+                'buyerToken' => get_user_meta($user->ID, 'tradesafe_token_id', true),
+                'sellerToken' => get_option('tradesafe_token')
+            ]);
+
+            $order->add_meta_data('tradesafe_transaction_id', $transaction['id'], true);
+        }
 
         // Mark as on-hold (we're awaiting the cheque)
-        $order->update_status('on-hold', __( 'Awaiting EFT payment', 'woocommerce-gateway-tradesafe' ));
+        $order->update_status('pending', __('Awaiting EFT payment', 'woocommerce-gateway-tradesafe'));
 
         // Remove cart
         $woocommerce->cart->empty_cart();
 
+        switch ($order->get_payment_method()) {
+            case "tradesafe-ecentric":
+                $url = '';
+                break;
+            case "tradesafe-manual":
+                $url = $order->get_checkout_payment_url(true);
+                break;
+            case "tradesafe-ozow":
+                $url = '';
+                break;
+            case "tradesafe-snapscan":
+                $url = '';
+                break;
+            default:
+                $url = $order->get_checkout_payment_url(true);
+        }
+
         // Return thankyou redirect
         return array(
             'result' => 'success',
-            'redirect' => site_url('tradesafe/eft-details/' . $order_id)
+            'redirect' => $url
         );
     }
 
-    public function get_checkout_payment_url( $on_checkout = false ) {
-        return apply_filters( 'woocommerce_get_checkout_payment_url', $pay_url, $this );
+    public function get_checkout_payment_url($on_checkout = false)
+    {
+        return apply_filters('woocommerce_get_checkout_payment_url', $pay_url, $this);
     }
 }

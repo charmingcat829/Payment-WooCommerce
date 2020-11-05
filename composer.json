@@ -20,11 +20,5 @@
             "TradeSafe\\WooCommerce\\": "src/",
             "TradeSafe\\": "vendor/tradesafe/src/"
         }
-    },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../../../../api/php"
-        }
-    ]
+    }
 }
