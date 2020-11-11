@@ -89,15 +89,19 @@ function woocommerce_tradesafe_add_gateway($methods)
 
 function woocommerce_tradesafe_api()
 {
-    $domain = 'dev-api.tradesafe.dev';
+    $domain = 'api-developer.tradesafe.dev';
 
     if (get_option('tradesafe_production_mode')) {
         $domain = 'api.tradesafe.co.za';
     }
 
-    $client = new \TradeSafe\Api\Client($domain);
-    $client->configure(get_option('tradesafe_client_id'), get_option('tradesafe_client_secret'), site_url('/tradesafe/oauth/callback/'));
-    $client->generateAuthToken();
+    try {
+        $client = new \TradeSafe\Api\Client($domain);
+        $client->configure(get_option('tradesafe_client_id'), get_option('tradesafe_client_secret'), site_url('/tradesafe/oauth/callback/'));
+        $client->generateAuthToken();
 
-    return $client;
+        return $client;
+    } catch (Exception $e) {
+        return null;
+    }
 }

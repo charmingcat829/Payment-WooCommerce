@@ -147,6 +147,10 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
         if (!$order->meta_exists('tradesafe_transaction_id')) {
             $client = woocommerce_tradesafe_api();
 
+            if (is_null($client)) {
+                return null;
+            }
+
             $user = wp_get_current_user();
 
             $transaction = $client->createTransaction([

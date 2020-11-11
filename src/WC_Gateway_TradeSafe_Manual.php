@@ -25,6 +25,13 @@ class WC_Gateway_TradeSafe_Manual extends WC_Gateway_TradeSafe_Base
         $user = wp_get_current_user();
         $client = woocommerce_tradesafe_api();
 
+        if (is_null($client)) {
+            echo "<table class='form-table' role='presentation'><tbody>";
+            echo "<tr><th scope='row'>Error:</th><td> Could not connect to server</td></tr>";
+            echo "</tbody></table>";
+            return;
+        }
+
         $tokenData = $client->getToken(get_user_meta($user->ID, 'tradesafe_token_id', true));
 
         include_once __DIR__ . '/../templates/checkout/order-receipt.php';

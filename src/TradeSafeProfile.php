@@ -53,6 +53,13 @@ class TradeSafeProfile
 
         $client = woocommerce_tradesafe_api();
 
+        if (is_null($client)) {
+            echo "<table class='form-table' role='presentation'><tbody>";
+            echo "<tr><th scope='row'>Error:</th><td> Could not connect to server</td></tr>";
+            echo "</tbody></table>";
+            return;
+        }
+
         if ($tokenId) {
             $tokenData = $client->getToken($tokenId);
 
