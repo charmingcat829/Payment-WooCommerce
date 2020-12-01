@@ -79,18 +79,6 @@ class TradeSafe
         register_setting('tradesafe', 'tradesafe_client_secret');
 
         add_settings_field(
-            'tradesafe_token',
-            'Token',
-            [
-                'TradeSafe',
-                'setting_token_callback'
-            ],
-            'tradesafe',
-            'tradesafe_settings_section'
-        );
-        register_setting('tradesafe', 'tradesafe_token');
-
-        add_settings_field(
             'tradesafe_production_mode',
             'Production Mode',
             [
@@ -195,10 +183,16 @@ class TradeSafe
                 return;
             }
 
-            $tokenData = $client->getToken(get_option('tradesafe_token'));
+            $profile = $client->getProfile();
+            $tokenData = $client->getToken($profile['token']);
 
             echo "<table class='form-table' role='presentation'><tbody>";
-            echo "<tr><th scope='row'>Name:</th><td>" . esc_attr($tokenData['name']) . "</td></tr>";
+            echo "<tr><th scope='row'>Organization Name:</th><td>" . esc_attr($tokenData['organization']['name']) . "</td></tr>";
+            echo "<tr><th scope='row'>Registration Number:</th><td>" . esc_attr($tokenData['organization']['registration']) . "</td></tr>";
+            if ($tokenData['organization']['taxNumber']) {
+                echo "<tr><th scope='row'>Tax Number:</th><td>" . esc_attr($tokenData['organization']['taxNumber']) . "</td></tr>";
+            }
+            echo "<tr><th scope='row'>Name:</th><td>" . esc_attr($tokenData['user']['givenName']) . " " . esc_attr($tokenData['user']['familyName']) . "</td></tr>";
             echo "<tr><th scope='row'>Email:</th><td>" . esc_attr($tokenData['user']['email']) . "</td></tr>";
             echo "<tr><th scope='row'>Mobile:</th><td>" . esc_attr($tokenData['user']['mobile']) . "</td></tr>";
             echo "</tbody></table>";
@@ -218,11 +212,6 @@ class TradeSafe
     public static function setting_client_secret_callback()
     {
         echo '<input name="tradesafe_client_secret" id="tradesafe_client_secret" type="password" value="' . get_option('tradesafe_client_secret') . '" class="regular-text ltr" />';
-    }
-
-    public static function setting_token_callback()
-    {
-        echo '<input name="tradesafe_token" id="tradesafe_token" type="text" value="' . get_option('tradesafe_token') . '" class="regular-text ltr" />';
     }
 
     public static function setting_production_mode_callback()

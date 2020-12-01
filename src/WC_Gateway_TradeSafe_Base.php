@@ -59,8 +59,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
 
         if ($is_available_currency
             && get_option('tradesafe_client_id')
-            && get_option('tradesafe_client_secret')
-            && get_option('tradesafe_token')) {
+            && get_option('tradesafe_client_secret')) {
             $is_available = true;
         }
 
@@ -157,13 +156,15 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
         if (!$order->meta_exists('tradesafe_transaction_id')) {
             $user = wp_get_current_user();
 
+            $profile = $client->getProfile();
+
             $transaction = $client->createTransaction([
                 'title' => 'Order ' . $order->get_id(),
                 'description' => 'WooCommerce Order ' . $order->get_order_key(),
                 'industry' => 'GENERAL_GOODS_SERVICES',
                 'value' => $order->get_total(),
                 'buyerToken' => get_user_meta($user->ID, 'tradesafe_token_id', true),
-                'sellerToken' => get_option('tradesafe_token')
+                'sellerToken' => $profile['token']
             ]);
 
             $order->add_meta_data('tradesafe_transaction_id', $transaction['id'], true);
