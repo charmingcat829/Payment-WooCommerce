@@ -19,8 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 ?>
-<h3>Banking Details</h3>
-<ul class="order_details banking_details">
+
+<h2><?php esc_html_e( 'Deposit Details', 'woocommerce-tradesafe-gateway' ); ?></h2>
+<ul class="order_details deposit_details">
     <li class="bank">
         Account Name: <strong>TradeSafe Escrow</strong>
     </li>

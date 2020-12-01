@@ -9,6 +9,9 @@ class TradeSafe
         add_action('admin_init', ['TradeSafe', 'settings_api_init']);
         add_action('admin_menu', ['TradeSafe', 'register_options_page']);
 
+        add_action('woocommerce_cart_calculate_fees', ['TradeSafe', 'add_gateway_fee'], PHP_INT_MAX);
+        add_action('woocommerce_review_order_before_payment', ['TradeSafe', 'refresh_checkout']);
+
         add_rewrite_rule('^tradesafe/eft-details/([0-9]+)[/]?$', 'index.php?tradesafe=eft-details&order-id=$matches[1]', 'top');
         add_rewrite_rule('^tradesafe/unlink?$', 'index.php?tradesafe=unlink', 'top');
         add_action('parse_request', ['TradeSafe', 'parse_request']);
@@ -292,5 +295,85 @@ class TradeSafe
                     exit;
             }
         }
+    }
+
+    public function add_gateway_fee()
+    {
+        if (is_admin() && !defined('DOING_AJAX')) return;
+
+        $client = woocommerce_tradesafe_api();
+
+        $totals = WC()->cart->get_totals();
+
+        $baseValue = $totals['subtotal']
+            + $totals['shipping_total']
+            - $totals['discount_total']
+            + $totals['fee_total'];
+
+        foreach (WC()->cart->get_taxes() as $tax) {
+            $baseValue += $tax;
+        }
+
+        $calculation = $client->getCalculation([
+            'feeAllocation' => 'BUYER',
+            'industry' => 'GENERAL_GOODS_SERVICES',
+            'value' => $baseValue
+        ]);
+
+        WC()->cart->add_fee('Escrow Fee', $calculation['processingFeeTotal'], false);
+
+        // You need to enter your fees here, in `payment gateway` => `fee amount` format
+        $fees = array(
+            'tradesafe-ecentric' => [
+                'name' => 'Credit Card',
+                'value' => $calculation['gatewayProcessingFees']['ecentric']['processingFee'],
+            ],
+            'tradesafe-ozow' => [
+                'name' => 'Ozow',
+                'value' => $calculation['gatewayProcessingFees']['ozow']['processingFee'],
+            ],
+            'tradesafe-snapscan' => [
+                'name' => 'Snapscan',
+                'value' => $calculation['gatewayProcessingFees']['snapscan']['processingFee'],
+            ],
+        );
+
+        // Getting current chosen payment gateway
+        $chosen_payment_method = false;
+        $available_gateways = WC()->payment_gateways->get_available_payment_gateways();
+        if (isset(WC()->session->chosen_payment_method)) {
+            $chosen_payment_method = WC()->session->chosen_payment_method;
+        } elseif (!empty($_REQUEST['payment_method'])) {
+            $chosen_payment_method = sanitize_key($_REQUEST['payment_method']);
+        } elseif ('' != ($default_gateway = get_option('woocommerce_default_gateway'))) {
+            $chosen_payment_method = $default_gateway;
+        } elseif (!empty($available_gateways)) {
+            $chosen_payment_method = current(array_keys($available_gateways));
+        }
+        if (!isset($available_gateways[$chosen_payment_method])) {
+            $chosen_payment_method = false;
+        }
+
+        // Applying fee (maybe)
+        if ($chosen_payment_method && !empty($fees[$chosen_payment_method])) {
+            $name = $fees[$chosen_payment_method]['name'] . ' Fee';
+            $amount = $fees[$chosen_payment_method]['value'];
+            $taxable = false;
+            $tax_class = '';
+            WC()->cart->add_fee($name, $amount, $taxable, $tax_class);
+        }
+    }
+
+    public function refresh_checkout()
+    {
+        ?>
+        <script type="text/javascript">
+            (function ($) {
+                $('form.checkout').on('change', 'input[name^="payment_method"]', function () {
+                    $('body').trigger('update_checkout');
+                });
+            })(jQuery);
+        </script>
+        <?php
     }
 }

@@ -108,14 +108,14 @@ defined('ABSPATH') || exit;
 
         <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
             <label for="tradesafe_token_organization_name"><?php esc_html_e('Name', 'woocommerce-tradesafe-gateway'); ?></label>
-            <input type="email" class="woocommerce-Input woocommerce-Input--email input-text"
+            <input type="text" class="woocommerce-Input woocommerce-Input--email input-text"
                    name="tradesafe_token_organization_name" id="tradesafe_token_organization_name"
                    value=""/>
         </p>
 
         <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-first">
-            <label for="tradesafe_token_organization_trading_name"><?php esc_html_e('Type', 'woocommerce-tradesafe-gateway'); ?></label>
-            <select name="">
+            <label for="tradesafe_token_organization_type"><?php esc_html_e('Type', 'woocommerce-tradesafe-gateway'); ?></label>
+            <select name="tradesafe_token_organization_type">
                 <option selected="selected" disabled="disabled" hidden="hidden"></option>
                 <option value="SOLE_PROP"> Sole Proprietorship</option>
                 <option value="PRIVATE"> Private Company</option>
@@ -131,23 +131,23 @@ defined('ABSPATH') || exit;
 
         <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-last">
             <label for="tradesafe_token_organization_trading_name"><?php esc_html_e('Trading Name', 'woocommerce-tradesafe-gateway'); ?></label>
-            <input type="email" class="woocommerce-Input woocommerce-Input--email input-text"
+            <input type="text" class="woocommerce-Input woocommerce-Input--email input-text"
                    name="tradesafe_token_organization_trading_name" id="tradesafe_token_organization_trading_name"
                    value=""/>
         </p>
         <div class="clear"></div>
 
         <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-first">
-            <label for="tradesafe_token_organization_trading_name"><?php esc_html_e('Registration Number', 'woocommerce-tradesafe-gateway'); ?></label>
-            <input type="email" class="woocommerce-Input woocommerce-Input--email input-text"
-                   name="tradesafe_token_organization_trading_name" id="tradesafe_token_organization_trading_name"
+            <label for="tradesafe_token_organization_registration_number"><?php esc_html_e('Registration Number', 'woocommerce-tradesafe-gateway'); ?></label>
+            <input type="text" class="woocommerce-Input woocommerce-Input--email input-text"
+                   name="tradesafe_token_organization_registration_number" id="tradesafe_token_organization_registration_number"
                    value=""/>
         </p>
 
         <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-last">
-            <label for="tradesafe_token_organization_trading_name"><?php esc_html_e('VAT Number', 'woocommerce-tradesafe-gateway'); ?></label>
+            <label for="tradesafe_token_organization_tax_number"><?php esc_html_e('VAT Number', 'woocommerce-tradesafe-gateway'); ?></label>
             <input type="email" class="woocommerce-Input woocommerce-Input--email input-text"
-                   name="tradesafe_token_organization_trading_name" id="tradesafe_token_organization_trading_name"
+                   name="tradesafe_token_organization_tax_number" id="tradesafe_token_organization_tax_number"
                    value=""/>
         </p>
     </fieldset>

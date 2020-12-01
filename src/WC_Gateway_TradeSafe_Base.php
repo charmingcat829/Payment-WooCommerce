@@ -37,12 +37,6 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
         $this->client_secret = $this->get_option('client_secret');
         $this->client_callback = $this->get_option('client_callback');
 
-        $this->base_url = 'https://api-dev.tradesafe.dev';
-
-        if ($this->get_option('production')) {
-            $this->base_url = 'https://api.tradesafe.co.za';
-        }
-
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
         add_action('woocommerce_receipt_tradesafe', array($this, 'receipt_page'));
         add_action('admin_notices', array($this, 'admin_notices'));
@@ -58,6 +52,8 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
      */
     public function is_valid_for_use()
     {
+        global $wp;
+
         $is_available = false;
         $is_available_currency = in_array(get_woocommerce_currency(), $this->available_currencies);
 
@@ -95,6 +91,14 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
             $user = wp_get_current_user();
             if ('' === get_user_meta($user->ID, 'tradesafe_token_id')) {
                 $is_available = false;
+            }
+
+            if (isset($wp->query_vars['order-pay'])) {
+                $order = wc_get_order($wp->query_vars['order-pay']);
+
+                if ($order->get_payment_method() !== null && $order->get_payment_method() !== $this->id) {
+                    $is_available = false;
+                }
             }
         }
 
@@ -144,13 +148,13 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
 
         $order = new WC_Order($order_id);
 
+        $client = woocommerce_tradesafe_api();
+
+        if (is_null($client)) {
+            return null;
+        }
+
         if (!$order->meta_exists('tradesafe_transaction_id')) {
-            $client = woocommerce_tradesafe_api();
-
-            if (is_null($client)) {
-                return null;
-            }
-
             $user = wp_get_current_user();
 
             $transaction = $client->createTransaction([
@@ -163,26 +167,40 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
             ]);
 
             $order->add_meta_data('tradesafe_transaction_id', $transaction['id'], true);
+            $transaction_id = $transaction['id'];
+        } else {
+            $transaction_id = $order->get_meta('tradesafe_transaction_id', true);
         }
 
-        // Mark as on-hold (we're awaiting the cheque)
-        $order->update_status('pending', __('Awaiting EFT payment', 'woocommerce-gateway-tradesafe'));
+        // Mark as pending
+        $order->update_status('pending', __('Awaiting payment', 'woocommerce-gateway-tradesafe'));
 
         // Remove cart
         $woocommerce->cart->empty_cart();
 
         switch ($order->get_payment_method()) {
             case "tradesafe-ecentric":
-                $url = '';
+                $deposit = $client->createTransactionDeposit($transaction_id, 'ECEN');
+                $order->add_meta_data('tradesafe_transaction_deposit_id', $deposit['id'], true);
+                $url = $deposit['paymentLink'];
                 break;
             case "tradesafe-manual":
-                $url = $order->get_checkout_payment_url(true);
+                $deposit = $client->createTransactionDeposit($transaction_id, 'EFT');
+                $order->add_meta_data('tradesafe_transaction_deposit_id', $deposit['id'], true);
+                $url = $order->get_view_order_url();
+
+                // Mark as on-hold -- waiting for Manual EFT
+                $order->update_status('on-hold', __('Awaiting Manual EFT payment', 'woocommerce-gateway-tradesafe'));
                 break;
             case "tradesafe-ozow":
-                $url = '';
+                $deposit = $client->createTransactionDeposit($transaction_id, 'OZOW');
+                $order->add_meta_data('tradesafe_transaction_deposit_id', $deposit['id'], true);
+                $url = $deposit['paymentLink'];
                 break;
             case "tradesafe-snapscan":
-                $url = '';
+                $deposit = $client->createTransactionDeposit($transaction_id, 'SNAP');
+                $order->add_meta_data('tradesafe_transaction_deposit_id', $deposit['id'], true);
+                $url = $deposit['paymentLink'];
                 break;
             default:
                 $url = $order->get_checkout_payment_url(true);
@@ -193,10 +211,5 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
             'result' => 'success',
             'redirect' => $url
         );
-    }
-
-    public function get_checkout_payment_url($on_checkout = false)
-    {
-        return apply_filters('woocommerce_get_checkout_payment_url', $pay_url, $this);
     }
 }

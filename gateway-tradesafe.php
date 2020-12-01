@@ -81,7 +81,7 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'woocommerce_trad
 function woocommerce_tradesafe_add_gateway($methods)
 {
     $methods[] = 'WC_Gateway_TradeSafe_Manual';
-//    $methods[] = 'WC_Gateway_TradeSafe_Ozow';
+    $methods[] = 'WC_Gateway_TradeSafe_Ozow';
 //    $methods[] = 'WC_Gateway_TradeSafe_Ecentric';
 //    $methods[] = 'WC_Gateway_TradeSafe_Snapscan';
     return $methods;
@@ -98,7 +98,16 @@ function woocommerce_tradesafe_api()
     try {
         $client = new \TradeSafe\Api\Client($domain);
         $client->configure(get_option('tradesafe_client_id'), get_option('tradesafe_client_secret'), site_url('/tradesafe/oauth/callback/'));
-        $client->generateAuthToken();
+
+        if (get_transient('tradesafe_client_token')) {
+            $client->setAuthToken(get_transient('tradesafe_client_token'));
+        } else {
+            $accessToken = $client->generateAuthToken();
+
+            // Get number of seconds token is valid
+            $expires = $accessToken['expires'] - time() - 30;
+            set_transient('tradesafe_client_token', $accessToken['token'], $expires);
+        }
 
         return $client;
     } catch (Exception $e) {

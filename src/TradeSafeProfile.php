@@ -79,6 +79,18 @@ class TradeSafeProfile
                     'accountType' => $_POST['tradesafe_token_bank_account_type'],
                 ];
 
+                if (isset($_POST['tradesafe_token_organization_name'])
+                && isset($_POST['tradesafe_token_organization_type'])
+                && isset($_POST['tradesafe_token_organization_registration_number'])) {
+                    $tokenInput += [
+                        'organizationName' => $_POST['tradesafe_token_organization_name'],
+                        'organizationTradeName' => $_POST['tradesafe_token_organization_trading_name'],
+                        'organizationType' => $_POST['tradesafe_token_organization_type'],
+                        'organizationRegistrationNumber' => $_POST['tradesafe_token_organization_registration_number'],
+                        'organizationTaxNumber' => $_POST['tradesafe_token_organization_tax_number'],
+                    ];
+                }
+
                 $tokenData = $client->createToken($tokenInput);
                 update_user_meta($user->ID, 'tradesafe_token_id', sanitize_text_field($tokenData['id']));
 
