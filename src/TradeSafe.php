@@ -10,7 +10,9 @@ class TradeSafe
         add_action('admin_menu', ['TradeSafe', 'register_options_page']);
 
         add_action('woocommerce_cart_calculate_fees', ['TradeSafe', 'add_gateway_fee'], PHP_INT_MAX);
+        add_action('woocommerce_order_status_completed', ['TradeSafe', 'complete_transaction'], PHP_INT_MAX);
         add_action('woocommerce_review_order_before_payment', ['TradeSafe', 'refresh_checkout']);
+
 
         add_rewrite_rule('^tradesafe/eft-details/([0-9]+)[/]?$', 'index.php?tradesafe=eft-details&order-id=$matches[1]', 'top');
         add_rewrite_rule('^tradesafe/callback$', 'index.php?tradesafe=callback', 'top');
@@ -296,19 +298,9 @@ class TradeSafe
                     $signatureCheck = hash_hmac('sha256', $request, get_option('tradesafe_client_id'));
 
                     if ($signature === $signatureCheck) {
-                        $args = array(
-                            'meta_query' => array(
-                                array(
-                                    'key' => 'tradesafe_transaction_id',
-                                    'value' => $data['id'],
-                                    'compare' => '=',
-                                )
-                            )
-                        );
-
                         $query = wc_get_orders(array(
                             'meta_key' => 'tradesafe_transaction_id',
-                            'meta_value' => '6CptyBAAceroV6IqQiq4pN',
+                            'meta_value' => $data['id'],
                             'meta_compare' => '=',
                         ));
 
@@ -319,6 +311,11 @@ class TradeSafe
                         $order = $query[0];
 
                         if ($order->get_status() === 'on-hold' && $data['state'] === 'FUNDS_RECEIVED') {
+                            $client = woocommerce_tradesafe_api();
+
+                            $transaction = $client->getTransaction($order->get_meta('tradesafe_transaction_id', true));
+                            $client->allocationStartDelivery($transaction['allocations'][0]['id']);
+
                             $order->update_status('processing', 'Funds have been received by TradeSafe.');
                         }
 
@@ -420,5 +417,19 @@ class TradeSafe
             })(jQuery);
         </script>
         <?php
+    }
+
+    public function complete_transaction($order_id)
+    {
+        $client = woocommerce_tradesafe_api();
+        $order = wc_get_order($order_id);
+
+        try {
+            $transaction = $client->getTransaction($order->get_meta('tradesafe_transaction_id', true));
+            $client->allocationAcceptDelivery($transaction['allocations'][0]['id']);
+        } catch (\Exception $e) {
+            $order->set_status('processing', 'Error occurred while completing transaction on TradeSafe.');
+            wp_die('Error occurred while completing transaction on TradeSafe.', 500);
+        }
     }
 }
