@@ -13,6 +13,7 @@ class TradeSafe
         add_action('woocommerce_review_order_before_payment', ['TradeSafe', 'refresh_checkout']);
 
         add_rewrite_rule('^tradesafe/eft-details/([0-9]+)[/]?$', 'index.php?tradesafe=eft-details&order-id=$matches[1]', 'top');
+        add_rewrite_rule('^tradesafe/callback$', 'index.php?tradesafe=callback', 'top');
         add_rewrite_rule('^tradesafe/unlink?$', 'index.php?tradesafe=unlink', 'top');
         add_action('parse_request', ['TradeSafe', 'parse_request']);
 
@@ -281,6 +282,50 @@ class TradeSafe
     {
         if (array_key_exists('tradesafe', $wp->query_vars)) {
             switch ($wp->query_vars['tradesafe']) {
+                case "callback":
+                    $data = json_decode(file_get_contents('php://input'), true);
+
+                    $signature = $data['signature'];
+                    unset($data['signature']);
+
+                    $request = '';
+                    foreach ($data as $value) {
+                        $request .= $value;
+                    }
+
+                    $signatureCheck = hash_hmac('sha256', $request, get_option('tradesafe_client_id'));
+
+                    if ($signature === $signatureCheck) {
+                        $args = array(
+                            'meta_query' => array(
+                                array(
+                                    'key' => 'tradesafe_transaction_id',
+                                    'value' => $data['id'],
+                                    'compare' => '=',
+                                )
+                            )
+                        );
+
+                        $query = wc_get_orders(array(
+                            'meta_key' => 'tradesafe_transaction_id',
+                            'meta_value' => '6CptyBAAceroV6IqQiq4pN',
+                            'meta_compare' => '=',
+                        ));
+
+                        if (!isset($query[0])) {
+                            wp_die('Invalid Transaction ID', 400);
+                        }
+
+                        $order = $query[0];
+
+                        if ($order->get_status() === 'on-hold' && $data['state'] === 'FUNDS_RECEIVED') {
+                            $order->update_status('processing', 'Funds have been received by TradeSafe.');
+                        }
+
+                        exit;
+                    } else {
+                        wp_die('Invalid Signature', 400);
+                    }
                 case "eft-details":
                     self::eft_details_page($wp->query_vars['order-id']);
                     break;

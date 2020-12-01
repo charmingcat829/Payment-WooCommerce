@@ -173,7 +173,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
         }
 
         // Mark as pending
-        $order->update_status('pending', __('Awaiting payment', 'woocommerce-gateway-tradesafe'));
+        $order->update_status('pending', __('Awaiting payment.', 'woocommerce-gateway-tradesafe'));
 
         // Remove cart
         $woocommerce->cart->empty_cart();
@@ -190,7 +190,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
                 $url = $order->get_view_order_url();
 
                 // Mark as on-hold -- waiting for Manual EFT
-                $order->update_status('on-hold', __('Awaiting Manual EFT payment', 'woocommerce-gateway-tradesafe'));
+                $order->update_status('on-hold', __('Awaiting Manual EFT payment.', 'woocommerce-gateway-tradesafe'));
                 break;
             case "tradesafe-ozow":
                 $deposit = $client->createTransactionDeposit($transaction_id, 'OZOW');
