@@ -318,7 +318,7 @@ class TradeSafe
                 case "unlink":
                     $user = wp_get_current_user();
                     delete_user_meta($user->ID, 'tradesafe_token_id');
-                    wp_redirect(wc_get_page_permalink('myaccount'));
+                    wp_redirect(wc_get_endpoint_url('tradesafe-settings', '', get_permalink(get_option('woocommerce_myaccount_page_id'))));
                     break;
                 default:
                     status_header(404);

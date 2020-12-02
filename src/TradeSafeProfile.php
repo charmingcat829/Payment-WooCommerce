@@ -74,10 +74,15 @@ class TradeSafeProfile
                     'idNumber' => $_POST['tradesafe_token_id_number'],
                     'idType' => $_POST['tradesafe_token_id_type'],
                     'idCountry' => $_POST['tradesafe_token_id_country'],
-                    'bank' => $_POST['tradesafe_token_bank'],
-                    'accountNumber' => $_POST['tradesafe_token_bank_account_number'],
-                    'accountType' => $_POST['tradesafe_token_bank_account_type'],
                 ];
+
+                if (isset($_POST['tradesafe_token_bank_account_number'])) {
+                    $tokenInput += [
+                        'accountNumber' => $_POST['tradesafe_token_bank_account_number'],
+                        'accountType' => $_POST['tradesafe_token_bank_account_type'],
+                        'bank' => $_POST['tradesafe_token_bank'],
+                    ];
+                }
 
                 if (isset($_POST['tradesafe_token_organization_name'])
                 && isset($_POST['tradesafe_token_organization_type'])
@@ -91,7 +96,11 @@ class TradeSafeProfile
                     ];
                 }
 
-                $tokenData = $client->createToken($tokenInput);
+                if (isset($tokenInput['accountNumber']) && $tokenInput['accountNumber'] != null) {
+                    $tokenData = $client->createToken($tokenInput);
+                } else {
+                    $tokenData = $client->createTokenWithoutBankAccount($tokenInput);
+                }
                 update_user_meta($user->ID, 'tradesafe_token_id', sanitize_text_field($tokenData['id']));
 
                 include_once dirname(__DIR__) . '/templates/myaccount/view-tradesafe-token.php';

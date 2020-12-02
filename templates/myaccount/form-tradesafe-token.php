@@ -61,49 +61,6 @@ defined('ABSPATH') || exit;
     </p>
 
     <fieldset>
-        <legend><?php esc_html_e('Banking Details', 'woocommerce-tradesafe-gateway'); ?></legend>
-
-        <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-            <label for="tradesafe_token_bank"><?php esc_html_e('Bank', 'woocommerce-tradesafe-gateway'); ?>
-                &nbsp;<span class="required">*</span></label>
-            <select name="tradesafe_token_bank" id="tradesafe_token_bank" class="woocommerce-Input" required>
-                <option selected="selected" disabled="disabled" hidden="hidden"></option>
-                <option value="ABSA"> Absa Bank</option>
-                <option value="AFRICAN"> African Bank</option>
-                <option value="CAPITEC"> Capitec Bank</option>
-                <option value="DISCOVERY"> Discovery Bank</option>
-                <option value="FNB"> First National Bank</option>
-                <option value="INVESTEC"> Investec Bank</option>
-                <option value="MTN"> MTN Banking</option>
-                <option value="NEDBANK"> Nedbank</option>
-                <option value="SBSA"> Standard Bank South Africa</option>
-                <option value="SAPO"> Postbank</option>
-                <option value="SASFIN"> Sasfin Bank</option>
-            </select>
-        </p>
-        <div class="clear"></div>
-
-        <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-first">
-            <label for="tradesafe_token_bank_account_number"><?php esc_html_e('Account number', 'woocommerce-tradesafe-gateway'); ?>
-                &nbsp;<span class="required">*</span></label>
-            <input type="mobile" class="woocommerce-Input woocommerce-Input--mobile input-text"
-                   name="tradesafe_token_bank_account_number" id="tradesafe_token_bank_account_number" autocomplete="mobile"
-                   value="" required/>
-        </p>
-
-        <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-last">
-            <label for="tradesafe_token_bank_account_type"><?php esc_html_e('Account type', 'woocommerce-tradesafe-gateway'); ?>
-                &nbsp;<span class="required">*</span></label>
-            <select name="tradesafe_token_bank_account_type" id="tradesafe_token_bank_account_type" required>
-                <option selected="selected" disabled="disabled" hidden="hidden"></option>
-                <option value="CHEQUE"> Cheque/Current Account</option>
-                <option value="SAVINGS"> Savings Account</option>
-                <option value="TRANSMISSION"> Transmission Account</option>
-            </select>
-        </p>
-    </fieldset>
-
-    <fieldset>
         <legend><?php esc_html_e('Organization Details', 'woocommerce-tradesafe-gateway'); ?></legend>
 
         <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
@@ -140,7 +97,8 @@ defined('ABSPATH') || exit;
         <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-first">
             <label for="tradesafe_token_organization_registration_number"><?php esc_html_e('Registration Number', 'woocommerce-tradesafe-gateway'); ?></label>
             <input type="text" class="woocommerce-Input woocommerce-Input--email input-text"
-                   name="tradesafe_token_organization_registration_number" id="tradesafe_token_organization_registration_number"
+                   name="tradesafe_token_organization_registration_number"
+                   id="tradesafe_token_organization_registration_number"
                    value=""/>
         </p>
 
@@ -151,6 +109,46 @@ defined('ABSPATH') || exit;
                    value=""/>
         </p>
     </fieldset>
+
+    <fieldset>
+        <legend><?php esc_html_e('Banking Details', 'woocommerce-tradesafe-gateway'); ?></legend>
+
+        <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
+            <label for="tradesafe_token_bank"><?php esc_html_e('Bank', 'woocommerce-tradesafe-gateway'); ?></label>
+            <select name="tradesafe_token_bank" id="tradesafe_token_bank" class="woocommerce-Input">
+                <option selected="selected" disabled="disabled" hidden="hidden"></option>
+                <option value="ABSA"> Absa Bank</option>
+                <option value="AFRICAN"> African Bank</option>
+                <option value="CAPITEC"> Capitec Bank</option>
+                <option value="DISCOVERY"> Discovery Bank</option>
+                <option value="FNB"> First National Bank</option>
+                <option value="INVESTEC"> Investec Bank</option>
+                <option value="MTN"> MTN Banking</option>
+                <option value="NEDBANK"> Nedbank</option>
+                <option value="SBSA"> Standard Bank South Africa</option>
+                <option value="SAPO"> Postbank</option>
+                <option value="SASFIN"> Sasfin Bank</option>
+            </select>
+        </p>
+        <div class="clear"></div>
+
+        <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-first">
+            <label for="tradesafe_token_bank_account_number"><?php esc_html_e('Account number', 'woocommerce-tradesafe-gateway'); ?></label>
+            <input type="mobile" class="woocommerce-Input woocommerce-Input--mobile input-text"
+                   name="tradesafe_token_bank_account_number" id="tradesafe_token_bank_account_number" value=""/>
+        </p>
+
+        <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-last">
+            <label for="tradesafe_token_bank_account_type"><?php esc_html_e('Account type', 'woocommerce-tradesafe-gateway'); ?></label>
+            <select name="tradesafe_token_bank_account_type" id="tradesafe_token_bank_account_type">
+                <option selected="selected" disabled="disabled" hidden="hidden"></option>
+                <option value="CHEQUE"> Cheque/Current Account</option>
+                <option value="SAVINGS"> Savings Account</option>
+                <option value="TRANSMISSION"> Transmission Account</option>
+            </select>
+        </p>
+    </fieldset>
+
     <div class="clear"></div>
 
     <p>
