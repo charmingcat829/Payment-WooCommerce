@@ -82,7 +82,7 @@ function woocommerce_tradesafe_add_gateway($methods)
 {
     $methods[] = 'WC_Gateway_TradeSafe_Manual';
     $methods[] = 'WC_Gateway_TradeSafe_Ozow';
-//    $methods[] = 'WC_Gateway_TradeSafe_Ecentric';
+    $methods[] = 'WC_Gateway_TradeSafe_Ecentric';
 //    $methods[] = 'WC_Gateway_TradeSafe_Snapscan';
     return $methods;
 }

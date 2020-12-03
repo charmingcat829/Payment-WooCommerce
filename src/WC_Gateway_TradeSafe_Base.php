@@ -179,9 +179,15 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
         // Remove cart
         $woocommerce->cart->empty_cart();
 
+        $redirects = [
+            'success' => $order->get_view_order_url(),
+            'failure' => wc_get_endpoint_url('orders', '', get_permalink(get_option('woocommerce_myaccount_page_id'))),
+            'cancel' => wc_get_endpoint_url('orders', '', get_permalink(get_option('woocommerce_myaccount_page_id'))),
+        ];
+
         switch ($order->get_payment_method()) {
             case "tradesafe-ecentric":
-                $deposit = $client->createTransactionDeposit($transaction_id, 'ECEN');
+                $deposit = $client->createTransactionDeposit($transaction_id, 'ECEN', $redirects);
                 $order->add_meta_data('tradesafe_transaction_deposit_id', $deposit['id'], true);
                 $url = $deposit['paymentLink'];
                 break;
@@ -194,7 +200,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
                 $order->update_status('on-hold', __('Awaiting Manual EFT payment.', 'woocommerce-gateway-tradesafe'));
                 break;
             case "tradesafe-ozow":
-                $deposit = $client->createTransactionDeposit($transaction_id, 'OZOW');
+                $deposit = $client->createTransactionDeposit($transaction_id, 'OZOW', $redirects);
                 $order->add_meta_data('tradesafe_transaction_deposit_id', $deposit['id'], true);
                 $url = $deposit['paymentLink'];
                 break;
