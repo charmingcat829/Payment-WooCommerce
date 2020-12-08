@@ -328,7 +328,7 @@ class TradeSafe
         }
     }
 
-    public function add_gateway_fee()
+    public static function add_gateway_fee()
     {
         if (is_admin() && !defined('DOING_AJAX')) return;
 
@@ -395,7 +395,7 @@ class TradeSafe
         }
     }
 
-    public function refresh_checkout()
+    public static function refresh_checkout()
     {
         ?>
         <script type="text/javascript">
@@ -408,7 +408,7 @@ class TradeSafe
         <?php
     }
 
-    public function complete_transaction($order_id)
+    public static function complete_transaction($order_id)
     {
         $client = woocommerce_tradesafe_api();
         $order = wc_get_order($order_id);
