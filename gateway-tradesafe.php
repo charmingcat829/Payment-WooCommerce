@@ -48,6 +48,7 @@ function woocommerce_tradesafe_init()
     load_plugin_textdomain('woocommerce-gateway-tradesafe', false, trailingslashit(dirname(plugin_basename(__FILE__))));
     add_filter('woocommerce_payment_gateways', 'woocommerce_tradesafe_add_gateway');
 }
+
 add_action('plugins_loaded', 'woocommerce_tradesafe_init', 0);
 add_action('init', ['TradeSafe', 'init']);
 add_action('init', ['TradeSafeProfile', 'init']);
@@ -111,6 +112,6 @@ function woocommerce_tradesafe_api()
 
         return $client;
     } catch (Exception $e) {
-        return null;
+        return ['error' => $e->getMessage()];
     }
 }

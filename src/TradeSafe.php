@@ -183,6 +183,14 @@ class TradeSafe
                 return;
             }
 
+            if (is_array($client) && isset($client['error'])) {
+                echo "<table class='form-table' role='presentation'><tbody>";
+                echo "<tr><th scope='row'>Error:</th><td> Could not connect to server</td></tr>";
+                echo "<tr><th scope='row'>Reason:</th><td> " . $client['error'] . "</td></tr>";
+                echo "</tbody></table>";
+                return;
+            }
+
             $profile = $client->getProfile();
             $tokenData = $client->getToken($profile['token']);
 
