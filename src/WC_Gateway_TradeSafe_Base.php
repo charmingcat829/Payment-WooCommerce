@@ -72,21 +72,6 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
         }
 
         if (!is_admin()) {
-            $cart = WC()->cart->get_cart_contents();
-            $vendor = null;
-
-            foreach ($cart as $product) {
-                $vendor_id = get_post_field('post_author', $product['product_id']);
-
-                if (is_null($vendor)) {
-                    $vendor = $vendor_id;
-                }
-
-                if ($vendor !== $vendor_id) {
-                    $is_available = false;
-                }
-            }
-
             $user = wp_get_current_user();
             if ('' === get_user_meta($user->ID, 'tradesafe_token_id')) {
                 $is_available = false;
@@ -158,14 +143,59 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
 
             $profile = $client->getProfile();
 
+            $itemList = [];
+            $vendors = [];
+            foreach ($order->get_items() as $item) {
+                // Get product owner
+                $product = get_post($item['product_id']);
+
+                if (get_option('tradesafe_transaction_marketplace', 0) === 1) {
+                    if (!isset($vendors[$product->post_author])) {
+                        $vendors[$product->post_author]['total'] = 0;
+                    }
+
+                    $vendors[$product->post_author]['total'] += $item->get_total();
+                }
+
+                // Add item to list for description
+                $itemList[] = $item->get_name() . ': ' . $order->get_formatted_line_subtotal($item);
+            }
+
+            $allocations[] = [
+                'title' => 'Order ' . $order->get_id(),
+                'description' => implode("\n", $itemList), // Itemized List?
+                'value' => $order->get_total(),
+                'daysToDeliver' => 14,
+                'daysToInspect' => 7,
+            ];
+
+            $parties[] = [
+                'role' => 'BUYER',
+                'token' => get_user_meta($user->ID, 'tradesafe_token_id', true)
+            ];
+
+            $parties[] = [
+                'role' => 'SELLER',
+                'token' => $profile['token']
+            ];
+
+            foreach ($vendors as $vendorId => $vendor) {
+                $parties[] = [
+                    'role' => 'BENEFICIARY_MERCHANT',
+                    'token' => get_user_meta($vendorId, 'tradesafe_token_id', true),
+                    'fee' => $vendor['total'],
+                    'feeType' => 'FLAT',
+                    'feeAllocation' => 'SELLER',
+                ];
+            }
+
             $transaction = $client->createTransaction([
                 'title' => 'Order ' . $order->get_id(),
-                'description' => 'WooCommerce Order ' . $order->get_order_key(),
-                'industry' => 'GENERAL_GOODS_SERVICES',
-                'value' => $order->get_total(),
-                'buyerToken' => get_user_meta($user->ID, 'tradesafe_token_id', true),
-                'sellerToken' => $profile['token']
-            ]);
+                'description' => implode("\n", $itemList),
+                'industry' => get_option('tradesafe_transaction_industry'),
+                'feeAllocation' => get_option('tradesafe_transaction_fee_allocation'),
+                'reference' => $order->get_order_key()
+            ], $allocations, $parties);
 
             $order->add_meta_data('tradesafe_transaction_id', $transaction['id'], true);
             $transaction_id = $transaction['id'];
@@ -186,11 +216,6 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
         ];
 
         switch ($order->get_payment_method()) {
-            case "tradesafe-ecentric":
-                $deposit = $client->createTransactionDeposit($transaction_id, 'ECEN', $redirects);
-                $order->add_meta_data('tradesafe_transaction_deposit_id', $deposit['id'], true);
-                $url = $deposit['paymentLink'];
-                break;
             case "tradesafe-manual":
                 $deposit = $client->createTransactionDeposit($transaction_id, 'EFT');
                 $order->add_meta_data('tradesafe_transaction_deposit_id', $deposit['id'], true);
@@ -198,6 +223,11 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
 
                 // Mark as on-hold -- waiting for Manual EFT
                 $order->update_status('on-hold', __('Awaiting Manual EFT payment.', 'woocommerce-gateway-tradesafe'));
+                break;
+            case "tradesafe-ecentric":
+                $deposit = $client->createTransactionDeposit($transaction_id, 'ECEN', $redirects);
+                $order->add_meta_data('tradesafe_transaction_deposit_id', $deposit['id'], true);
+                $url = $deposit['paymentLink'];
                 break;
             case "tradesafe-ozow":
                 $deposit = $client->createTransactionDeposit($transaction_id, 'OZOW', $redirects);

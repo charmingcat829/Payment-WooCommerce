@@ -66,7 +66,7 @@ class TradeSafeProfile
             include_once dirname(__DIR__) . '/templates/myaccount/view-tradesafe-token.php';
         } else {
             if (isset($_POST) && !empty($_POST)) {
-                $tokenInput = [
+                $userInfo = [
                     'givenName' => $_POST['tradesafe_token_first_name'],
                     'familyName' => $_POST['tradesafe_token_last_name'],
                     'email' => $_POST['tradesafe_token_email'],
@@ -76,8 +76,11 @@ class TradeSafeProfile
                     'idCountry' => $_POST['tradesafe_token_id_country'],
                 ];
 
+                $bankAccount = null;
+                $organization = null;
+
                 if (isset($_POST['tradesafe_token_bank_account_number'])) {
-                    $tokenInput += [
+                    $bankAccount = [
                         'accountNumber' => $_POST['tradesafe_token_bank_account_number'],
                         'accountType' => $_POST['tradesafe_token_bank_account_type'],
                         'bank' => $_POST['tradesafe_token_bank'],
@@ -87,20 +90,17 @@ class TradeSafeProfile
                 if (isset($_POST['tradesafe_token_organization_name'])
                 && isset($_POST['tradesafe_token_organization_type'])
                 && isset($_POST['tradesafe_token_organization_registration_number'])) {
-                    $tokenInput += [
-                        'organizationName' => $_POST['tradesafe_token_organization_name'],
-                        'organizationTradeName' => $_POST['tradesafe_token_organization_trading_name'],
-                        'organizationType' => $_POST['tradesafe_token_organization_type'],
-                        'organizationRegistrationNumber' => $_POST['tradesafe_token_organization_registration_number'],
-                        'organizationTaxNumber' => $_POST['tradesafe_token_organization_tax_number'],
+                    $organization = [
+                        'name' => $_POST['tradesafe_token_organization_name'],
+                        'tradeName' => $_POST['tradesafe_token_organization_trading_name'],
+                        'type' => $_POST['tradesafe_token_organization_type'],
+                        'registrationNumber' => $_POST['tradesafe_token_organization_registration_number'],
+                        'taxNumber' => $_POST['tradesafe_token_organization_tax_number'],
                     ];
                 }
 
-                if (isset($tokenInput['accountNumber']) && $tokenInput['accountNumber'] != null) {
-                    $tokenData = $client->createToken($tokenInput);
-                } else {
-                    $tokenData = $client->createTokenWithoutBankAccount($tokenInput);
-                }
+                $tokenData = $client->createToken($userInfo, $organization, $bankAccount);
+
                 update_user_meta($user->ID, 'tradesafe_token_id', sanitize_text_field($tokenData['id']));
 
                 include_once dirname(__DIR__) . '/templates/myaccount/view-tradesafe-token.php';

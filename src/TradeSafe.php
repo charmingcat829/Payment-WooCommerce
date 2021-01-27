@@ -13,7 +13,6 @@ class TradeSafe
         add_action('woocommerce_order_status_completed', ['TradeSafe', 'complete_transaction'], PHP_INT_MAX);
         add_action('woocommerce_review_order_before_payment', ['TradeSafe', 'refresh_checkout']);
 
-
         add_rewrite_rule('^tradesafe/eft-details/([0-9]+)[/]?$', 'index.php?tradesafe=eft-details&order-id=$matches[1]', 'top');
         add_rewrite_rule('^tradesafe/callback$', 'index.php?tradesafe=callback', 'top');
         add_rewrite_rule('^tradesafe/unlink?$', 'index.php?tradesafe=unlink', 'top');
@@ -34,6 +33,16 @@ class TradeSafe
      */
     public static function settings_api_init()
     {
+        $dokanEnabled = false;
+
+        $plugins = get_option('active_plugins');
+
+        foreach ($plugins as $plugin) {
+            if (strpos($plugin, 'dokan') !== false) {
+                $dokanEnabled = true;
+            }
+        }
+
         add_settings_section(
             'tradesafe_info_section',
             'Callback URL\'s',
@@ -101,44 +110,20 @@ class TradeSafe
         );
 
         add_settings_field(
-            'tradesafe_transaction_agent',
-            'Agent / Marketplace',
+            'tradesafe_transaction_industry',
+            'Industry',
             [
                 'TradeSafe',
-                'setting_transaction_agent_callback'
+                'setting_transaction_industry_callback'
             ],
             'tradesafe',
             'tradesafe_transaction_section'
         );
-        register_setting('tradesafe', 'tradesafe_transaction_agent');
-
-        add_settings_field(
-            'tradesafe_transaction_fee',
-            'Agent Fee',
-            [
-                'TradeSafe',
-                'setting_transaction_fee_callback'
-            ],
-            'tradesafe',
-            'tradesafe_transaction_section'
-        );
-        register_setting('tradesafe', 'tradesafe_transaction_fee');
-
-        add_settings_field(
-            'tradesafe_transaction_fee_type',
-            'Agent Fee Type',
-            [
-                'TradeSafe',
-                'setting_transaction_fee_type_callback'
-            ],
-            'tradesafe',
-            'tradesafe_transaction_section'
-        );
-        register_setting('tradesafe', 'tradesafe_transaction_fee_type');
+        register_setting('tradesafe', 'tradesafe_transaction_industry');
 
         add_settings_field(
             'tradesafe_transaction_fee_allocation',
-            'Agent Fee Allocation',
+            'Fee Allocation',
             [
                 'TradeSafe',
                 'setting_transaction_fee_allocation_callback'
@@ -147,25 +132,63 @@ class TradeSafe
             'tradesafe_transaction_section'
         );
         register_setting('tradesafe', 'tradesafe_transaction_fee_allocation');
+
+        if ($dokanEnabled !== true) {
+            add_settings_field(
+                'tradesafe_transaction_marketplace',
+                'Is this website a Marketplace?',
+                [
+                    'TradeSafe',
+                    'setting_transaction_agent_callback'
+                ],
+                'tradesafe',
+                'tradesafe_transaction_section'
+            );
+            register_setting('tradesafe', 'tradesafe_transaction_marketplace');
+
+            add_settings_field(
+                'tradesafe_transaction_fee',
+                'Marketplace Fee',
+                [
+                    'TradeSafe',
+                    'setting_transaction_fee_callback'
+                ],
+                'tradesafe',
+                'tradesafe_transaction_section'
+            );
+            register_setting('tradesafe', 'tradesafe_transaction_fee');
+
+            add_settings_field(
+                'tradesafe_transaction_fee_type',
+                'Marketplace Fee Type',
+                [
+                    'TradeSafe',
+                    'setting_transaction_fee_type_callback'
+                ],
+                'tradesafe',
+                'tradesafe_transaction_section'
+            );
+            register_setting('tradesafe', 'tradesafe_transaction_fee_type');
+        }
     }
 
     public static function settings_info_callback()
     {
         $urls = [
+            'oauth_callback' => site_url('/tradesafe/oauth/callback/'),
             'callback' => site_url('/tradesafe/callback/'),
-            'auth_callback' => site_url('/tradesafe/oauth/callback/'),
         ];
 
         echo '<p>The following URL\'s can be used to register your application with TradeSafe.</p>';
         echo '<table class="form-table">
         <tbody>
         <tr>
-            <th scope="row">Callback URL</th>
-            <td>' . esc_attr($urls['callback']) . '</td>
+            <th scope="row">OAuth Callback URL</th>
+            <td>' . esc_attr($urls['oauth_callback']) . '</td>
         </tr>
         <tr>
-            <th scope="row">Auth Callback URL</th>
-            <td>' . esc_attr($urls['auth_callback']) . '</td>
+            <th scope="row">API Callback URL</th>
+            <td>' . esc_attr($urls['callback']) . '</td>
         </tr>
         </tbody>
     </table>';
@@ -191,19 +214,32 @@ class TradeSafe
                 return;
             }
 
-            $profile = $client->getProfile();
-            $tokenData = $client->getToken($profile['token']);
+            try {
+                $profile = $client->getProfile();
+                $tokenData = $client->getToken($profile['token']);
 
-            echo "<table class='form-table' role='presentation'><tbody>";
-            echo "<tr><th scope='row'>Organization Name:</th><td>" . esc_attr($tokenData['organization']['name']) . "</td></tr>";
-            echo "<tr><th scope='row'>Registration Number:</th><td>" . esc_attr($tokenData['organization']['registration']) . "</td></tr>";
-            if ($tokenData['organization']['taxNumber']) {
-                echo "<tr><th scope='row'>Tax Number:</th><td>" . esc_attr($tokenData['organization']['taxNumber']) . "</td></tr>";
+                echo "<table class='form-table' role='presentation'><tbody>";
+                echo "<tr><th scope='row'>Organization Name:</th><td>" . esc_attr($tokenData['organization']['name']) . "</td></tr>";
+                echo "<tr><th scope='row'>Registration Number:</th><td>" . esc_attr($tokenData['organization']['registration']) . "</td></tr>";
+                if ($tokenData['organization']['taxNumber']) {
+                    echo "<tr><th scope='row'>Tax Number:</th><td>" . esc_attr($tokenData['organization']['taxNumber']) . "</td></tr>";
+                }
+                echo "<tr><th scope='row'>Name:</th><td>" . esc_attr($tokenData['user']['givenName']) . " " . esc_attr($tokenData['user']['familyName']) . "</td></tr>";
+                echo "<tr><th scope='row'>Email:</th><td>" . esc_attr($tokenData['user']['email']) . "</td></tr>";
+                echo "<tr><th scope='row'>Mobile:</th><td>" . esc_attr($tokenData['user']['mobile']) . "</td></tr>";
+                echo "</tbody></table>";
+            } catch (\GuzzleHttp\Exception\ClientException $e) {
+                echo "<table class='form-table' role='presentation'><tbody>";
+                echo "<tr><th scope='row'>Error:</th><td> Could not connect to server</td></tr>";
+                echo "<tr><th scope='row'>Code:</th><td> " . $e->getCode() . "</td></tr>";
+                echo "</tbody></table>";
+                return;
+            } catch (Exception $e) {
+                echo "<table class='form-table' role='presentation'><tbody>";
+                echo "<tr><th scope='row'>Error:</th><td> " . $e->getMessage() . "</td></tr>";
+                echo "</tbody></table>";
+                return;
             }
-            echo "<tr><th scope='row'>Name:</th><td>" . esc_attr($tokenData['user']['givenName']) . " " . esc_attr($tokenData['user']['familyName']) . "</td></tr>";
-            echo "<tr><th scope='row'>Email:</th><td>" . esc_attr($tokenData['user']['email']) . "</td></tr>";
-            echo "<tr><th scope='row'>Mobile:</th><td>" . esc_attr($tokenData['user']['mobile']) . "</td></tr>";
-            echo "</tbody></table>";
         }
     }
 
@@ -227,9 +263,31 @@ class TradeSafe
         echo '<input name="tradesafe_production_mode" id="tradesafe_production_mode" type="checkbox" value="1" ' . checked(1, get_option('tradesafe_production_mode'), false) . ' />';
     }
 
+    public static function setting_transaction_industry_callback()
+    {
+        $client = woocommerce_tradesafe_api();
+
+        try {
+            $industries = $client->getIndustries();
+        } catch (Exception $e) {
+            $industries = [[
+                'name' => 'GENERAL_GOODS_SERVICES',
+                'description' => 'General Goods & Services'
+            ]];
+        }
+
+        echo '<select name="tradesafe_transaction_industry" class="small-text ltr">';
+
+        foreach ($industries as $industry) {
+            echo '<option ' . (get_option('tradesafe_transaction_industry', 'GENERAL_GOODS_SERVICES') === $industry['name'] ? 'selected' : '') . ' value="' . $industry['name'] . '">' . $industry['description'] . '</option>';
+        }
+
+        echo '</select>';
+    }
+
     public static function setting_transaction_agent_callback()
     {
-        echo '<input name="tradesafe_transaction_agent" id="tradesafe_transaction_agent" type="checkbox" value="1" ' . checked(1, get_option('tradesafe_transaction_agent'), false) . ' />';
+        echo '<input name="tradesafe_transaction_marketplace" id="tradesafe_transaction_marketplace" type="checkbox" value="1" ' . checked(1, get_option('tradesafe_transaction_marketplace'), false) . ' />';
     }
 
     public static function setting_transaction_fee_callback()
@@ -240,16 +298,16 @@ class TradeSafe
     public static function setting_transaction_fee_type_callback()
     {
         echo '<select name="tradesafe_transaction_fee_type" class="small-text ltr">';
-        echo '<option ' . (get_option('tradesafe_transaction_fee_type') === 'percent' ? 'selected' : '') . ' value="percent">Percent</option>';
-        echo '<option ' . (get_option('tradesafe_transaction_fee_type') === 'fixed' ? 'selected' : '') . ' value="fixed">Fixed</option>';
+        echo '<option ' . (get_option('tradesafe_transaction_fee_type') === 'PERCENT' ? 'selected' : '') . ' value="PERCENT">Percent</option>';
+        echo '<option ' . (get_option('tradesafe_transaction_fee_type') === 'FIXED' ? 'selected' : '') . ' value="FIXED">Fixed</option>';
         echo '</select>';
     }
 
     public static function setting_transaction_fee_allocation_callback()
     {
         echo '<select name="tradesafe_transaction_fee_allocation" class="small-text ltr">';
-        echo '<option ' . (get_option('tradesafe_transaction_fee_allocation') === 'seller' ? 'selected' : '') . ' value="seller">Seller</option>';
-        echo '<option ' . (get_option('tradesafe_transaction_fee_allocation') === 'buyer' ? 'selected' : '') . ' value="buyer">Buyer</option>';
+        echo '<option ' . (get_option('tradesafe_transaction_fee_allocation', 'SELLER') === 'seller' ? 'selected' : '') . ' value="SELLER">Seller</option>';
+        echo '<option ' . (get_option('tradesafe_transaction_fee_allocation') === 'BUYER' ? 'selected' : '') . ' value="BUYER">Buyer</option>';
         echo '</select>';
     }
 
@@ -353,13 +411,11 @@ class TradeSafe
             $baseValue += $tax;
         }
 
-        $calculation = $client->getCalculation([
-            'feeAllocation' => 'BUYER',
-            'industry' => 'GENERAL_GOODS_SERVICES',
-            'value' => $baseValue
-        ]);
+        $calculation = $client->getCalculation($baseValue, get_option('tradesafe_transaction_fee_allocation'), get_option('tradesafe_transaction_industry'));
 
-        WC()->cart->add_fee('Escrow Fee', $calculation['processingFeeTotal'], false);
+        if (get_option('tradesafe_transaction_fee_allocation') === 'BUYER') {
+            WC()->cart->add_fee('Escrow Fee', $calculation['processingFeeTotal'], false);
+        }
 
         // You need to enter your fees here, in `payment gateway` => `fee amount` format
         $fees = array(
