@@ -193,7 +193,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
                 'title' => 'Order ' . $order->get_id(),
                 'description' => implode("\n", $itemList),
                 'industry' => get_option('tradesafe_transaction_industry'),
-                'feeAllocation' => get_option('tradesafe_transaction_fee_allocation'),
+                'feeAllocation' => get_option('tradesafe_fee_allocation'),
                 'reference' => $order->get_order_key()
             ], $allocations, $parties);
 

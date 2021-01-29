@@ -122,8 +122,57 @@ class TradeSafe
         register_setting('tradesafe', 'tradesafe_transaction_industry');
 
         add_settings_field(
+            'tradesafe_fee_allocation',
+            'TradeSafe Fee Allocation',
+            [
+                'TradeSafe',
+                'setting_tradesafe_fee_allocation_callback'
+            ],
+            'tradesafe',
+            'tradesafe_transaction_section'
+        );
+        register_setting('tradesafe', 'tradesafe_fee_allocation');
+
+        add_settings_field(
+            'tradesafe_transaction_marketplace',
+            'Is this website a Marketplace?',
+            [
+                'TradeSafe',
+                'setting_transaction_agent_callback'
+            ],
+            'tradesafe',
+            'tradesafe_transaction_section'
+        );
+        register_setting('tradesafe', 'tradesafe_transaction_marketplace');
+
+        add_settings_field(
+            'tradesafe_transaction_fee',
+            'Marketplace Fee',
+            [
+                'TradeSafe',
+                'setting_transaction_fee_callback'
+            ],
+            'tradesafe',
+            'tradesafe_transaction_section'
+        );
+        register_setting('tradesafe', 'tradesafe_transaction_fee');
+
+        add_settings_field(
+            'tradesafe_transaction_fee_type',
+            'Marketplace Fee Type',
+            [
+                'TradeSafe',
+                'setting_transaction_fee_type_callback'
+            ],
+            'tradesafe',
+            'tradesafe_transaction_section'
+        );
+        register_setting('tradesafe', 'tradesafe_transaction_fee_type');
+
+
+        add_settings_field(
             'tradesafe_transaction_fee_allocation',
-            'Fee Allocation',
+            'Marketplace Fee Allocation',
             [
                 'TradeSafe',
                 'setting_transaction_fee_allocation_callback'
@@ -132,44 +181,6 @@ class TradeSafe
             'tradesafe_transaction_section'
         );
         register_setting('tradesafe', 'tradesafe_transaction_fee_allocation');
-
-        if ($dokanEnabled !== true) {
-            add_settings_field(
-                'tradesafe_transaction_marketplace',
-                'Is this website a Marketplace?',
-                [
-                    'TradeSafe',
-                    'setting_transaction_agent_callback'
-                ],
-                'tradesafe',
-                'tradesafe_transaction_section'
-            );
-            register_setting('tradesafe', 'tradesafe_transaction_marketplace');
-
-            add_settings_field(
-                'tradesafe_transaction_fee',
-                'Marketplace Fee',
-                [
-                    'TradeSafe',
-                    'setting_transaction_fee_callback'
-                ],
-                'tradesafe',
-                'tradesafe_transaction_section'
-            );
-            register_setting('tradesafe', 'tradesafe_transaction_fee');
-
-            add_settings_field(
-                'tradesafe_transaction_fee_type',
-                'Marketplace Fee Type',
-                [
-                    'TradeSafe',
-                    'setting_transaction_fee_type_callback'
-                ],
-                'tradesafe',
-                'tradesafe_transaction_section'
-            );
-            register_setting('tradesafe', 'tradesafe_transaction_fee_type');
-        }
     }
 
     public static function settings_info_callback()
@@ -303,10 +314,18 @@ class TradeSafe
         echo '</select>';
     }
 
+    public static function setting_tradesafe_fee_allocation_callback()
+    {
+        echo '<select name="tradesafe_fee_allocation" class="small-text ltr">';
+        echo '<option ' . (get_option('tradesafe_transaction_fee_allocation', 'SELLER') === 'seller' ? 'selected' : '') . ' value="SELLER">Seller / Marketplace</option>';
+        echo '<option ' . (get_option('tradesafe_transaction_fee_allocation') === 'BUYER' ? 'selected' : '') . ' value="BUYER">Buyer</option>';
+        echo '</select>';
+    }
+
     public static function setting_transaction_fee_allocation_callback()
     {
         echo '<select name="tradesafe_transaction_fee_allocation" class="small-text ltr">';
-        echo '<option ' . (get_option('tradesafe_transaction_fee_allocation', 'SELLER') === 'seller' ? 'selected' : '') . ' value="SELLER">Seller</option>';
+        echo '<option ' . (get_option('tradesafe_transaction_fee_allocation', 'SELLER') === 'seller' ? 'selected' : '') . ' value="SELLER">Marketplace</option>';
         echo '<option ' . (get_option('tradesafe_transaction_fee_allocation') === 'BUYER' ? 'selected' : '') . ' value="BUYER">Buyer</option>';
         echo '</select>';
     }
@@ -414,6 +433,21 @@ class TradeSafe
         $calculation = $client->getCalculation($baseValue, get_option('tradesafe_transaction_fee_allocation'), get_option('tradesafe_transaction_industry'));
 
         if (get_option('tradesafe_transaction_fee_allocation') === 'BUYER') {
+            $fee = 0;
+
+            switch (get_option('tradesafe_transaction_fee_type')) {
+                case 'FIXED':
+                    $fee = get_option('tradesafe_transaction_fee');
+                    break;
+                case 'PERCENTAGE':
+                    $fee = $baseValue * (get_option('tradesafe_transaction_fee') / 100);
+                    break;
+            }
+
+            WC()->cart->add_fee('Marketplace Fee', $baseValue + $fee, false);
+        }
+
+        if (get_option('tradesafe_fee_allocation') === 'BUYER') {
             WC()->cart->add_fee('Escrow Fee', $calculation['processingFeeTotal'], false);
         }
 
