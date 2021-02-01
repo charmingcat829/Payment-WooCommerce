@@ -317,8 +317,8 @@ class TradeSafe
     public static function setting_tradesafe_fee_allocation_callback()
     {
         echo '<select name="tradesafe_fee_allocation" class="small-text ltr">';
-        echo '<option ' . (get_option('tradesafe_transaction_fee_allocation', 'SELLER') === 'seller' ? 'selected' : '') . ' value="SELLER">Seller / Marketplace</option>';
-        echo '<option ' . (get_option('tradesafe_transaction_fee_allocation') === 'BUYER' ? 'selected' : '') . ' value="BUYER">Buyer</option>';
+        echo '<option ' . (get_option('tradesafe_fee_allocation', 'SELLER') === 'seller' ? 'selected' : '') . ' value="SELLER">Seller / Marketplace</option>';
+        echo '<option ' . (get_option('tradesafe_fee_allocation') === 'BUYER' ? 'selected' : '') . ' value="BUYER">Buyer</option>';
         echo '</select>';
     }
 
