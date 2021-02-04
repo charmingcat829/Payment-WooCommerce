@@ -163,7 +163,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
 
             $allocations[] = [
                 'title' => 'Order ' . $order->get_id(),
-                'description' => implode("\n", $itemList), // Itemized List?
+                'description' => wp_strip_all_tags(implode(',', $itemList)), // Itemized List?
                 'value' => $order->get_total(),
                 'daysToDeliver' => 14,
                 'daysToInspect' => 7,
@@ -191,10 +191,10 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
 
             $transaction = $client->createTransaction([
                 'title' => 'Order ' . $order->get_id(),
-                'description' => implode("\n", $itemList),
+                'description' => wp_strip_all_tags(implode(',', $itemList)),
                 'industry' => get_option('tradesafe_transaction_industry'),
                 'feeAllocation' => get_option('tradesafe_fee_allocation'),
-                'reference' => $order->get_order_key()
+                'reference' => $order->get_order_key() . '-' . time()
             ], $allocations, $parties);
 
             $order->add_meta_data('tradesafe_transaction_id', $transaction['id'], true);
@@ -217,7 +217,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
 
         switch ($order->get_payment_method()) {
             case "tradesafe-manual":
-                $deposit = $client->createTransactionDeposit($transaction_id, 'EFT');
+                $deposit = $client->createTransactionDeposit($transaction_id, 'EFT', $redirects);
                 $order->add_meta_data('tradesafe_transaction_deposit_id', $deposit['id'], true);
                 $url = $order->get_view_order_url();
 
@@ -235,7 +235,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
                 $url = $deposit['paymentLink'];
                 break;
             case "tradesafe-snapscan":
-                $deposit = $client->createTransactionDeposit($transaction_id, 'SNAP');
+                $deposit = $client->createTransactionDeposit($transaction_id, 'SNAP', $redirects);
                 $order->add_meta_data('tradesafe_transaction_deposit_id', $deposit['id'], true);
                 $url = $deposit['paymentLink'];
                 break;
@@ -243,7 +243,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
                 $url = $order->get_checkout_payment_url(true);
         }
 
-        // Return thankyou redirect
+        // Return redirect
         return array(
             'result' => 'success',
             'redirect' => $url
