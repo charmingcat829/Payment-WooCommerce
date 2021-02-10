@@ -279,7 +279,7 @@ class TradeSafe
         $client = woocommerce_tradesafe_api();
 
         try {
-            $industries = $client->getIndustries();
+            $industries = $client->getEnums('Industry');
         } catch (Exception $e) {
             $industries = [[
                 'name' => 'GENERAL_GOODS_SERVICES',

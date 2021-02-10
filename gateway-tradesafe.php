@@ -92,7 +92,7 @@ function woocommerce_tradesafe_api()
 {
     $domain = 'api-developer.tradesafe.dev';
 
-    if (get_option('tradesafe_production_mode')) {
+    if (get_option('tradesafe_production_mode') && true == false) {
         $domain = 'api.tradesafe.co.za';
     }
 
