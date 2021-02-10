@@ -96,8 +96,9 @@ function woocommerce_tradesafe_api()
         $domain = 'api.tradesafe.co.za';
     }
 
+    $client = new \TradeSafe\Api\Client($domain);
+
     try {
-        $client = new \TradeSafe\Api\Client($domain);
         $client->configure(get_option('tradesafe_client_id'), get_option('tradesafe_client_secret'), site_url('/tradesafe/oauth/callback/'));
 
         if (get_transient('tradesafe_client_token')) {
@@ -111,9 +112,9 @@ function woocommerce_tradesafe_api()
                 set_transient('tradesafe_client_token', $accessToken['token'], $expires);
             }
         }
-
-        return $client;
     } catch (Exception $e) {
-        return ['error' => $e->getMessage()];
+        error_log('TradeSafe: ERROR: ' . $e->getMessage());
     }
+
+    return $client;
 }
