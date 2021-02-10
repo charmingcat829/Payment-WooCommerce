@@ -105,9 +105,11 @@ function woocommerce_tradesafe_api()
         } else {
             $accessToken = $client->generateAuthToken();
 
-            // Get number of seconds token is valid
-            $expires = $accessToken['expires'] - time() - 30;
-            set_transient('tradesafe_client_token', $accessToken['token'], $expires);
+            if (is_array($accessToken)) {
+                // Get number of seconds token is valid
+                $expires = $accessToken['expires'] - time() - 30;
+                set_transient('tradesafe_client_token', $accessToken['token'], $expires);
+            }
         }
 
         return $client;
