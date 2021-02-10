@@ -444,7 +444,7 @@ class TradeSafe
                     break;
             }
 
-            WC()->cart->add_fee('Marketplace Fee', $baseValue + $fee, false);
+            WC()->cart->add_fee('Marketplace Fee',  $fee, false);
         }
 
         if (get_option('tradesafe_fee_allocation') === 'BUYER') {
