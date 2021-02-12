@@ -7,8 +7,8 @@
  * Author URI: https://www.tradesafe.co.za/
  * Version: 1.0.0
  * Requires at least: 4.4
- * Tested up to: 5.4
- * WC tested up to: 4.0
+ * Tested up to: 5.6.1
+ * WC tested up to: 5.0.0
  * WC requires at least: 2.6
  *
  */
@@ -52,7 +52,6 @@ function woocommerce_tradesafe_init()
 add_action('plugins_loaded', 'woocommerce_tradesafe_init', 0);
 add_action('init', ['TradeSafe', 'init']);
 add_action('init', ['TradeSafeProfile', 'init']);
-add_action('init', ['TradeSafeProfile', 'add_endpoints']);
 
 function woocommerce_tradesafe_plugin_links($links)
 {
@@ -117,4 +116,11 @@ function woocommerce_tradesafe_api()
     }
 
     return $client;
+}
+
+if (!function_exists('has_dokan')) {
+    function has_dokan()
+    {
+        return class_exists('WeDevs_Dokan');
+    }
 }

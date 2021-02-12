@@ -148,7 +148,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
                 // Get product owner
                 $product = get_post($item['product_id']);
 
-                if (get_option('tradesafe_transaction_marketplace', 0) === 1) {
+                if (get_option('tradesafe_transaction_marketplace', 0) === 1 && !has_dokan()) {
                     if (!isset($vendors[$product->post_author])) {
                         $vendors[$product->post_author]['total'] = 0;
                     }
@@ -178,14 +178,52 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
                 'token' => $profile['token']
             ];
 
-            foreach ($vendors as $vendorId => $vendor) {
-                $parties[] = [
-                    'role' => 'BENEFICIARY_MERCHANT',
-                    'token' => get_user_meta($vendorId, 'tradesafe_token_id', true),
-                    'fee' => $vendor['total'],
-                    'feeType' => 'FLAT',
-                    'feeAllocation' => 'SELLER',
-                ];
+            if (has_dokan()) {
+                $sub_orders = get_children(
+                    [
+                        'post_parent' => dokan_get_prop($order, 'id'),
+                        'post_type' => 'shop_order',
+                        'post_status' => [
+                            'wc-pending',
+                            'wc-completed',
+                            'wc-processing',
+                            'wc-on-hold',
+                            'wc-cancelled',
+                        ],
+                    ]
+                );
+
+                if (!$sub_orders) {
+                    $parties[] = [
+                        'role' => 'BENEFICIARY_MERCHANT',
+                        'token' => get_user_meta($order->get_meta('_dokan_vendor_id', true), 'tradesafe_token_id', true),
+                        'fee' => dokan()->commission->get_earning_by_order($order),
+                        'feeType' => 'FLAT',
+                        'feeAllocation' => 'SELLER',
+                    ];
+                } else {
+                    foreach ($sub_orders as $sub_order_post) {
+                        $sub_order = wc_get_order($sub_order_post->ID);
+
+                        $parties[] = [
+                            'role' => 'BENEFICIARY_MERCHANT',
+                            'token' => get_user_meta($sub_order->get_meta('_dokan_vendor_id', true), 'tradesafe_token_id', true),
+                            'fee' => dokan()->commission->get_earning_by_order($sub_order),
+                            'feeType' => 'FLAT',
+                            'feeAllocation' => 'SELLER',
+                        ];
+                    }
+                }
+            } else {
+                foreach ($vendors as $vendorId => $vendor) {
+                    $parties[] = [
+                        'role' => 'BENEFICIARY_MERCHANT',
+                        'token' => get_user_meta($vendorId, 'tradesafe_token_id', true),
+                        'fee' => $vendor['total'],
+                        'feeType' => 'FLAT',
+                        'feeAllocation' => 'SELLER',
+                    ];
+                }
             }
 
             $transaction = $client->createTransaction([
@@ -247,5 +285,10 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
             'result' => 'success',
             'redirect' => $url
         );
+    }
+
+    public static function admin_notices()
+    {
+        print "?";
     }
 }

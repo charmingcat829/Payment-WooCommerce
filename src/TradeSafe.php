@@ -33,16 +33,6 @@ class TradeSafe
      */
     public static function settings_api_init()
     {
-        $dokanEnabled = false;
-
-        $plugins = get_option('active_plugins');
-
-        foreach ($plugins as $plugin) {
-            if (strpos($plugin, 'dokan') !== false) {
-                $dokanEnabled = true;
-            }
-        }
-
         add_settings_section(
             'tradesafe_info_section',
             'Callback URL\'s',
@@ -134,52 +124,99 @@ class TradeSafe
         register_setting('tradesafe', 'tradesafe_fee_allocation');
 
         add_settings_field(
-            'tradesafe_transaction_marketplace',
-            'Is this website a Marketplace?',
+            'tradesafe_gateway__fee_allocation',
+            'Payment Gateway Fee Allocation',
             [
                 'TradeSafe',
-                'setting_transaction_agent_callback'
+                'setting_tradesafe_gateway_fee_allocation_callback'
             ],
             'tradesafe',
             'tradesafe_transaction_section'
         );
-        register_setting('tradesafe', 'tradesafe_transaction_marketplace');
+        register_setting('tradesafe', 'tradesafe_gateway_fee_allocation');
 
-        add_settings_field(
-            'tradesafe_transaction_fee',
-            'Marketplace Fee',
-            [
-                'TradeSafe',
-                'setting_transaction_fee_callback'
-            ],
-            'tradesafe',
-            'tradesafe_transaction_section'
-        );
+        if (has_dokan()) {
+            add_settings_field(
+                'tradesafe_transaction_fee',
+                'Marketplace Fee',
+                [
+                    'TradeSafe',
+                    'setting_transaction_fee_dokan_callback'
+                ],
+                'tradesafe',
+                'tradesafe_transaction_section'
+            );
+
+            add_settings_field(
+                'tradesafe_transaction_fee_type',
+                'Marketplace Fee Type',
+                [
+                    'TradeSafe',
+                    'setting_transaction_fee_type_dokan_callback'
+                ],
+                'tradesafe',
+                'tradesafe_transaction_section'
+            );
+
+            add_settings_field(
+                'tradesafe_transaction_fee_allocation',
+                'Marketplace Fee Allocation',
+                [
+                    'TradeSafe',
+                    'setting_transaction_fee_allocation_dokan_callback'
+                ],
+                'tradesafe',
+                'tradesafe_transaction_section'
+            );
+        } else {
+            add_settings_field(
+                'tradesafe_transaction_marketplace',
+                'Is this website a Marketplace?',
+                [
+                    'TradeSafe',
+                    'setting_transaction_agent_callback'
+                ],
+                'tradesafe',
+                'tradesafe_transaction_section'
+            );
+            register_setting('tradesafe', 'tradesafe_transaction_marketplace');
+
+            add_settings_field(
+                'tradesafe_transaction_fee',
+                'Marketplace Fee',
+                [
+                    'TradeSafe',
+                    'setting_transaction_fee_callback'
+                ],
+                'tradesafe',
+                'tradesafe_transaction_section'
+            );
+
+            add_settings_field(
+                'tradesafe_transaction_fee_type',
+                'Marketplace Fee Type',
+                [
+                    'TradeSafe',
+                    'setting_transaction_fee_type_callback'
+                ],
+                'tradesafe',
+                'tradesafe_transaction_section'
+            );
+
+            add_settings_field(
+                'tradesafe_transaction_fee_allocation',
+                'Marketplace Fee Allocation',
+                [
+                    'TradeSafe',
+                    'setting_transaction_fee_allocation_callback'
+                ],
+                'tradesafe',
+                'tradesafe_transaction_section'
+            );
+        }
+
         register_setting('tradesafe', 'tradesafe_transaction_fee');
-
-        add_settings_field(
-            'tradesafe_transaction_fee_type',
-            'Marketplace Fee Type',
-            [
-                'TradeSafe',
-                'setting_transaction_fee_type_callback'
-            ],
-            'tradesafe',
-            'tradesafe_transaction_section'
-        );
         register_setting('tradesafe', 'tradesafe_transaction_fee_type');
-
-
-        add_settings_field(
-            'tradesafe_transaction_fee_allocation',
-            'Marketplace Fee Allocation',
-            [
-                'TradeSafe',
-                'setting_transaction_fee_allocation_callback'
-            ],
-            'tradesafe',
-            'tradesafe_transaction_section'
-        );
         register_setting('tradesafe', 'tradesafe_transaction_fee_allocation');
     }
 
@@ -296,6 +333,22 @@ class TradeSafe
         echo '</select>';
     }
 
+    public static function setting_tradesafe_fee_allocation_callback()
+    {
+        echo '<select name="tradesafe_fee_allocation" class="small-text ltr">';
+        echo '<option ' . (get_option('tradesafe_fee_allocation', 'SELLER') === 'seller' ? 'selected' : '') . ' value="SELLER">Seller / Marketplace</option>';
+        echo '<option ' . (get_option('tradesafe_fee_allocation') === 'BUYER' ? 'selected' : '') . ' value="BUYER">Buyer</option>';
+        echo '</select>';
+    }
+
+    public static function setting_tradesafe_gateway_fee_allocation_callback()
+    {
+        echo '<select name="tradesafe_gateway_fee_allocation" class="small-text ltr">';
+        echo '<option ' . (get_option('tradesafe_gateway_fee_allocation', 'SELLER') === 'seller' ? 'selected' : '') . ' value="SELLER">Seller / Marketplace</option>';
+        echo '<option ' . (get_option('tradesafe_gateway_fee_allocation') === 'BUYER' ? 'selected' : '') . ' value="BUYER">Buyer</option>';
+        echo '</select>';
+    }
+
     public static function setting_transaction_agent_callback()
     {
         echo '<input name="tradesafe_transaction_marketplace" id="tradesafe_transaction_marketplace" type="checkbox" value="1" ' . checked(1, get_option('tradesafe_transaction_marketplace'), false) . ' />';
@@ -314,20 +367,29 @@ class TradeSafe
         echo '</select>';
     }
 
-    public static function setting_tradesafe_fee_allocation_callback()
-    {
-        echo '<select name="tradesafe_fee_allocation" class="small-text ltr">';
-        echo '<option ' . (get_option('tradesafe_fee_allocation', 'SELLER') === 'seller' ? 'selected' : '') . ' value="SELLER">Seller / Marketplace</option>';
-        echo '<option ' . (get_option('tradesafe_fee_allocation') === 'BUYER' ? 'selected' : '') . ' value="BUYER">Buyer</option>';
-        echo '</select>';
-    }
-
     public static function setting_transaction_fee_allocation_callback()
     {
         echo '<select name="tradesafe_transaction_fee_allocation" class="small-text ltr">';
         echo '<option ' . (get_option('tradesafe_transaction_fee_allocation', 'SELLER') === 'seller' ? 'selected' : '') . ' value="SELLER">Marketplace</option>';
         echo '<option ' . (get_option('tradesafe_transaction_fee_allocation') === 'BUYER' ? 'selected' : '') . ' value="BUYER">Buyer</option>';
         echo '</select>';
+    }
+
+    public static function setting_transaction_fee_dokan_callback()
+    {
+        echo dokan_get_option('admin_percentage', 'dokan_selling', 0)
+            . ' (<a href="' . admin_url('admin.php?page=dokan#/settings') . '">Change</a>)';
+    }
+
+    public static function setting_transaction_fee_type_dokan_callback()
+    {
+        echo ucwords(dokan_get_option('commission_type', 'dokan_selling', 'percentage'))
+            . ' (<a href="' . admin_url('admin.php?page=dokan#/settings') . '">Change</a>)';
+    }
+
+    public static function setting_transaction_fee_allocation_dokan_callback()
+    {
+        echo 'Vendor';
     }
 
     // Add the link to the settings menu
@@ -403,7 +465,7 @@ class TradeSafe
                 case "unlink":
                     $user = wp_get_current_user();
                     delete_user_meta($user->ID, 'tradesafe_token_id');
-                    wp_redirect(wc_get_endpoint_url('tradesafe-settings', '', get_permalink(get_option('woocommerce_myaccount_page_id'))));
+                    wp_redirect(wc_get_endpoint_url('edit-account', '', get_permalink(get_option('woocommerce_myaccount_page_id'))));
                     break;
                 default:
                     status_header(404);
@@ -444,7 +506,7 @@ class TradeSafe
                     break;
             }
 
-            WC()->cart->add_fee('Marketplace Fee',  $fee, false);
+            WC()->cart->add_fee('Marketplace Fee', $fee, false);
         }
 
         if (get_option('tradesafe_fee_allocation') === 'BUYER') {
