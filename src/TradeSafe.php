@@ -423,6 +423,12 @@ class TradeSafe
                 case "callback":
                     $data = json_decode(file_get_contents('php://input'), true);
 
+                    if (is_null($data)) {
+                        wp_die('No Data', 'An Error Occurred While Processing Callback', [
+                            'code' => 400
+                        ]);
+                    }
+
                     $signature = $data['signature'];
                     unset($data['signature']);
 
