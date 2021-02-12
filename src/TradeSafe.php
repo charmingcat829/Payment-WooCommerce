@@ -441,7 +441,9 @@ class TradeSafe
                         ));
 
                         if (!isset($query[0])) {
-                            wp_die('Invalid Transaction ID', 400);
+                            wp_die('Invalid Transaction ID', 'An Error Occurred While Processing Callback', [
+                                'code' => 400
+                            ]);
                         }
 
                         $order = $query[0];
@@ -457,7 +459,9 @@ class TradeSafe
 
                         exit;
                     } else {
-                        wp_die('Invalid Signature', 400);
+                        wp_die('Invalid Signature', 'An Error Occurred While Processing Callback', [
+                                'code' => 400
+                        ]);
                     }
                 case "eft-details":
                     self::eft_details_page($wp->query_vars['order-id']);
@@ -578,7 +582,9 @@ class TradeSafe
             $client->allocationAcceptDelivery($transaction['allocations'][0]['id']);
         } catch (\Exception $e) {
             $order->set_status('processing', 'Error occurred while completing transaction on TradeSafe.');
-            wp_die('Error occurred while completing transaction on TradeSafe.', 500);
+            wp_die($e->getMessage(), 'Error occurred while completing transaction on TradeSafe', [
+                'code' => 400
+            ]);
         }
     }
 }
