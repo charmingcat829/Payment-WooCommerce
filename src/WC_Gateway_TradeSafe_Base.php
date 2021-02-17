@@ -71,10 +71,12 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
             $is_available = false;
         }
 
-        $user = wp_get_current_user();
+        if (!is_admin()) {
+            $user = wp_get_current_user();
 
-        if ('' === get_user_meta($user->ID, 'tradesafe_token_id', true)) {
-            $is_available = false;
+            if ('' === get_user_meta($user->ID, 'tradesafe_token_id', true)) {
+                $is_available = false;
+            }
         }
 
         if (isset($wp->query_vars['order-pay'])) {
