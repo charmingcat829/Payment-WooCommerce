@@ -454,7 +454,7 @@ class TradeSafe
 
                         $order = $query[0];
 
-                        if ($order->get_status() === 'on-hold' && $data['state'] === 'FUNDS_RECEIVED') {
+                        if (($order->has_status('on-hold') || $order->has_status('pending')) && $data['state'] === 'FUNDS_RECEIVED') {
                             $client = woocommerce_tradesafe_api();
 
                             $transaction = $client->getTransaction($order->get_meta('tradesafe_transaction_id', true));
@@ -466,7 +466,7 @@ class TradeSafe
                         exit;
                     } else {
                         wp_die('Invalid Signature', 'An Error Occurred While Processing Callback', [
-                                'code' => 400
+                            'code' => 400
                         ]);
                     }
                 case "eft-details":
@@ -502,7 +502,7 @@ class TradeSafe
             $baseValue += $tax;
         }
 
-        $calculation = $client->getCalculation($baseValue, get_option('tradesafe_transaction_fee_allocation'), get_option('tradesafe_transaction_industry'));
+        $calculation = $client->getCalculation($baseValue, get_option('tradesafe_fee_allocation'), get_option('tradesafe_transaction_industry'));
 
         if (get_option('tradesafe_transaction_fee_allocation') === 'BUYER') {
             $fee = 0;
