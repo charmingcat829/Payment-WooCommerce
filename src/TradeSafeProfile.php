@@ -45,7 +45,7 @@ class TradeSafeProfile
         include_once dirname(__DIR__) . '/templates/myaccount/form-tradesafe-token-user.php';
         include_once dirname(__DIR__) . '/templates/myaccount/form-tradesafe-token-organization.php';
 
-        if ($tokenData) {
+        if (isset($tokenData['bankAccount'])) {
             include_once dirname(__DIR__) . '/templates/myaccount/view-tradesafe-token-bank-account.php';
         } else {
             include_once dirname(__DIR__) . '/templates/myaccount/form-tradesafe-token-bank-account.php';
@@ -70,7 +70,12 @@ class TradeSafeProfile
         $bankAccount = null;
         $organization = null;
 
-        if (isset($_POST['tradesafe_token_bank_account_number'])) {
+        if (isset($_POST['tradesafe_token_bank_account_number'])
+            && !is_null($_POST['tradesafe_token_bank_account_number'])
+            && isset($_POST['tradesafe_token_bank_account_type'])
+            && !is_null($_POST['tradesafe_token_bank_account_type'])
+            && isset($_POST['tradesafe_token_bank'])
+            && !is_null($_POST['tradesafe_token_bank'])) {
             $bankAccount = [
                 'accountNumber' => $_POST['tradesafe_token_bank_account_number'],
                 'accountType' => $_POST['tradesafe_token_bank_account_type'],
