@@ -5,11 +5,11 @@
  * Description: Process payments using the TradeSafe as a payments provider.
  * Author: TradeSafe
  * Author URI: https://www.tradesafe.co.za/
- * Version: 1.0.0-dev.2021021712
- * Requires at least: 4.4
+ * Version: 1.0.0-dev.2021021916
+ * Requires at least: 5.0
  * Tested up to: 5.6.1
  * WC tested up to: 5.0.0
- * WC requires at least: 2.6
+ * WC requires at least: 4.6
  *
  */
 defined('ABSPATH') || exit;

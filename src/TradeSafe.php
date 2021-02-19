@@ -13,7 +13,10 @@ class TradeSafe
         add_action('woocommerce_order_status_completed', ['TradeSafe', 'complete_transaction'], PHP_INT_MAX);
         add_action('woocommerce_review_order_before_payment', ['TradeSafe', 'refresh_checkout']);
 
+        add_filter( 'woocommerce_my_account_my_orders_actions', ['TradeSafe', 'accept_order'], 10, 2 );
+
         add_rewrite_rule('^tradesafe/eft-details/([0-9]+)[/]?$', 'index.php?tradesafe=eft-details&order-id=$matches[1]', 'top');
+        add_rewrite_rule('^tradesafe/accept/([0-9]+)[/]?$', 'index.php?tradesafe=accept&order-id=$matches[1]', 'top');
         add_rewrite_rule('^tradesafe/callback$', 'index.php?tradesafe=callback', 'top');
         add_rewrite_rule('^tradesafe/unlink?$', 'index.php?tradesafe=unlink', 'top');
         add_action('parse_request', ['TradeSafe', 'parse_request']);
@@ -472,6 +475,11 @@ class TradeSafe
                 case "eft-details":
                     self::eft_details_page($wp->query_vars['order-id']);
                     break;
+                case "accept":
+                    $order = wc_get_order($wp->query_vars['order-id']);
+                    $order->update_status('completed', 'Transaction Completed. Paying out funds to parties.');
+                    wp_redirect(wc_get_endpoint_url('orders', '', get_permalink(get_option('woocommerce_myaccount_page_id'))));
+                    break;
                 case "unlink":
                     $user = wp_get_current_user();
                     delete_user_meta($user->ID, 'tradesafe_token_id');
@@ -576,6 +584,19 @@ class TradeSafe
             })(jQuery);
         </script>
         <?php
+    }
+
+    public static function accept_order( $actions, $order ) {
+        if ($order->has_status('processing')) {
+            $action_slug = 'tradesafe_accept';
+
+            $actions[$action_slug] = array(
+                'url'  => home_url('/tradesafe/accept/' . $order->get_order_number()),
+                'name' => 'Accept',
+            );
+        }
+
+        return $actions;
     }
 
     public static function complete_transaction($order_id)
