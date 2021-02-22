@@ -13,7 +13,8 @@ class TradeSafe
         add_action('woocommerce_order_status_completed', ['TradeSafe', 'complete_transaction'], PHP_INT_MAX);
         add_action('woocommerce_review_order_before_payment', ['TradeSafe', 'refresh_checkout']);
 
-        add_filter( 'woocommerce_my_account_my_orders_actions', ['TradeSafe', 'accept_order'], 10, 2 );
+        add_filter('woocommerce_my_account_my_orders_actions', ['TradeSafe', 'accept_order'], 10, 2);
+        add_filter('woocommerce_available_payment_gateways', ['TradeSafe', 'availability'], 10, 2);
 
         add_rewrite_rule('^tradesafe/eft-details/([0-9]+)[/]?$', 'index.php?tradesafe=eft-details&order-id=$matches[1]', 'top');
         add_rewrite_rule('^tradesafe/accept/([0-9]+)[/]?$', 'index.php?tradesafe=accept&order-id=$matches[1]', 'top');
@@ -586,12 +587,13 @@ class TradeSafe
         <?php
     }
 
-    public static function accept_order( $actions, $order ) {
+    public static function accept_order($actions, $order)
+    {
         if ($order->has_status('processing')) {
             $action_slug = 'tradesafe_accept';
 
             $actions[$action_slug] = array(
-                'url'  => home_url('/tradesafe/accept/' . $order->get_order_number()),
+                'url' => home_url('/tradesafe/accept/' . $order->get_order_number()),
                 'name' => 'Accept',
             );
         }
@@ -613,5 +615,22 @@ class TradeSafe
                 'code' => 400
             ]);
         }
+    }
+
+    public static function availability($available_gateways)
+    {
+        if (is_admin()) {
+            return $available_gateways;
+        }
+
+        if (WC()->cart->total < 200) {
+            unset($available_gateways['tradesafe']);
+            unset($available_gateways['tradesafe-manual']);
+            unset($available_gateways['tradesafe-ozow']);
+            unset($available_gateways['tradesafe-ecentric']);
+            unset($available_gateways['tradesafe-snapscan']);
+        }
+
+        return $available_gateways;
     }
 }
