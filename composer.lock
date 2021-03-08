@@ -573,12 +573,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/tradesafe/tradesafe-api-php.git",
-                "reference": "9d658704447043d0122a8fb2a3cefbf17c40d620"
+                "reference": "d70ab8c5510a4a6c7c07aaabb1de33eae96c69ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tradesafe/tradesafe-api-php/zipball/9d658704447043d0122a8fb2a3cefbf17c40d620",
-                "reference": "9d658704447043d0122a8fb2a3cefbf17c40d620",
+                "url": "https://api.github.com/repos/tradesafe/tradesafe-api-php/zipball/d70ab8c5510a4a6c7c07aaabb1de33eae96c69ed",
+                "reference": "d70ab8c5510a4a6c7c07aaabb1de33eae96c69ed",
                 "shasum": ""
             },
             "require": {
@@ -619,7 +619,7 @@
                 "issues": "https://github.com/tradesafe/tradesafe-api-php/issues",
                 "source": "https://github.com/tradesafe/tradesafe-api-php"
             },
-            "time": "2021-02-12T13:06:54+00:00"
+            "time": "2021-03-08T07:36:05+00:00"
         }
     ],
     "packages-dev": [],
