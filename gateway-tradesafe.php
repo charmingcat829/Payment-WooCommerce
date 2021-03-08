@@ -5,7 +5,7 @@
  * Description: Process payments using the TradeSafe as a payments provider.
  * Author: TradeSafe
  * Author URI: https://www.tradesafe.co.za/
- * Version: 1.0.0-dev.2021022216
+ * Version: 1.0.0-dev.2021030809
  * Requires at least: 5.0
  * Tested up to: 5.6.1
  * WC tested up to: 5.0.0
@@ -39,11 +39,12 @@ function woocommerce_tradesafe_init()
 
     require_once(plugin_basename('src/TradeSafe.php'));
     require_once(plugin_basename('src/TradeSafeProfile.php'));
-    require_once(plugin_basename('src/WC_Gateway_TradeSafe_Base.php'));
-    require_once(plugin_basename('src/WC_Gateway_TradeSafe_Manual.php'));
-    require_once(plugin_basename('src/WC_Gateway_TradeSafe_Ozow.php'));
-    require_once(plugin_basename('src/WC_Gateway_TradeSafe_Ecentric.php'));
-    require_once(plugin_basename('src/WC_Gateway_TradeSafe_Snapscan.php'));
+    require_once(plugin_basename('src/WC_Gateway_TradeSafe.php'));
+//    require_once(plugin_basename('src/WC_Gateway_TradeSafe_Base.php'));
+//    require_once(plugin_basename('src/WC_Gateway_TradeSafe_Manual.php'));
+//    require_once(plugin_basename('src/WC_Gateway_TradeSafe_Ozow.php'));
+//    require_once(plugin_basename('src/WC_Gateway_TradeSafe_Ecentric.php'));
+//    require_once(plugin_basename('src/WC_Gateway_TradeSafe_Snapscan.php'));
 
     load_plugin_textdomain('woocommerce-gateway-tradesafe', false, trailingslashit(dirname(plugin_basename(__FILE__))));
     add_filter('woocommerce_payment_gateways', 'woocommerce_tradesafe_add_gateway');
@@ -80,9 +81,10 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'woocommerce_trad
  */
 function woocommerce_tradesafe_add_gateway($methods)
 {
-    $methods[] = 'WC_Gateway_TradeSafe_Manual';
-    $methods[] = 'WC_Gateway_TradeSafe_Ozow';
-    $methods[] = 'WC_Gateway_TradeSafe_Ecentric';
+    $methods[] = 'WC_Gateway_TradeSafe';
+//    $methods[] = 'WC_Gateway_TradeSafe_Manual';
+//    $methods[] = 'WC_Gateway_TradeSafe_Ozow';
+//    $methods[] = 'WC_Gateway_TradeSafe_Ecentric';
 //    $methods[] = 'WC_Gateway_TradeSafe_Snapscan';
     return $methods;
 }

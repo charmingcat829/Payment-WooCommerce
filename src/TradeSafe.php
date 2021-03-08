@@ -128,7 +128,7 @@ class TradeSafe
         register_setting('tradesafe', 'tradesafe_fee_allocation');
 
         add_settings_field(
-            'tradesafe_gateway__fee_allocation',
+            'tradesafe_gateway_fee_allocation',
             'Payment Gateway Fee Allocation',
             [
                 'TradeSafe',
@@ -140,6 +140,16 @@ class TradeSafe
         register_setting('tradesafe', 'tradesafe_gateway_fee_allocation');
 
         if (has_dokan()) {
+            add_settings_field(
+                'tradesafe_payout_fee',
+                'Payout Fee',
+                [
+                    'TradeSafe',
+                    'setting_payout_fee_dokan_callback'
+                ],
+                'tradesafe',
+                'tradesafe_transaction_section'
+            );
             add_settings_field(
                 'tradesafe_transaction_fee',
                 'Marketplace Fee',
@@ -229,6 +239,8 @@ class TradeSafe
         $urls = [
             'oauth_callback' => site_url('/tradesafe/oauth/callback/'),
             'callback' => site_url('/tradesafe/callback/'),
+            'success' => site_url('my-orders/'),
+            'failure' => wc_get_endpoint_url('orders', '', get_permalink(get_option('woocommerce_myaccount_page_id'))),
         ];
 
         echo '<p>The following URL\'s can be used to register your application with TradeSafe.</p>';
@@ -241,6 +253,14 @@ class TradeSafe
         <tr>
             <th scope="row">API Callback URL</th>
             <td>' . esc_attr($urls['callback']) . '</td>
+        </tr>
+        <tr>
+            <th scope="row">Success URL</th>
+            <td>' . esc_attr($urls['success']) . '</td>
+        </tr>
+        <tr>
+            <th scope="row">Failure URL</th>
+            <td>' . esc_attr($urls['failure']) . '</td>
         </tr>
         </tbody>
     </table>';
@@ -376,6 +396,15 @@ class TradeSafe
         echo '<select name="tradesafe_transaction_fee_allocation" class="small-text ltr">';
         echo '<option ' . (get_option('tradesafe_transaction_fee_allocation', 'SELLER') === 'seller' ? 'selected' : '') . ' value="SELLER">Marketplace</option>';
         echo '<option ' . (get_option('tradesafe_transaction_fee_allocation') === 'BUYER' ? 'selected' : '') . ' value="BUYER">Buyer</option>';
+        echo '</select>';
+    }
+
+    public static function setting_payout_fee_dokan_callback()
+    {
+        echo '<select name="tradesafe_payout_fee" class="small-text ltr">';
+        echo '<option ' . (get_option('tradesafe_payout_fee', 'SELLER') === 'seller' ? 'selected' : '') . ' value="SELLER">Marketplace</option>';
+        echo '<option ' . (get_option('tradesafe_payout_fee') === 'BUYER' ? 'selected' : '') . ' value="BUYER">Buyer</option>';
+        echo '<option ' . (get_option('tradesafe_payout_fee') === 'VENDOR' ? 'selected' : '') . ' value="VENDOR">Vendor</option>';
         echo '</select>';
     }
 
@@ -623,12 +652,17 @@ class TradeSafe
             return $available_gateways;
         }
 
-        if (WC()->cart->total < 200) {
+        if (isset($_GET['key'])) {
+            $order_id = wc_get_order_id_by_order_key($_GET['key']);
+            $order = wc_get_order($order_id);
+
+            if ($order->get_total() < 200) {
+                unset($available_gateways['tradesafe']);
+            }
+        }
+
+        if (WC()->cart->total !== 0 && WC()->cart->total < 200) {
             unset($available_gateways['tradesafe']);
-            unset($available_gateways['tradesafe-manual']);
-            unset($available_gateways['tradesafe-ozow']);
-            unset($available_gateways['tradesafe-ecentric']);
-            unset($available_gateways['tradesafe-snapscan']);
         }
 
         return $available_gateways;
