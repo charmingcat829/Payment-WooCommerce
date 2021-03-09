@@ -233,10 +233,22 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
                 }
             } else {
                 foreach ($vendors as $vendorId => $vendor) {
+                    $fee = 0;
+                    if (get_option('tradesafe_transaction_fee_allocation', 'SELLER') === 'SELLER') {
+                        switch (get_option('tradesafe_transaction_fee_type')) {
+                            case "PERCENT":
+                                $fee = $vendor['total'] * (get_option('tradesafe_transaction_fee') / 100);
+                                break;
+                            case "FIXED":
+                                $fee = get_option('tradesafe_transaction_fee');
+                                break;
+                        }
+                    }
+
                     $parties[] = [
                         'role' => 'BENEFICIARY_MERCHANT',
                         'token' => get_user_meta($vendorId, 'tradesafe_token_id', true),
-                        'fee' => $vendor['total'],
+                        'fee' => $vendor['total'] - $fee,
                         'feeType' => 'FLAT',
                         'feeAllocation' => 'SELLER',
                     ];
