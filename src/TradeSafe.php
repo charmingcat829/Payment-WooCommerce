@@ -561,22 +561,6 @@ class TradeSafe
             WC()->cart->add_fee('Escrow Fee', $calculation['processingFeeTotal'], false);
         }
 
-        // You need to enter your fees here, in `payment gateway` => `fee amount` format
-        $fees = array(
-            'tradesafe-ecentric' => [
-                'name' => 'Credit Card',
-                'value' => $calculation['gatewayProcessingFees']['ecentric']['processingFee'],
-            ],
-            'tradesafe-ozow' => [
-                'name' => 'Ozow',
-                'value' => $calculation['gatewayProcessingFees']['ozow']['processingFee'],
-            ],
-            'tradesafe-snapscan' => [
-                'name' => 'Snapscan',
-                'value' => $calculation['gatewayProcessingFees']['snapscan']['processingFee'],
-            ],
-        );
-
         // Getting current chosen payment gateway
         $chosen_payment_method = false;
         $available_gateways = WC()->payment_gateways->get_available_payment_gateways();
@@ -591,15 +575,6 @@ class TradeSafe
         }
         if (!isset($available_gateways[$chosen_payment_method])) {
             $chosen_payment_method = false;
-        }
-
-        // Applying fee (maybe)
-        if ($chosen_payment_method && !empty($fees[$chosen_payment_method])) {
-            $name = $fees[$chosen_payment_method]['name'] . ' Fee';
-            $amount = $fees[$chosen_payment_method]['value'];
-            $taxable = false;
-            $tax_class = '';
-            WC()->cart->add_fee($name, $amount, $taxable, $tax_class);
         }
     }
 

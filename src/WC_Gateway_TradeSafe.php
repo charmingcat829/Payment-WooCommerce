@@ -147,7 +147,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
                 // Get product owner
                 $product = get_post($item['product_id']);
 
-                if (get_option('tradesafe_transaction_marketplace', 0) === 1 && !has_dokan()) {
+                if (get_option('tradesafe_transaction_marketplace', 0) && !has_dokan()) {
                     if (!isset($vendors[$product->post_author])) {
                         $vendors[$product->post_author]['total'] = 0;
                     }
@@ -162,7 +162,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
             $allocations[] = [
                 'title' => 'Order ' . $order->get_id(),
                 'description' => wp_strip_all_tags(implode(',', $itemList)), // Itemized List?
-                'value' => $order->get_total(),
+                'value' => ((float) $order->get_subtotal() - (float) $order->get_discount_total() + (float) $order->get_shipping_total() + (float) $order->get_total_tax()),
                 'daysToDeliver' => 14,
                 'daysToInspect' => 7,
             ];
@@ -255,6 +255,9 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
                 }
             }
 
+            print_r($parties);
+            die();
+
             $transaction = $client->createTransaction([
                 'title' => 'Order ' . $order->get_id(),
                 'description' => wp_strip_all_tags(implode(',', $itemList)),
@@ -274,12 +277,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
 
         // Remove cart
         $woocommerce->cart->empty_cart();
-
-        $redirects = [
-            'success' => $order->get_view_order_url(),
-            'failure' => wc_get_endpoint_url('orders', '', get_permalink(get_option('woocommerce_myaccount_page_id'))),
-            'cancel' => wc_get_endpoint_url('orders', '', get_permalink(get_option('woocommerce_myaccount_page_id'))),
-        ];
 
         // Return redirect
         return array(
