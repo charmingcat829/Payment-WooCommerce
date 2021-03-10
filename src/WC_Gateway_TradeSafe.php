@@ -255,9 +255,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
                 }
             }
 
-            print_r($parties);
-            die();
-
             $transaction = $client->createTransaction([
                 'title' => 'Order ' . $order->get_id(),
                 'description' => wp_strip_all_tags(implode(',', $itemList)),
