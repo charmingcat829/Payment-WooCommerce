@@ -56,6 +56,11 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
 
         $is_available = false;
         $is_available_currency = in_array(get_woocommerce_currency(), $this->available_currencies);
+        $meta_key = 'tradesafe_token_id';
+
+        if (get_option('tradesafe_production_mode')) {
+            $meta_key = 'tradesafe_prod_token_id';
+        }
 
         if ($is_available_currency
             && get_option('tradesafe_client_id')
@@ -74,7 +79,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
         if (!is_admin()) {
             $user = wp_get_current_user();
 
-            if ('' === get_user_meta($user->ID, 'tradesafe_token_id', true)) {
+            if ('' === get_user_meta($user->ID, $meta_key, true)) {
                 $is_available = false;
             }
         }
@@ -144,6 +149,12 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
 
             $profile = $client->getProfile();
 
+            $meta_key = 'tradesafe_token_id';
+
+            if (get_option('tradesafe_production_mode')) {
+                $meta_key = 'tradesafe_prod_token_id';
+            }
+
             $itemList = [];
             $vendors = [];
             foreach ($order->get_items() as $item) {
@@ -172,7 +183,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
 
             $parties[] = [
                 'role' => 'BUYER',
-                'token' => get_user_meta($user->ID, 'tradesafe_token_id', true)
+                'token' => get_user_meta($user->ID, $meta_key, true)
             ];
 
             $parties[] = [
@@ -198,7 +209,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
                 if (!$sub_orders) {
                     $parties[] = [
                         'role' => 'BENEFICIARY_MERCHANT',
-                        'token' => get_user_meta($order->get_meta('_dokan_vendor_id', true), 'tradesafe_token_id', true),
+                        'token' => get_user_meta($order->get_meta('_dokan_vendor_id', true), $meta_key, true),
                         'fee' => dokan()->commission->get_earning_by_order($order),
                         'feeType' => 'FLAT',
                         'feeAllocation' => 'SELLER',
@@ -209,7 +220,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
 
                         $parties[] = [
                             'role' => 'BENEFICIARY_MERCHANT',
-                            'token' => get_user_meta($sub_order->get_meta('_dokan_vendor_id', true), 'tradesafe_token_id', true),
+                            'token' => get_user_meta($sub_order->get_meta('_dokan_vendor_id', true), $meta_key, true),
                             'fee' => dokan()->commission->get_earning_by_order($sub_order),
                             'feeType' => 'FLAT',
                             'feeAllocation' => 'SELLER',
@@ -220,7 +231,7 @@ class WC_Gateway_TradeSafe_Base extends WC_Payment_Gateway
                 foreach ($vendors as $vendorId => $vendor) {
                     $parties[] = [
                         'role' => 'BENEFICIARY_MERCHANT',
-                        'token' => get_user_meta($vendorId, 'tradesafe_token_id', true),
+                        'token' => get_user_meta($vendorId, $meta_key, true),
                         'fee' => $vendor['total'],
                         'feeType' => 'FLAT',
                         'feeAllocation' => 'SELLER',

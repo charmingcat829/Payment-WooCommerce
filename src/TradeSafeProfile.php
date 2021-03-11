@@ -25,7 +25,13 @@ class TradeSafeProfile
         $client = woocommerce_tradesafe_api();
         $user = wp_get_current_user();
 
-        $tokenId = get_user_meta($user->ID, 'tradesafe_token_id', true);
+        $meta_key = 'tradesafe_token_id';
+
+        if (get_option('tradesafe_production_mode')) {
+            $meta_key = 'tradesafe_prod_token_id';
+        }
+
+        $tokenId = get_user_meta($user->ID, $meta_key, true);
         $banks = $client->getEnums('UniversalBranchCode');
         $bankAccountTypes = $client->getEnums('BankAccountType');
         $organizationType = $client->getEnums('OrganizationType');
@@ -55,7 +61,14 @@ class TradeSafeProfile
     public static function save_account_details($user_id)
     {
         $client = woocommerce_tradesafe_api();
-        $tokenId = get_user_meta($user_id, 'tradesafe_token_id', true);
+
+        $meta_key = 'tradesafe_token_id';
+
+        if (get_option('tradesafe_production_mode')) {
+            $meta_key = 'tradesafe_prod_token_id';
+        }
+
+        $tokenId = get_user_meta($user_id, $meta_key, true);
 
         $userInfo = [
             'givenName' => $_POST['account_first_name'],
@@ -99,7 +112,10 @@ class TradeSafeProfile
             $tokenData = $client->updateToken($tokenId, $userInfo, $organization, $bankAccount);
         } else {
             $tokenData = $client->createToken($userInfo, $organization, $bankAccount);
-            update_user_meta($user_id, 'tradesafe_token_id', sanitize_text_field($tokenData['id']));
+
+
+
+            update_user_meta($user_id, $meta_key, sanitize_text_field($tokenData['id']));
         }
     }
 }

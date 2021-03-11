@@ -512,7 +512,14 @@ class TradeSafe
                     break;
                 case "unlink":
                     $user = wp_get_current_user();
-                    delete_user_meta($user->ID, 'tradesafe_token_id');
+
+                    $meta_key = 'tradesafe_token_id';
+
+                    if (get_option('tradesafe_production_mode')) {
+                        $meta_key = 'tradesafe_prod_token_id';
+                    }
+
+                    delete_user_meta($user->ID, $meta_key);
                     wp_redirect(wc_get_endpoint_url('edit-account', '', get_permalink(get_option('woocommerce_myaccount_page_id'))));
                     break;
                 default:
