@@ -487,6 +487,10 @@ class TradeSafe
 
                         $order = $query[0];
 
+                        if ($data['state'] === 'FUNDS_DEPOSITED') {
+                            $order->update_status('on-hold', __('Awaiting Manual EFT payment.', 'woocommerce-gateway-tradesafe'));
+                        }
+
                         if (($order->has_status('on-hold') || $order->has_status('pending')) && $data['state'] === 'FUNDS_RECEIVED') {
                             $client = woocommerce_tradesafe_api();
 
