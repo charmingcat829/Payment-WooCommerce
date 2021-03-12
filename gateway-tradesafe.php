@@ -5,7 +5,7 @@
  * Description: Process payments using the TradeSafe as a payments provider.
  * Author: TradeSafe
  * Author URI: https://www.tradesafe.co.za/
- * Version: 1.0.0-dev.202103111255
+ * Version: 1.0.0-dev.202103121057
  * Requires at least: 5.0
  * Tested up to: 5.7
  * WC tested up to: 5.1
@@ -77,10 +77,6 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'woocommerce_trad
 function woocommerce_tradesafe_add_gateway($methods)
 {
     $methods[] = 'WC_Gateway_TradeSafe';
-//    $methods[] = 'WC_Gateway_TradeSafe_Manual';
-//    $methods[] = 'WC_Gateway_TradeSafe_Ozow';
-//    $methods[] = 'WC_Gateway_TradeSafe_Ecentric';
-//    $methods[] = 'WC_Gateway_TradeSafe_Snapscan';
     return $methods;
 }
 
