@@ -642,12 +642,12 @@ class TradeSafe
             $order_id = wc_get_order_id_by_order_key($_GET['key']);
             $order = wc_get_order($order_id);
 
-            if ($order->get_total() < 200) {
+            if ($order->get_total() < 50) {
                 unset($available_gateways['tradesafe']);
             }
         }
 
-        if (WC()->cart->total !== 0 && WC()->cart->total < 200) {
+        if (WC()->cart->total !== 0 && WC()->cart->total < 50) {
             unset($available_gateways['tradesafe']);
         }
 
