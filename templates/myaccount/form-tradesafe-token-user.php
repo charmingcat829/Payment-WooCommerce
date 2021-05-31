@@ -7,14 +7,14 @@
 defined('ABSPATH') || exit;
 
 ?>
-<h3>ARE MY DETAILS SAFE?</h3>
-<p>
-    TradeSafe forces HTTPS for all services using TLS (SSL) including our public website and the Application.
-    All bank account details are encrypted with AES-256. Decryption keys are stored on separate machines from the
-    application.
-    In English, your details are encrypted with the highest industry-specific standards (which can be found in most
-    banks), making your information confidential, secure and safe.
-</p>
+<h3>Why do I need to provide my ID and mobile number?</h3>
+<p>First off, your details are safe and secure. Your information is encrypted with the highest industry-specific
+    standards which can be found in most banks.</p>
+<p>Our payment service provider is TradeSafe Escrow. When the buyer deposits the funds, they will make payment to
+    TradeSafe who will hold the funds in the middle (in a trust account). Once the seller has delivered what was
+    ordered, then TradeSafe releases the funds to the selling party.</p>
+<p>TradeSafe is required by the South African Reserve Bank to know the identities of the parties and that is why these
+    details are required.</p>
 
 <fieldset>
     <legend><?php esc_html_e('Personal Details', 'woocommerce-tradesafe-gateway'); ?></legend>

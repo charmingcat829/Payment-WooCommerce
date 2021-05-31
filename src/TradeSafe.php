@@ -12,9 +12,23 @@ class TradeSafe
         add_action('woocommerce_cart_calculate_fees', ['TradeSafe', 'add_gateway_fee'], PHP_INT_MAX);
         add_action('woocommerce_order_status_completed', ['TradeSafe', 'complete_transaction'], PHP_INT_MAX);
         add_action('woocommerce_review_order_before_payment', ['TradeSafe', 'refresh_checkout']);
+        add_action('admin_notices', ['TradeSafe', 'seller_account_incomplete_notice'], -10000, 0);
+        add_action('dokan_dashboard_content_inside_before', ['TradeSafe', 'seller_account_incomplete_notice']);
+//        add_action('woocommerce_before_checkout_form', ['TradeSafe', 'seller_account_incomplete_notice']);
+        add_action('woocommerce_review_order_before_payment', ['TradeSafe', 'buyer_account_incomplete_notice']);
+
+        // Disable publish for standard woocommerce products
+        add_action('admin_head', ['TradeSafe', 'disable_publish_button']);
+
+        if (has_dokan()) {
+            // Disable add new product button when using dokan
+            add_action('wp_head', ['TradeSafe', 'disable_add_product_button']);
+        }
 
         add_filter('woocommerce_my_account_my_orders_actions', ['TradeSafe', 'accept_order'], 10, 2);
         add_filter('woocommerce_available_payment_gateways', ['TradeSafe', 'availability'], 10, 2);
+
+        add_filter('woocommerce_checkout_fields', ['TradeSafe', 'checkout_field_defaults'], 20);
 
         add_rewrite_rule('^tradesafe/eft-details/([0-9]+)[/]?$', 'index.php?tradesafe=eft-details&order-id=$matches[1]', 'top');
         add_rewrite_rule('^tradesafe/accept/([0-9]+)[/]?$', 'index.php?tradesafe=accept&order-id=$matches[1]', 'top');
@@ -232,6 +246,39 @@ class TradeSafe
         register_setting('tradesafe', 'tradesafe_transaction_fee');
         register_setting('tradesafe', 'tradesafe_transaction_fee_type');
         register_setting('tradesafe', 'tradesafe_transaction_fee_allocation');
+    }
+
+    private static function is_valid_token($role): bool
+    {
+        $client = woocommerce_tradesafe_api();
+        $user = wp_get_current_user();
+        $meta_key = 'tradesafe_token_id';
+        $valid = false;
+
+        if (get_option('tradesafe_production_mode')) {
+            $meta_key = 'tradesafe_prod_token_id';
+        }
+
+        $tokenId = get_user_meta($user->ID, $meta_key, true);
+
+        if ($tokenId) {
+            $tokenData = $client->getToken($tokenId);
+
+            switch ($role) {
+                case 'seller':
+                    if (isset($tokenData['bankAccount']['accountNumber']) && $tokenData['bankAccount']['accountNumber'] !== '') {
+                        $valid = true;
+                    }
+                    break;
+                case 'buyer':
+                    if (isset($tokenData['user']['idNumber']) && $tokenData['user']['idNumber'] !== '') {
+                        $valid = true;
+                    }
+                    break;
+            }
+        }
+
+        return $valid;
     }
 
     public static function settings_info_callback()
@@ -652,5 +699,97 @@ class TradeSafe
         }
 
         return $available_gateways;
+    }
+
+    public static function seller_account_incomplete_notice()
+    {
+        $validAccount = self::is_valid_token('seller');
+
+        if ($validAccount === false) {
+            $class = 'notice notice-warning';
+            $title = __('Your account is incomplete!', 'woocommerce-gateway-tradesafe');
+            $message = __('For payment to be made to you, TradeSafe requires your bank account details.', 'woocommerce-gateway-tradesafe');
+            $more = __('TradeSafe forces HTTPS for all services using TLS (SSL) including their public website and the Application. All bank account details are encrypted with AES-256. Decryption keys are stored on separate machines from the application. In English, your details are encrypted with the highest industry-specific standards (which can be found in most banks), making your information confidential, secure, and safe.', 'woocommerce-gateway-tradesafe');
+
+            printf('<div class="%1$s"><h3>%2$s</h3><p>%3$s</p><p>%4$s</p><p><a href="%5$s" class="button-secondary button alt button-large button-next">Update Account</a></p></div>', esc_attr($class), esc_html($title), esc_html($message), esc_html($more), wc_get_endpoint_url('edit-account', '', get_permalink(get_option('woocommerce_myaccount_page_id'))));
+        }
+    }
+
+    public static function buyer_account_incomplete_notice()
+    {
+        $validAccount = self::is_valid_token('buyer');
+
+        if ($validAccount === false) {
+            $class = 'notice notice-warning';
+            $title = __('Your account is incomplete!', 'woocommerce-gateway-tradesafe');
+            $message = __('Please update your account to proceed with checkout.', 'woocommerce-gateway-tradesafe');
+
+            printf('<div class="%1$s"><h3>%2$s</h3><p>%3$s</p><p><a href="%4$s" class="button-secondary button alt button-large button-next">Update Account</a></p></div>', esc_attr($class), esc_html($title), esc_html($message), wc_get_endpoint_url('edit-account', '', get_permalink(get_option('woocommerce_myaccount_page_id'))));
+        }
+    }
+
+    public static function checkout_field_defaults($fields): array
+    {
+        $client = woocommerce_tradesafe_api();
+        $user = wp_get_current_user();
+
+        $meta_key = 'tradesafe_token_id';
+
+        if (get_option('tradesafe_production_mode')) {
+            $meta_key = 'tradesafe_prod_token_id';
+        }
+
+        $tokenId = get_user_meta($user->ID, $meta_key, true);
+
+        if ($tokenId) {
+            $tokenData = $client->getToken($tokenId);
+
+            if (isset($tokenData['user']['mobile']) && $tokenData['user']['mobile'] !== '') {
+                $fields['billing']['billing_phone']['placeholder'] = $tokenData['user']['mobile'];
+                $fields['billing']['billing_phone']['default'] = $tokenData['user']['mobile'];
+            }
+        }
+
+        return $fields;
+    }
+
+    public static function disable_publish_button()
+    {
+        $validAccount = self::is_valid_token('seller');
+
+        if ($validAccount) {
+            return;
+        }
+
+        ?>
+        <script type="text/javascript">
+            window.onload = function () {
+                document.getElementById('publish').disabled = true;
+            }
+        </script>
+        <?php
+    }
+
+    public static function disable_add_product_button()
+    {
+        if (str_contains($_SERVER['REQUEST_URI'], 'dashboard/products')) {
+            $validAccount = self::is_valid_token('seller');
+
+            if ($validAccount) {
+                return;
+            }
+
+            ?>
+            <script type="text/javascript">
+                window.onload = function () {
+                    let buttons = document.getElementsByClassName('dokan-add-new-product');
+
+                    Array.prototype.forEach.call(buttons, function(el) {
+                        el.style.visibility = 'hidden'
+                    });
+                }
+            </script>
+            <?php
+        }
     }
 }

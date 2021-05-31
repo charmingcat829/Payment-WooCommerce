@@ -5,10 +5,10 @@
  * Description: Process payments using the TradeSafe as a payments provider.
  * Author: TradeSafe
  * Author URI: https://www.tradesafe.co.za/
- * Version: 1.0.0-dev.202103121057
+ * Version: 1.0.0-dev.202105311253
  * Requires at least: 5.0
  * Tested up to: 5.7
- * WC tested up to: 5.1
+ * WC tested up to: 5.3
  * WC requires at least: 4.6
  *
  */
@@ -90,6 +90,8 @@ function woocommerce_tradesafe_api()
 
     $client = new \TradeSafe\Api\Client($domain);
 
+    $client = new \TradeSafe\Api\Client('concord-api.cdptv.dev', 'persona.cdptv.dev');
+
     try {
         $client->configure(get_option('tradesafe_client_id'), get_option('tradesafe_client_secret'), site_url('/tradesafe/oauth/callback/'));
 
@@ -115,5 +117,12 @@ if (!function_exists('has_dokan')) {
     function has_dokan()
     {
         return class_exists('WeDevs_Dokan');
+    }
+}
+
+// based on original work from the PHP Laravel framework
+if (!function_exists('str_contains')) {
+    function str_contains($haystack, $needle) {
+        return $needle !== '' && strpos($haystack, $needle) !== false;
     }
 }

@@ -44,7 +44,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
 
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
         add_action('woocommerce_receipt_tradesafe', array($this, 'receipt_page'));
-        add_action('admin_notices', array($this, 'admin_notices'));
     }
 
     /**
@@ -57,8 +56,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
      */
     public function is_valid_for_use()
     {
-        global $wp;
-
         $is_available = false;
         $is_available_currency = in_array(get_woocommerce_currency(), $this->available_currencies);
 
@@ -74,10 +71,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
             $is_available = true;
         }
 
-        if ("yes" === $this->get_option('production')) {
-            $is_available = false;
-        }
-
         if ("no" === $this->get_option('enabled') || null === $this->get_option('enabled')) {
             $is_available = false;
         }
@@ -85,7 +78,8 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
         if (!is_admin()) {
             $user = wp_get_current_user();
 
-            if ('' === get_user_meta($user->ID, $meta_key, true)) {
+            if ('' === get_user_meta($user->ID, $meta_key, true)
+                || false === get_user_meta($user->ID, $meta_key, true)) {
                 $is_available = false;
             }
         }
@@ -174,7 +168,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
             $allocations[] = [
                 'title' => 'Order ' . $order->get_id(),
                 'description' => wp_strip_all_tags(implode(',', $itemList)), // Itemized List?
-                'value' => ((float) $order->get_subtotal() - (float) $order->get_discount_total() + (float) $order->get_shipping_total() + (float) $order->get_total_tax()),
+                'value' => ((float)$order->get_subtotal() - (float)$order->get_discount_total() + (float)$order->get_shipping_total() + (float)$order->get_total_tax()),
                 'daysToDeliver' => 14,
                 'daysToInspect' => 7,
             ];
@@ -292,10 +286,5 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
             'result' => 'success',
             'redirect' => $client->getTransactionDepositLink($transaction_id),
         );
-    }
-
-    public static function admin_notices()
-    {
-        //
     }
 }

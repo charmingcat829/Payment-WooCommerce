@@ -71,8 +71,8 @@ class TradeSafeProfile
         $tokenId = get_user_meta($user_id, $meta_key, true);
 
         $userInfo = [
-            'givenName' => $_POST['account_first_name'],
-            'familyName' => $_POST['account_last_name'],
+            'givenName' => stripslashes($_POST['account_first_name']),
+            'familyName' => stripslashes($_POST['account_last_name']),
             'email' => $_POST['account_email'],
             'mobile' => $_POST['tradesafe_token_mobile'],
             'idNumber' => $_POST['tradesafe_token_id_number'],
@@ -112,8 +112,6 @@ class TradeSafeProfile
             $tokenData = $client->updateToken($tokenId, $userInfo, $organization, $bankAccount);
         } else {
             $tokenData = $client->createToken($userInfo, $organization, $bankAccount);
-
-
 
             update_user_meta($user_id, $meta_key, sanitize_text_field($tokenData['id']));
         }
