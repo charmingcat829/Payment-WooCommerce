@@ -708,7 +708,7 @@ class TradeSafe
         if ($validAccount === false) {
             $class = 'notice notice-warning';
             $title = __('Your account is incomplete!', 'woocommerce-gateway-tradesafe');
-            $message = __('For payment to be made to you, TradeSafe requires your bank account details.', 'woocommerce-gateway-tradesafe');
+            $message = __('Our payment service provider is TradeSafe Escrow. TradeSafe keeps the funds safe in the middle and will release the funds to you once delivery is completed successfully. Sellers are guaranteed payment.', 'woocommerce-gateway-tradesafe');
             $more = __('TradeSafe forces HTTPS for all services using TLS (SSL) including their public website and the Application. All bank account details are encrypted with AES-256. Decryption keys are stored on separate machines from the application. In English, your details are encrypted with the highest industry-specific standards (which can be found in most banks), making your information confidential, secure, and safe.', 'woocommerce-gateway-tradesafe');
 
             printf('<div class="%1$s"><h3>%2$s</h3><p>%3$s</p><p>%4$s</p><p><a href="%5$s" class="button-secondary button alt button-large button-next">Update Account</a></p></div>', esc_attr($class), esc_html($title), esc_html($message), esc_html($more), wc_get_endpoint_url('edit-account', '', get_permalink(get_option('woocommerce_myaccount_page_id'))));
@@ -722,7 +722,7 @@ class TradeSafe
         if ($validAccount === false) {
             $class = 'notice notice-warning';
             $title = __('Your account is incomplete!', 'woocommerce-gateway-tradesafe');
-            $message = __('Please update your account to proceed with checkout.', 'woocommerce-gateway-tradesafe');
+            $message = __('You may receive a message below that there are no available payment providers as your user account is incomplete. Please click on the button below to update your account to access additional payment methods. Once done, you will be able to proceed with checkout.', 'woocommerce-gateway-tradesafe');
 
             printf('<div class="%1$s"><h3>%2$s</h3><p>%3$s</p><p><a href="%4$s" class="button-secondary button alt button-large button-next">Update Account</a></p></div>', esc_attr($class), esc_html($title), esc_html($message), wc_get_endpoint_url('edit-account', '', get_permalink(get_option('woocommerce_myaccount_page_id'))));
         }

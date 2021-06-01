@@ -16,7 +16,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
     public function __construct()
     {
         $this->id = 'tradesafe';
-        $this->method_title = __('TradeSafe', 'woocommerce-gateway-tradesafe');
+        $this->method_title = __('TradeSafe Escrow', 'woocommerce-gateway-tradesafe');
         $this->method_description = __('TradeSafe Escrow', 'woocommerce-gateway-tradesafe');
         $this->icon = WP_PLUGIN_URL . '/' . plugin_basename(dirname(dirname(__FILE__))) . '/assets/images/icon.svg';
 
