@@ -90,8 +90,6 @@ function woocommerce_tradesafe_api()
 
     $client = new \TradeSafe\Api\Client($domain);
 
-    $client = new \TradeSafe\Api\Client('concord-api.cdptv.dev', 'persona.cdptv.dev');
-
     try {
         $client->configure(get_option('tradesafe_client_id'), get_option('tradesafe_client_secret'), site_url('/tradesafe/oauth/callback/'));
 
