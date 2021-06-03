@@ -157,7 +157,7 @@ class TradeSafe
 
         add_settings_field(
             'tradesafe_accept_transaction',
-            'Allow Buyer to Accept Transaction/Order',
+            'Allow Buyers to Accept Goods to Release Funds',
             [
                 'TradeSafe',
                 'setting_tradesafe_accept_transaction_callback'
@@ -168,18 +168,6 @@ class TradeSafe
         register_setting('tradesafe', 'tradesafe_accept_transaction');
         
         if (has_dokan()) {
-            add_settings_field(
-                'tradesafe_update_transaction_dokan',
-                'Allow Seller/Vendor to change the status for a Transaction/Order',
-                [
-                    'TradeSafe',
-                    'setting_tradesafe_update_transaction_dokan_callback'
-                ],
-                'tradesafe',
-                'tradesafe_transaction_section'
-            );
-            register_setting('tradesafe', 'tradesafe_update_transaction_dokan');
-
             add_settings_field(
                 'tradesafe_payout_fee',
                 'Payout Fee',
@@ -451,11 +439,6 @@ class TradeSafe
         echo '<input name="tradesafe_accept_transaction" id="tradesafe_accept_transaction" type="checkbox" value="1" ' . checked(1, get_option('tradesafe_accept_transaction', true), false) . ' />';
     }
 
-    public static function setting_tradesafe_update_transaction_dokan_callback()
-    {
-        echo '<input name="tradesafe_update_transaction_dokan" id="tradesafe_update_transaction_dokan" type="checkbox" value="1" ' . checked(1, get_option('tradesafe_update_transaction_dokan', true), false) . ' />';
-    }
-
     public static function setting_transaction_agent_callback()
     {
         echo '<input name="tradesafe_transaction_marketplace" id="tradesafe_transaction_marketplace" type="checkbox" value="1" ' . checked(1, get_option('tradesafe_transaction_marketplace'), false) . ' />';
@@ -532,7 +515,7 @@ class TradeSafe
         if (has_dokan()) {
             $options = get_option('dokan_selling', array());
 
-            if ($options['order_status_change'] === 'on' && get_option('tradesafe_update_transaction_dokan', true) !== '1') {
+            if ($options['order_status_change'] === 'on') {
                 $options['order_status_change'] = 'off';
                 update_option('dokan_selling', $options);
             }
@@ -841,9 +824,7 @@ class TradeSafe
 
     public static function override_dokan_selling($value)
     {
-        if (get_option('tradesafe_update_transaction_dokan', true) !== '1') {
-            $value['order_status_change'] = 'off';
-        }
+        $value['order_status_change'] = 'off';
 
         return $value;
     }
