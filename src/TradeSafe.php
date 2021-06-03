@@ -133,7 +133,7 @@ class TradeSafe
 
         add_settings_field(
             'tradesafe_fee_allocation',
-            'TradeSafe Fee Allocation',
+            'Who absorbs TradeSafe’s fee (this is 0.75% of the transaction value)?',
             [
                 'TradeSafe',
                 'setting_tradesafe_fee_allocation_callback'
@@ -145,7 +145,7 @@ class TradeSafe
 
         add_settings_field(
             'tradesafe_gateway_fee_allocation',
-            'Payment Gateway Fee Allocation',
+            'Who absorbs the remaining payment gateway fee?',
             [
                 'TradeSafe',
                 'setting_tradesafe_gateway_fee_allocation_callback'
@@ -157,7 +157,7 @@ class TradeSafe
 
         add_settings_field(
             'tradesafe_accept_transaction',
-            'Allow Buyers to Accept Goods to Release Funds',
+            'Allow buyers to accept goods to release funds',
             [
                 'TradeSafe',
                 'setting_tradesafe_accept_transaction_callback'
@@ -170,7 +170,7 @@ class TradeSafe
         if (has_dokan()) {
             add_settings_field(
                 'tradesafe_payout_fee',
-                'Payout Fee',
+                'Who absorbs the pay-out fee (R10 for every additional vendor)?',
                 [
                     'TradeSafe',
                     'setting_payout_fee_dokan_callback'
@@ -180,7 +180,7 @@ class TradeSafe
             );
             add_settings_field(
                 'tradesafe_transaction_fee',
-                'Marketplace Fee',
+                'Marketplace Commission Fee',
                 [
                     'TradeSafe',
                     'setting_transaction_fee_dokan_callback'
@@ -191,7 +191,7 @@ class TradeSafe
 
             add_settings_field(
                 'tradesafe_transaction_fee_type',
-                'Marketplace Fee Type',
+                'Marketplace Commission Type',
                 [
                     'TradeSafe',
                     'setting_transaction_fee_type_dokan_callback'
@@ -202,7 +202,7 @@ class TradeSafe
 
             add_settings_field(
                 'tradesafe_transaction_fee_allocation',
-                'Marketplace Fee Allocation',
+                'Marketplace Commission Fee Allocation',
                 [
                     'TradeSafe',
                     'setting_transaction_fee_allocation_dokan_callback'
@@ -225,7 +225,7 @@ class TradeSafe
 
             add_settings_field(
                 'tradesafe_transaction_fee',
-                'Marketplace Fee',
+                'Marketplace Commission Fee',
                 [
                     'TradeSafe',
                     'setting_transaction_fee_callback'
@@ -236,7 +236,7 @@ class TradeSafe
 
             add_settings_field(
                 'tradesafe_transaction_fee_type',
-                'Marketplace Fee Type',
+                'Marketplace Commission Type',
                 [
                     'TradeSafe',
                     'setting_transaction_fee_type_callback'
@@ -247,7 +247,7 @@ class TradeSafe
 
             add_settings_field(
                 'tradesafe_transaction_fee_allocation',
-                'Marketplace Fee Allocation',
+                'Marketplace Commission Fee Allocation',
                 [
                     'TradeSafe',
                     'setting_transaction_fee_allocation_callback'
