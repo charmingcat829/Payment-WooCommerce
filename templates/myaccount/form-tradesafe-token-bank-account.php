@@ -10,6 +10,12 @@ defined('ABSPATH') || exit;
 <fieldset>
     <legend><?php esc_html_e('Banking Details', 'woocommerce-tradesafe-gateway'); ?></legend>
 
+    <p>
+        For a payout or a refund to be made to you, we require your bank account details. Please ensure you enter your
+        bank account details correctly. Neither we, nor TradeSafe, will be held responsible should the funds be paid
+        into another bank account should you provide incorrect bank account details.
+    </p>
+
     <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
         <label for="tradesafe_token_bank"><?php esc_html_e('Bank', 'woocommerce-tradesafe-gateway'); ?></label>
         <select name="tradesafe_token_bank" id="tradesafe_token_bank" class="woocommerce-Input">
