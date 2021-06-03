@@ -25,6 +25,8 @@ class TradeSafe
             add_action('wp_head', ['TradeSafe', 'disable_add_product_button']);
         }
 
+        add_filter('pre_update_option_dokan_selling', ['TradeSafe', 'override_dokan_selling']);
+
         add_filter('woocommerce_my_account_my_orders_actions', ['TradeSafe', 'accept_order'], 10, 2);
         add_filter('woocommerce_available_payment_gateways', ['TradeSafe', 'availability'], 10, 2);
 
@@ -153,7 +155,31 @@ class TradeSafe
         );
         register_setting('tradesafe', 'tradesafe_gateway_fee_allocation');
 
+        add_settings_field(
+            'tradesafe_accept_transaction',
+            'Allow Buyer to Accept Transaction/Order',
+            [
+                'TradeSafe',
+                'setting_tradesafe_accept_transaction_callback'
+            ],
+            'tradesafe',
+            'tradesafe_transaction_section'
+        );
+        register_setting('tradesafe', 'tradesafe_accept_transaction');
+        
         if (has_dokan()) {
+            add_settings_field(
+                'tradesafe_update_transaction_dokan',
+                'Allow Seller/Vendor to change the status for a Transaction/Order',
+                [
+                    'TradeSafe',
+                    'setting_tradesafe_update_transaction_dokan_callback'
+                ],
+                'tradesafe',
+                'tradesafe_transaction_section'
+            );
+            register_setting('tradesafe', 'tradesafe_update_transaction_dokan');
+
             add_settings_field(
                 'tradesafe_payout_fee',
                 'Payout Fee',
@@ -420,6 +446,16 @@ class TradeSafe
         echo '</select>';
     }
 
+    public static function setting_tradesafe_accept_transaction_callback()
+    {
+        echo '<input name="tradesafe_accept_transaction" id="tradesafe_accept_transaction" type="checkbox" value="1" ' . checked(1, get_option('tradesafe_accept_transaction', true), false) . ' />';
+    }
+
+    public static function setting_tradesafe_update_transaction_dokan_callback()
+    {
+        echo '<input name="tradesafe_update_transaction_dokan" id="tradesafe_update_transaction_dokan" type="checkbox" value="1" ' . checked(1, get_option('tradesafe_update_transaction_dokan', true), false) . ' />';
+    }
+
     public static function setting_transaction_agent_callback()
     {
         echo '<input name="tradesafe_transaction_marketplace" id="tradesafe_transaction_marketplace" type="checkbox" value="1" ' . checked(1, get_option('tradesafe_transaction_marketplace'), false) . ' />';
@@ -492,6 +528,16 @@ class TradeSafe
     // Display settings page
     public static function settings_page()
     {
+        // Don't allow sellers top alter order statues
+        if (has_dokan()) {
+            $options = get_option('dokan_selling', array());
+
+            if ($options['order_status_change'] === 'on' && get_option('tradesafe_update_transaction_dokan', true) !== '1') {
+                $options['order_status_change'] = 'off';
+                update_option('dokan_selling', $options);
+            }
+        }
+
         include_once __DIR__ . '/../partials/settings.php';
     }
 
@@ -651,7 +697,7 @@ class TradeSafe
 
     public static function accept_order($actions, $order)
     {
-        if ($order->has_status('processing')) {
+        if ($order->has_status('processing') && get_option('tradesafe_accept_transaction', true)) {
             $action_slug = 'tradesafe_accept';
 
             $actions[$action_slug] = array(
@@ -784,12 +830,21 @@ class TradeSafe
                 window.onload = function () {
                     let buttons = document.getElementsByClassName('dokan-add-new-product');
 
-                    Array.prototype.forEach.call(buttons, function(el) {
+                    Array.prototype.forEach.call(buttons, function (el) {
                         el.style.visibility = 'hidden'
                     });
                 }
             </script>
             <?php
         }
+    }
+
+    public static function override_dokan_selling($value)
+    {
+        if (get_option('tradesafe_update_transaction_dokan', true) !== '1') {
+            $value['order_status_change'] = 'off';
+        }
+
+        return $value;
     }
 }
