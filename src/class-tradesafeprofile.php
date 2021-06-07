@@ -48,7 +48,7 @@ class TradeSafeProfile {
 		$token_id           = get_user_meta( $user->ID, $meta_key, true );
 		$banks              = $client->getEnums( 'UniversalBranchCode' );
 		$bank_account_types = $client->getEnums( 'BankAccountType' );
-		$organization_type  = $client->getEnums( 'OrganizationType' );
+		$organization_types = $client->getEnums( 'OrganizationType' );
 		$token_data         = null;
 
 		if ( $token_id ) {
