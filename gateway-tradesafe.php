@@ -139,7 +139,7 @@ if ( ! function_exists( 'has_dokan' ) ) {
 	 *
 	 * @return bool
 	 */
-	function has_dokan() {
+	function has_dokan(): bool {
 		return class_exists( 'WeDevs_Dokan' );
 	}
 }

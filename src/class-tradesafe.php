@@ -121,6 +121,16 @@ class TradeSafe {
 		);
 		register_setting( 'tradesafe', 'tradesafe_production_mode' );
 
+        add_settings_section(
+            'tradesafe_transaction_section',
+            'Transaction Settings',
+            [
+                'TradeSafe',
+                'settings_transaction_callback'
+            ],
+            'tradesafe'
+        );
+
 		add_settings_field(
 			'tradesafe_transaction_industry',
 			'Industry',
@@ -388,6 +398,14 @@ class TradeSafe {
 			}
 		}
 	}
+
+    /**
+     * Transaction settings section.
+     */
+    public static function settings_transaction_callback()
+    {
+        //
+    }
 
 	/**
 	 * Client ID field.
