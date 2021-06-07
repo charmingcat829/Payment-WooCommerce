@@ -2,7 +2,7 @@
 
 return [
   'root' => getcwd(),
-  'path' => 'changelog.txt',
+  'path' => 'CHANGELOG.md',
   'headerTitle' => 'Changelog',
   'headerDescription' => 'All notable changes to this project will be documented in this file.',
   'sortBy' => 'subject',
