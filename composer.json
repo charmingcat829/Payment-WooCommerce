@@ -15,10 +15,21 @@
     "require": {
         "tradesafe/api": "dev-master"
     },
+    "require-dev": {
+        "marcocesarato/php-conventional-changelog": "^1.10"
+    },
     "autoload": {
         "psr-4": {
             "TradeSafe\\WooCommerce\\": "src/",
             "TradeSafe\\": "vendor/tradesafe/src/"
         }
-    }
+    },
+    "scripts": {
+        "changelog": "conventional-changelog",
+        "release": "conventional-changelog --commit",
+        "release:patch": "conventional-changelog --patch --commit",
+        "release:minor": "conventional-changelog --minor --commit",
+        "release:major": "conventional-changelog --major --commit"
+    },
+    "version": "1.0.0"
 }
