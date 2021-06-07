@@ -16,25 +16,25 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+	exit;
 }
 ?>
 
 <h2><?php esc_html_e( 'Deposit Details', 'woocommerce-tradesafe-gateway' ); ?></h2>
 <ul class="order_details deposit_details">
-    <li class="bank">
-        Account Name: <strong>TradeSafe Escrow</strong>
-    </li>
-    <li class="bank">
-        Bank: <strong>Standard Bank South Africa</strong>
-    </li>
-    <li class="date">
-        Account Number: <strong>2960060</strong>
-    </li>
-    <li class="total">
-        Branch Code: <strong>051001</strong>
-    </li>
-    <li class="total">
-        Payment Reference: <strong><?php echo $tokenData['reference']; ?></strong>
-    </li>
+	<li class="bank">
+		Account Name: <strong>TradeSafe Escrow</strong>
+	</li>
+	<li class="bank">
+		Bank: <strong>Standard Bank South Africa</strong>
+	</li>
+	<li class="date">
+		Account Number: <strong>2960060</strong>
+	</li>
+	<li class="total">
+		Branch Code: <strong>051001</strong>
+	</li>
+	<li class="total">
+		Payment Reference: <strong><?php echo esc_attr( $token_data['reference'] ); ?></strong>
+	</li>
 </ul>
