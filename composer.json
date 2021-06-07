@@ -3,6 +3,7 @@
     "description": "Process payments using the TradeSafe as a payments provider",
     "homepage": "https://www.tradesafe.co.za/",
     "type": "wordpress-plugin",
+    "version": "1.0.0",
     "prefer-stable": true,
     "minimum-stability": "dev",
     "license": "GPL-3.0-or-later",
@@ -30,6 +31,5 @@
         "release:patch": "conventional-changelog --patch --commit",
         "release:minor": "conventional-changelog --minor --commit",
         "release:major": "conventional-changelog --major --commit"
-    },
-    "version": "1.0.0"
+    }
 }
