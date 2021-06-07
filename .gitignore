@@ -24,3 +24,4 @@ Thumbs.db
 !CHANGELOG.md
 !composer.json
 !composer.lock
+!.husky

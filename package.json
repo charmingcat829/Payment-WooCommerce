@@ -1,0 +1,33 @@
+{
+  "name": "woocommerce-gateway-tradesafe",
+  "version": "1.0.0",
+  "description": "TradeSafe Payment Gateway for WooCommerce",
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tradesafe/woocommerce-tradesafe-gateway.git"
+  },
+  "keywords": [
+    "tradesafe",
+    "woocommerce",
+    "eft",
+    "instant",
+    "eft",
+    "credit",
+    "card",
+    "snapscan"
+  ],
+  "author": "TradeSafe <support@tradesafe.co.za>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tradesafe/woocommerce-tradesafe-gateway/issues"
+  },
+  "homepage": "https://github.com/tradesafe/woocommerce-tradesafe-gateway#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^12.1.4",
+    "@commitlint/config-conventional": "^12.1.4",
+    "husky": "^6.0.0"
+  }
+}
