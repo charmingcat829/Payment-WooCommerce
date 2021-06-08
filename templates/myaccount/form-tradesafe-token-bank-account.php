@@ -2,7 +2,7 @@
 /**
  * Add Token Details.
  *
- * @package WooCommerce TradeSafe Gateway
+ * @package TradeSafe Payment Gateway
  */
 
 defined( 'ABSPATH' ) || exit;

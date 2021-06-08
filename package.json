@@ -1,10 +1,7 @@
 {
-    "name": "woocommerce-gateway-tradesafe",
+    "name": "tradesafe-payment-gateway",
     "version": "1.0.0",
     "description": "TradeSafe Payment Gateway for WooCommerce",
-    "scripts": {
-        "prepare": "husky install"
-    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/tradesafe/woocommerce-tradesafe-gateway.git"

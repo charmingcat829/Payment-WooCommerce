@@ -2,7 +2,7 @@
 /**
  * Links WooCommerce Account page to a TradeSafe user token.
  *
- * @package WooCommerce TradeSafe Gateway
+ * @package TradeSafe Payment Gateway
  */
 
 defined( 'ABSPATH' ) || exit;

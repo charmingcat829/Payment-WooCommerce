@@ -2,7 +2,7 @@
 /**
  * TradeSafe Gateway for WooCommerce.
  *
- * @package WooCommerce TradeSafe Gateway
+ * @package TradeSafe Payment Gateway
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -23,8 +23,8 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	 */
 	public function __construct() {
 		$this->id                 = 'tradesafe';
-		$this->method_title       = __( 'TradeSafe Escrow', 'woocommerce-gateway-tradesafe' );
-		$this->method_description = __( 'TradeSafe Escrow', 'woocommerce-gateway-tradesafe' );
+		$this->method_title       = __( 'TradeSafe Escrow', 'tradesafe-payment-gateway' );
+		$this->method_description = __( 'TradeSafe Escrow', 'tradesafe-payment-gateway' );
 		$this->icon               = WP_PLUGIN_URL . '/' . plugin_basename( dirname( dirname( __FILE__ ) ) ) . '/assets/images/icon.svg';
 
 		$this->version              = WC_GATEWAY_TRADESAFE_VERSION;
@@ -97,24 +97,24 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	public function init_form_fields() {
 		$this->form_fields = array(
 			'enabled'     => array(
-				'title'       => __( 'Enable/Disable', 'woocommerce-gateway-tradesafe' ),
-				'label'       => __( 'Enable TradeSafe', 'woocommerce-gateway-tradesafe' ),
+				'title'       => __( 'Enable/Disable', 'tradesafe-payment-gateway' ),
+				'label'       => __( 'Enable TradeSafe', 'tradesafe-payment-gateway' ),
 				'type'        => 'checkbox',
-				'description' => __( 'This controls whether or not this gateway is enabled within WooCommerce.', 'woocommerce-gateway-tradesafe' ),
+				'description' => __( 'This controls whether or not this gateway is enabled within WooCommerce.', 'tradesafe-payment-gateway' ),
 				'default'     => 'yes',
 				'desc_tip'    => true,
 			),
 			'title'       => array(
-				'title'       => __( 'Title', 'woocommerce-gateway-tradesafe' ),
+				'title'       => __( 'Title', 'tradesafe-payment-gateway' ),
 				'type'        => 'text',
-				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-gateway-tradesafe' ),
+				'description' => __( 'This controls the title which the user sees during checkout.', 'tradesafe-payment-gateway' ),
 				'default'     => $this->method_title,
 				'desc_tip'    => true,
 			),
 			'description' => array(
-				'title'       => __( 'Description', 'woocommerce-gateway-tradesafe' ),
+				'title'       => __( 'Description', 'tradesafe-payment-gateway' ),
 				'type'        => 'textarea',
-				'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-gateway-tradesafe' ),
+				'description' => __( 'This controls the description which the user sees during checkout.', 'tradesafe-payment-gateway' ),
 				'default'     => $this->method_description,
 				'desc_tip'    => true,
 			),
@@ -126,7 +126,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	 */
 	public function admin_options() {
 		?>
-		<h2><?php esc_attr_e( 'TradeSafe', 'woocommerce-gateway-tradesafe' ); ?></h2>
+		<h2><?php esc_attr_e( 'TradeSafe', 'tradesafe-payment-gateway' ); ?></h2>
 		<table class="form-table">
 			<?php $this->generate_settings_html(); ?>
 		</table> 
@@ -294,7 +294,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		}
 
 		// Mark as pending.
-		$order->update_status( 'pending', __( 'Awaiting payment.', 'woocommerce-gateway-tradesafe' ) );
+		$order->update_status( 'pending', __( 'Awaiting payment.', 'tradesafe-payment-gateway' ) );
 
 		// Remove cart.
 		$woocommerce->cart->empty_cart();

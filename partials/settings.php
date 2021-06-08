@@ -2,7 +2,7 @@
 /**
  * Wrapper for TradeSafe settings page.
  *
- * @package WooCommerce TradeSafe Gateway
+ * @package TradeSafe Payment Gateway
  */
 
 ?>

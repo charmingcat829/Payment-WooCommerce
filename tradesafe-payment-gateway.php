@@ -1,18 +1,18 @@
 <?php
 /**
- * Plugin Name: WooCommerce TradeSafe Gateway
- * Plugin URI: https://developer.tradesafe.co.za
+ * Plugin Name: TradeSafe Payment Gateway
+ * Plugin URI: https://developer.tradesafe.co.za/docs/1.1/tools/plugins/woocommerce
  * Description: Process payments using the TradeSafe as a payments provider.
  * Version: 1.0.0
  * Author: TradeSafe
  * Author URI: https://www.tradesafe.co.za/
- * Text Domain: woocommerce-gateway-tradesafe
+ * Text Domain: tradesafe-payment-gateway
  * Requires at least: 5.0
  * Tested up to: 5.7
  * WC tested up to: 5.3
  * WC requires at least: 4.6
  *
- * @package WooCommerce TradeSafe Gateway
+ * @package TradeSafe Payment Gateway
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -44,7 +44,7 @@ function woocommerce_tradesafe_init() {
 	require_once plugin_basename( 'src/class-tradesafeprofile.php' );
 	require_once plugin_basename( 'src/class-wc-gateway-tradesafe.php' );
 
-	load_plugin_textdomain( 'woocommerce-gateway-tradesafe', false, trailingslashit( dirname( plugin_basename( __FILE__ ) ) ) );
+	load_plugin_textdomain( 'tradesafe-payment-gateway', false, trailingslashit( dirname( plugin_basename( __FILE__ ) ) ) );
 	add_filter( 'woocommerce_payment_gateways', 'woocommerce_tradesafe_add_gateway' );
 }
 
@@ -67,9 +67,9 @@ function woocommerce_tradesafe_plugin_links( $links ): array {
 	);
 
 	$plugin_links = array(
-		'<a href="' . esc_url( $settings_url ) . '">' . __( 'Settings', 'woocommerce-gateway-tradesafe' ) . '</a>',
-		'<a href="https://www.tradesafe.co.za/support/">' . __( 'Support', 'woocommerce-gateway-tradesafe' ) . '</a>',
-		'<a href="https://developer.tradesafe.co.za/docs...?">' . __( 'Docs', 'woocommerce-gateway-tradesafe' ) . '</a>',
+		'<a href="' . esc_url( $settings_url ) . '">' . __( 'Settings', 'tradesafe-payment-gateway' ) . '</a>',
+		'<a href="https://www.tradesafe.co.za/support/">' . __( 'Support', 'tradesafe-payment-gateway' ) . '</a>',
+		'<a href="https://developer.tradesafe.co.za/docs...?">' . __( 'Docs', 'tradesafe-payment-gateway' ) . '</a>',
 	);
 
 	return array_merge( $plugin_links, $links );
@@ -102,6 +102,7 @@ function woocommerce_tradesafe_api() {
 	}
 
 	$client = new \TradeSafe\Api\Client( $domain );
+	$client = new \TradeSafe\Api\Client( 'concord-api.cdptv.dev', 'persona.cdptv.dev' );
 
 	try {
 		$client->configure( get_option( 'tradesafe_client_id' ), get_option( 'tradesafe_client_secret' ), site_url( '/tradesafe/oauth/callback/' ) );

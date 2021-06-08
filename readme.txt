@@ -1,4 +1,4 @@
-=== WooCommerce TradeSafe Gateway ===
+=== TradeSafe Payment Gateway ===
 Contributors: richardnbanks, tradesafeops
 Tags: tradesafe, woocommerce, dokan, credit card, eft, instant eft
 Requires at least: 5.6
