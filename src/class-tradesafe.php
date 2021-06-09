@@ -30,7 +30,7 @@ class TradeSafe {
 		// Disable publish for standard woocommerce products.
 		add_action( 'admin_head', array( 'TradeSafe', 'disable_publish_button' ) );
 
-		if ( has_dokan() ) {
+		if ( tradesafe_has_dokan() ) {
 			// Disable add new product button when using dokan.
 			add_action( 'wp_head', array( 'TradeSafe', 'disable_add_product_button' ) );
 		}
@@ -179,7 +179,7 @@ class TradeSafe {
 		);
 		register_setting( 'tradesafe', 'tradesafe_accept_transaction' );
 
-		if ( has_dokan() ) {
+		if ( tradesafe_has_dokan() ) {
 			add_settings_field(
 				'tradesafe_payout_fee',
 				'Who absorbs the pay-out fee (R10 for every additional vendor)?',
@@ -571,7 +571,7 @@ class TradeSafe {
 	 */
 	public static function settings_page() {
 		// Don't allow sellers top alter order statues.
-		if ( has_dokan() ) {
+		if ( tradesafe_has_dokan() ) {
 			$options = get_option( 'dokan_selling', array() );
 
 			if ( 'on' === $options['order_status_change'] ) {

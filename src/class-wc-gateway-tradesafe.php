@@ -167,7 +167,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				// Get product owner.
 				$product = get_post( $item['product_id'] );
 
-				if ( get_option( 'tradesafe_transaction_marketplace', 0 ) && ! has_dokan() ) {
+				if ( get_option( 'tradesafe_transaction_marketplace', 0 ) && ! tradesafe_has_dokan() ) {
 					if ( ! isset( $vendors[ $product->post_author ] ) ) {
 						$vendors[ $product->post_author ]['total'] = 0;
 					}
@@ -197,7 +197,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				'token' => $profile['token'],
 			);
 
-			if ( has_dokan() ) {
+			if ( tradesafe_has_dokan() ) {
 				$sub_orders = get_children(
 					array(
 						'post_parent' => dokan_get_prop( $order, 'id' ),

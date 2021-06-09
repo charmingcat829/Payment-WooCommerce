@@ -102,7 +102,7 @@ class TradeSafeProfile {
 		$user_info = array(
 			'givenName'  => sanitize_text_field( wp_unslash( $_POST['account_first_name'] ?? null ) ),
 			'familyName' => sanitize_text_field( wp_unslash( $_POST['account_last_name'] ?? null ) ),
-			'email'      => sanitize_text_field( wp_unslash( $_POST['account_email'] ?? null ) ),
+			'email'      => sanitize_email( wp_unslash( $_POST['account_email'] ?? null ) ),
 			'mobile'     => sanitize_text_field( wp_unslash( $_POST['tradesafe_token_mobile'] ?? null ) ),
 			'idNumber'   => sanitize_text_field( wp_unslash( $_POST['tradesafe_token_id_number'] ?? null ) ),
 			'idType'     => sanitize_text_field( wp_unslash( $_POST['tradesafe_token_id_type'] ?? null ) ),

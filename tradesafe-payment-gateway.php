@@ -132,33 +132,10 @@ function woocommerce_tradesafe_api() {
 }
 
 /**
- * Check is the dokan plugin has been installed and enabled.
- */
-if ( ! function_exists( 'has_dokan' ) ) {
-	/**
-	 * Return true if Dokan class exists.
-	 *
-	 * @return bool
-	 */
-	function has_dokan(): bool {
-		return class_exists( 'WeDevs_Dokan' );
-	}
-}
-
-/**
- * Check if a string contains a specific sequence of characters.
+ * Return true if Dokan class exists.
  *
- * Based on original work from the PHP Laravel framework.
+ * @return bool
  */
-if ( ! function_exists( 'str_contains' ) ) {
-	/**
-	 * Check of the existence of a string inside a string.
-	 *
-	 * @param string $haystack string to be searched.
-	 * @param string $needle string to search for.
-	 * @return bool
-	 */
-	function str_contains( $haystack, $needle ) {
-		return '' !== $needle && false !== strpos( $haystack, $needle );
-	}
+function tradesafe_tradesafe_has_dokan(): bool {
+	return class_exists( 'WeDevs_Dokan' );
 }
