@@ -136,6 +136,6 @@ function woocommerce_tradesafe_api() {
  *
  * @return bool
  */
-function tradesafe_tradesafe_has_dokan(): bool {
+function tradesafe_has_dokan(): bool {
 	return class_exists( 'WeDevs_Dokan' );
 }
