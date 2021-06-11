@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [1.0.1](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v1.0.0...v1.0.1) (2021-06-11)
+
+
+### Bug Fixes
+
+* Updated plugin info and links for final release ([74c9a6](https://github.com/tradesafe/tradesafe-payment-gateway/commit/74c9a62da904be149b53b405950380eff037e61b))
+
+---
+
 ## [1.0.0](https://github.com/tradesafe/woocommerce-tradesafe-gateway/compare/53203b526cdc2551bec20f42649b2e1be2baeeb7...v1.0.0) (2021-06-08)
 
 
