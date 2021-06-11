@@ -14,7 +14,8 @@
         }
     ],
     "require": {
-        "tradesafe/api": "dev-master"
+        "tradesafe/api": "dev-master",
+        "symfony/polyfill-php80": "^1.23"
     },
     "require-dev": {
         "marcocesarato/php-conventional-changelog": "^1.10"
