@@ -4,12 +4,13 @@
  * Plugin URI: https://developer.tradesafe.co.za/docs/1.1/tools/plugins/woocommerce
  * Description: Process payments using the TradeSafe as a payments provider.
  * Version: 1.0.0
- * Author: TradeSafe
- * Author URI: https://www.tradesafe.co.za/
+ * Author: TradeSafe Escrow
+ * Author URI: https://www.tradesafe.co.za
  * Text Domain: tradesafe-payment-gateway
- * Requires at least: 5.0
+ * Requires at least: 5.5
+ * Requires PHP: 7.4
  * Tested up to: 5.7
- * WC tested up to: 5.3
+ * WC tested up to: 5.4
  * WC requires at least: 4.6
  *
  * @package TradeSafe Payment Gateway
@@ -68,14 +69,34 @@ function woocommerce_tradesafe_plugin_links( $links ): array {
 
 	$plugin_links = array(
 		'<a href="' . esc_url( $settings_url ) . '">' . __( 'Settings', 'tradesafe-payment-gateway' ) . '</a>',
-		'<a href="https://www.tradesafe.co.za/support/">' . __( 'Support', 'tradesafe-payment-gateway' ) . '</a>',
-		'<a href="https://developer.tradesafe.co.za/docs...?">' . __( 'Docs', 'tradesafe-payment-gateway' ) . '</a>',
 	);
 
 	return array_merge( $plugin_links, $links );
 }
 
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'woocommerce_tradesafe_plugin_links' );
+
+/**
+ * Add additional links under the plugin description.
+ *
+ * @param array  $links An array of existing links.
+ * @param string $file Name of the plugin file been loaded.
+ * @return array
+ */
+function tradesafe_payment_gateway_plugin_row_meta( array $links, string $file ): array {
+	if ( strpos( $file, 'tradesafe-payment-gateway.php' ) !== false ) {
+		$new_links = array(
+			'<a href="https://developer.tradesafe.co.za/docs/1.1/plugins/woocommerce">' . __( 'Docs', 'tradesafe-payment-gateway' ) . '</a>',
+			'<a href="https://www.tradesafe.co.za/support/">' . __( 'Support', 'tradesafe-payment-gateway' ) . '</a>',
+		);
+
+		$links = array_merge( $links, $new_links );
+	}
+
+	return $links;
+}
+
+add_filter( 'plugin_row_meta', 'tradesafe_payment_gateway_plugin_row_meta', 10, 2 );
 
 
 /**
