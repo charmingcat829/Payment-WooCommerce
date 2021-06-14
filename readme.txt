@@ -4,7 +4,7 @@ Tags: tradesafe, woocommerce, dokan, credit card, eft, instant eft
 Requires at least: 5.6
 Tested up to: 5.7
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -14,15 +14,20 @@ The official TradeSafe plugin for WooCommerce
 The TradeSafe plugin for WooCommerce allows TradeSafe Escrow to be used as a payment gateway when buying and selling
 goods and services through WooCommerce.
 
+The TradeSafe plugin includes payment gateways namely Ozow (Instant EFT), Visa/Mastercard, SnapScan and normal EFT, with more to come.
+
 The plugin also includes support for paying multiple vendors when using the Dokan plugin.
 
 == Frequently Asked Questions ==
 
 = Where can I find documentation? =
 
-For more information on how to setup the plugin, please refer to our [guide](https://developer.tradesafe.co.za/docs/1.1/tools/plugins/woocommerce)
+For more information on how to setup the plugin, please refer to our [guide](https://developer.tradesafe.co.za/docs/1.1/plugins/woocommerce)
 
 == Changelog ==
+
+= 1.0.2 - 2021-06-14 =
+ * Updated plugin page description
 
 = 1.0.1 - 2021-06-11 =
  * Updated plugin info and links for final release
@@ -35,8 +40,8 @@ For more information on how to setup the plugin, please refer to our [guide](htt
  * Display accept button on order in processing state
  * Updated field type for tax number
  * Updated get option function to return single value for validation check
- * Updated tradesafe api library
- * Updated variable name for tradesafe fee allocation
+ * Updated TradeSafe api library
+ * Updated variable name for TradeSafe fee allocation
 
 == Upgrade Notice ==
 Initial release
