@@ -1,0 +1,14 @@
+.exclude
+.git*
+.husky*
+.changelog
+.phpcs.xml.dist
+phpcs.xml.dist
+vendor/tradesafe/api/.git/*
+composer.json
+composer.lock
+package.json
+package-lock.json
+node_modules
+CHANGELOG.md
+commitlint.config.js

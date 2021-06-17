@@ -20,6 +20,7 @@ Thumbs.db
 !.editorconfig
 !.phpcs.xml.dist
 !.changelog
+!.exclude
 !README.md
 !CHANGELOG.md
 !composer.json
