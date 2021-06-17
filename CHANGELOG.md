@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [1.0.4](https://github.com/tradesafe/plugin-woocommerce/compare/v1.0.3...v1.0.4) (2021-06-17)
+
+
+### Bug Fixes
+
+* Removed reference to internal development API ([b38ceb](https://github.com/tradesafe/plugin-woocommerce/commit/b38cebea7e414e31ab87979f7fca8593d6784483))
+
+---
+
 ## [1.0.3](https://github.com/tradesafe/plugin-woocommerce/compare/v1.0.2...v1.0.3) (2021-06-17)
 
 
