@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [1.0.3](https://github.com/tradesafe/plugin-woocommerce/compare/v1.0.2...v1.0.3) (2021-06-17)
+
+
+### Bug Fixes
+
+* Updated exclude list to fix issue where not all files are deployed wordpress.org ([18caec](https://github.com/tradesafe/plugin-woocommerce/commit/18caeccdef559f0215e07a9125a51deca1096133))
+
+---
+
 ## [1.0.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v1.0.1...v1.0.2) (2021-06-14)
 
 
