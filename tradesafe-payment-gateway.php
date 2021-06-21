@@ -145,7 +145,7 @@ function woocommerce_tradesafe_api() {
             // phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		}
 
-		wp_die( 'An error occurred while connecting to the TradeSafe API.' );
+		return null;
 	}
 
 	return $client;
