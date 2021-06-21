@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [1.0.5](https://github.com/tradesafe/plugin-woocommerce/compare/v1.0.4...v1.0.5) (2021-06-21)
+
+
+### Bug Fixes
+
+* Don't call wp_die if api connection fails ([d48f88](https://github.com/tradesafe/plugin-woocommerce/commit/d48f8898c035d77dd40537c76e92bb049e8a40f6))
+
+---
+
 ## [1.0.4](https://github.com/tradesafe/plugin-woocommerce/compare/v1.0.3...v1.0.4) (2021-06-17)
 
 

@@ -4,7 +4,7 @@ Tags: tradesafe, woocommerce, dokan, credit card, eft, instant eft
 Requires at least: 5.6
 Tested up to: 5.7
 Requires PHP: 7.4
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -26,7 +26,10 @@ For more information on how to setup the plugin, please refer to our [guide](htt
 
 == Changelog ==
 
-= 1.0.3 - 2021-06-17 =
+= 1.0.5 - 2021-06-21 =
+ * Don't call wp_die if API connection fails
+
+= 1.0.4 - 2021-06-17 =
  * Removed reference to internal development API
 
 = 1.0.3 - 2021-06-17 =
@@ -50,4 +53,4 @@ For more information on how to setup the plugin, please refer to our [guide](htt
  * Updated variable name for TradeSafe fee allocation
 
 == Upgrade Notice ==
-Initial release
+Bug fix for new installations
