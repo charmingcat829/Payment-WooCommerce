@@ -26,6 +26,9 @@ For more information on how to setup the plugin, please refer to our [guide](htt
 
 == Changelog ==
 
+= 1.0.6 - 2021-06-22 =
+ * Changed the API client function name and added additional error handling
+
 = 1.0.5 - 2021-06-21 =
  * Don't call wp_die if API connection fails
 
