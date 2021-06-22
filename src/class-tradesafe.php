@@ -281,10 +281,14 @@ class TradeSafe {
 	 * @return bool
 	 */
 	private static function is_valid_token( string $role ): bool {
-		$client   = woocommerce_tradesafe_api();
+		$client   = tradesafe_api_client();
 		$user     = wp_get_current_user();
 		$meta_key = 'tradesafe_token_id';
 		$valid    = false;
+
+		if ( is_null( $client ) ) {
+			return false;
+		}
 
 		if ( get_option( 'tradesafe_production_mode' ) ) {
 			$meta_key = 'tradesafe_prod_token_id';
@@ -319,7 +323,7 @@ class TradeSafe {
 		$urls = array(
 			'oauth_callback' => site_url( '/tradesafe/oauth/callback/' ),
 			'callback'       => site_url( '/tradesafe/callback/' ),
-			'success'        => site_url( 'my-orders/' ),
+			'success'        => wc_get_endpoint_url( 'orders', '', get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) ),
 			'failure'        => wc_get_endpoint_url( 'orders', '', get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) ),
 		);
 
@@ -353,7 +357,7 @@ class TradeSafe {
 	 */
 	public static function settings_application_callback() {
 		if ( get_option( 'tradesafe_client_id' ) && get_option( 'tradesafe_client_secret' ) ) {
-			$client = woocommerce_tradesafe_api();
+			$client = tradesafe_api_client();
 
 			if ( is_null( $client ) ) {
 				echo "<table class='form-table' role='presentation'><tbody>";
@@ -430,17 +434,17 @@ class TradeSafe {
 	 * Default industry for transactions.
 	 */
 	public static function setting_transaction_industry_callback() {
-		$client = woocommerce_tradesafe_api();
+		$client = tradesafe_api_client();
 
-		try {
+		$industries = array(
+			array(
+				'name'        => 'GENERAL_GOODS_SERVICES',
+				'description' => 'General Goods & Services',
+			),
+		);
+
+		if ( ! is_null( $client ) ) {
 			$industries = $client->getEnums( 'Industry' );
-		} catch ( Exception $e ) {
-			$industries = array(
-				array(
-					'name'        => 'GENERAL_GOODS_SERVICES',
-					'description' => 'General Goods & Services',
-				),
-			);
 		}
 
 		echo '<select name="tradesafe_transaction_industry" class="small-text ltr">';
@@ -640,7 +644,7 @@ class TradeSafe {
 						}
 
 						if ( ( $order->has_status( 'on-hold' ) || $order->has_status( 'pending' ) ) && 'FUNDS_RECEIVED' === $data['state'] ) {
-							$client = woocommerce_tradesafe_api();
+							$client = tradesafe_api_client();
 
 							$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
 							$client->allocationStartDelivery( $transaction['allocations'][0]['id'] );
@@ -691,11 +695,11 @@ class TradeSafe {
 	 * Calculate and add escrow fee to checkout page.
 	 */
 	public static function add_gateway_fee() {
-		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
+		$client = tradesafe_api_client();
+
+		if ( is_admin() && ! defined( 'DOING_AJAX' ) || is_null( $client ) ) {
 			return;
 		}
-
-		$client = woocommerce_tradesafe_api();
 
 		$totals = WC()->cart->get_totals();
 
@@ -790,7 +794,7 @@ class TradeSafe {
 	 * @param int $order_id WooCommerce order id.
 	 */
 	public static function complete_transaction( int $order_id ) {
-		$client = woocommerce_tradesafe_api();
+		$client = tradesafe_api_client();
 		$order  = wc_get_order( $order_id );
 
 		try {
@@ -876,7 +880,7 @@ class TradeSafe {
 	 * @return array
 	 */
 	public static function checkout_field_defaults( array $fields ): array {
-		$client = woocommerce_tradesafe_api();
+		$client = tradesafe_api_client();
 		$user   = wp_get_current_user();
 
 		$meta_key = 'tradesafe_token_id';

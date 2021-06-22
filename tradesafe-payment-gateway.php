@@ -115,7 +115,7 @@ function woocommerce_tradesafe_add_gateway( $methods ) {
  *
  * @return \TradeSafe\Api\Client
  */
-function woocommerce_tradesafe_api() {
+function tradesafe_api_client() {
 	$domain = 'api-developer.tradesafe.dev';
 
 	if ( get_option( 'tradesafe_production_mode' ) ) {

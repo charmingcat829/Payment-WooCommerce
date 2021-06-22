@@ -36,8 +36,15 @@ class TradeSafeProfile {
 	 * Add TradeSafe fields to user account form.
 	 */
 	public static function edit_account_form() {
-		$client = woocommerce_tradesafe_api();
+		$client = tradesafe_api_client();
 		$user   = wp_get_current_user();
+
+		if ( is_null( $client ) ) {
+			echo "<table class='form-table' role='presentation'><tbody>";
+			echo "<tr><th scope='row'>Error:</th><td> TradeSafe Payment Gateway not configured</td></tr>";
+			echo '</tbody></table>';
+			return;
+		}
 
 		$meta_key = 'tradesafe_token_id';
 
@@ -80,16 +87,15 @@ class TradeSafeProfile {
 	public static function save_account_details( int $user_id ) {
 		// Nonce check copied from woocommerce/includes/class-wc-form-handler.php@save_account_details.
         $nonce_value = wc_get_var( $_REQUEST['save-account-details-nonce'], wc_get_var( $_REQUEST['_wpnonce'], '' ) ); // @codingStandardsIgnoreLine.
+		$client      = tradesafe_api_client();
 
 		if ( ! wp_verify_nonce( $nonce_value, 'save_account_details' ) ) {
 			return;
 		}
 
-		if ( empty( $_POST['action'] ) || 'save_account_details' !== $_POST['action'] ) {
+		if ( empty( $_POST['action'] ) || 'save_account_details' !== $_POST['action'] || is_null( $client ) ) {
 			return;
 		}
-
-		$client = woocommerce_tradesafe_api();
 
 		$meta_key = 'tradesafe_token_id';
 

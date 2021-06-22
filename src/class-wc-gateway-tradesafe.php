@@ -144,7 +144,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 		$order = new WC_Order( $order_id );
 
-		$client = woocommerce_tradesafe_api();
+		$client = tradesafe_api_client();
 
 		if ( is_null( $client ) ) {
 			return null;
