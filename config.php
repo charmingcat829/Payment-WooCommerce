@@ -1,4 +1,9 @@
 <?php
+/**
+ * TradeSafe API Config.
+ *
+ * @package TradeSafe Payment Gateway
+ */
 
 $api_domains = [
     'sit' => 'api-developer.tradesafe.dev',

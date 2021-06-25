@@ -116,13 +116,15 @@ function woocommerce_tradesafe_add_gateway( $methods ) {
  * @return \TradeSafe\Api\Client
  */
 function tradesafe_api_client() {
-	$domain = 'api-developer.tradesafe.dev';
+	require 'config.php';
+
+	$domain = $api_domains['sit'];
 
 	if ( get_option( 'tradesafe_production_mode' ) ) {
-		$domain = 'api.tradesafe.co.za';
+		$domain = $api_domains['prod'];
 	}
 
-	$client = new \TradeSafe\Api\Client( $domain );
+	$client = new \TradeSafe\Api\Client( $domain, $auth_domain );
 
 	try {
 		$client->configure( get_option( 'tradesafe_client_id' ), get_option( 'tradesafe_client_secret' ), site_url( '/tradesafe/oauth/callback/' ) );

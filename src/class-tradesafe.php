@@ -121,6 +121,29 @@ class TradeSafe {
 		);
 		register_setting( 'tradesafe', 'tradesafe_production_mode' );
 
+		add_settings_field(
+			'tradesafe_require_id_number',
+			'Require ID Number on checkout',
+			array(
+				'TradeSafe',
+				'setting_require_id_number_callback',
+			),
+			'tradesafe',
+			'tradesafe_settings_section'
+		);
+		register_setting(
+			'tradesafe',
+			'tradesafe_require_id_number',
+			array(
+				'type'              => 'boolean',
+				'default'           => true,
+				'sanitize_callback' => array(
+					'TradeSafe',
+					'sanitize_boolean',
+				),
+			)
+		);
+
 		add_settings_section(
 			'tradesafe_transaction_section',
 			'Transaction Settings',
@@ -272,6 +295,20 @@ class TradeSafe {
 		register_setting( 'tradesafe', 'tradesafe_transaction_fee' );
 		register_setting( 'tradesafe', 'tradesafe_transaction_fee_type' );
 		register_setting( 'tradesafe', 'tradesafe_transaction_fee_allocation' );
+	}
+
+	/**
+	 * Set empty value to zero.
+	 *
+	 * @param mixed $value Option value.
+	 * @return int|mixed
+	 */
+	public static function sanitize_boolean( $value ) {
+		if ( empty( $value ) ) {
+			$value = 0;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -427,7 +464,16 @@ class TradeSafe {
 	 * Production mode toggle.
 	 */
 	public static function setting_production_mode_callback() {
-		echo '<input name="tradesafe_production_mode" id="tradesafe_production_mode" type="checkbox" value="1" ' . checked( 1, esc_attr( get_option( 'tradesafe_production_mode' ) ), false ) . ' />';
+		echo '<input name="tradesafe_production_mode" id="tradesafe_production_mode" type="checkbox" value="1" ' . checked( 1, esc_attr( get_option( 'tradesafe_production_mode', 0 ) ), false ) . ' />';
+		echo '<p class="description" id="tradesafe_production_mode_description">Use the production API. <strong>Do not enable this option until you have completed testing and have requested your application to be approved.</strong></p>';
+	}
+
+	/**
+	 * Required ID Number on checkout.
+	 */
+	public static function setting_require_id_number_callback() {
+		echo '<input name="tradesafe_require_id_number" id="tradesafe_require_id_number" type="checkbox" value="1" ' . checked( 1, esc_attr( get_option( 'tradesafe_require_id_number' ) ), false ) . ' />';
+		echo '<p class="description" id="tradesafe_require_id_number_description">Require user to enter their ID Number on the checkout form if their account is incomplete.</strong></p>';
 	}
 
 	/**
@@ -864,7 +910,7 @@ class TradeSafe {
 	public static function buyer_account_incomplete_notice() {
 		$valid_account = self::is_valid_token( 'buyer' );
 
-		if ( false === $valid_account ) {
+		if ( false === $valid_account && '0' === get_option( 'tradesafe_require_id_number' ) ) {
 			$class   = 'notice notice-warning';
 			$title   = __( 'Your account is incomplete!', 'tradesafe-payment-gateway' );
 			$message = __( 'You may receive a message below that there are no available payment providers as your user account is incomplete. Please click on the button below to update your account to access additional payment methods. Once done, you will be able to proceed with checkout.', 'tradesafe-payment-gateway' );

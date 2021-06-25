@@ -79,7 +79,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			$is_available = false;
 		}
 
-		if ( ! is_admin() ) {
+		if ( ! is_admin() && '0' === get_option( 'tradesafe_require_id_number' ) ) {
 			$user = wp_get_current_user();
 
 			if ( '' === get_user_meta( $user->ID, $meta_key, true )
