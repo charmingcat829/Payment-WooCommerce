@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [1.1.0](https://github.com/tradesafe/plugin-woocommerce/compare/v1.0.6...v1.1.0) (2021-06-25)
+
+
+### Features
+
+* Added the option to include a users id number on checkout ([92d11a](https://github.com/tradesafe/plugin-woocommerce/commit/92d11ace044a5c8931eadf2475cae0acedac21b0))
+
+---
+
 ## [1.0.6](https://github.com/tradesafe/plugin-woocommerce/compare/v1.0.5...v1.0.6) (2021-06-22)
 
 

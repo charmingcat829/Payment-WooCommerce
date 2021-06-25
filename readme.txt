@@ -4,7 +4,7 @@ Tags: tradesafe, woocommerce, dokan, credit card, eft, instant eft
 Requires at least: 5.6
 Tested up to: 5.7
 Requires PHP: 7.4
-Stable tag: 1.0.5
+Stable tag: 1.1.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -26,34 +26,8 @@ For more information on how to setup the plugin, please refer to our [guide](htt
 
 == Changelog ==
 
-= 1.0.6 - 2021-06-22 =
- * Changed the API client function name and added additional error handling
-
-= 1.0.5 - 2021-06-21 =
- * Don't call wp_die if API connection fails
-
-= 1.0.4 - 2021-06-17 =
- * Removed reference to internal development API
-
-= 1.0.3 - 2021-06-17 =
- * Updated exclude list to fix issue where not all files are deployed wordpress.org
-
-= 1.0.2 - 2021-06-14 =
- * Updated plugin page description
-
-= 1.0.1 - 2021-06-11 =
- * Updated plugin info and links for final release
-
-= 1.0.0 - 2021-06-07 =
- * Added notice for users about bank account details
- * Added settings allow or disallow user to change order/transaction state
- * Added token validation for buyers and sellers to ensure their account is completed
- * Calculate cart total without escrow fee
- * Display accept button on order in processing state
- * Updated field type for tax number
- * Updated get option function to return single value for validation check
- * Updated TradeSafe api library
- * Updated variable name for TradeSafe fee allocation
+= 1.1.0 - 2021-06-25 =
+ * Added the option to include a users id number on checkout
 
 == Upgrade Notice ==
-Bug fix for new installations
+ID Numbers are not required on checkout by default and can be disabled on the settings page.
