@@ -10,6 +10,9 @@ vendor/
 ehthumbs.db
 Thumbs.db
 
+# Ignore config file
+config.php
+
 # -------------------------
 # BEGIN Whitelisted Files
 # -------------------------
