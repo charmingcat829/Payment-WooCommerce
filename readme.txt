@@ -4,7 +4,7 @@ Tags: tradesafe, woocommerce, dokan, credit card, eft, instant eft
 Requires at least: 5.6
 Tested up to: 5.7
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -26,8 +26,8 @@ For more information on how to setup the plugin, please refer to our [guide](htt
 
 == Changelog ==
 
-= 1.1.0 - 2021-06-25 =
- * Added the option to include a users id number on checkout
+= 1.2.0 - 2021-06-30 =
+ * Removed ID number field from checkout page as it will now be requested on the payment page
 
 == Upgrade Notice ==
-ID Numbers are not required on checkout by default and can be disabled on the settings page.
+ID Numbers are not required on checkout and will be captured when the buyer makes a payment.

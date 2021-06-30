@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [1.2.0](https://github.com/tradesafe/plugin-woocommerce/compare/v1.1.0...v1.2.0) (2021-06-30)
+
+
+### Features
+
+* Removed ID number field from checkout page as it will now be requested on the payment page ([ab7bb0](https://github.com/tradesafe/plugin-woocommerce/commit/ab7bb0a48f9abee4b20cdc131ff7eafeb000d5cf))
+
+---
+
 ## [1.1.0](https://github.com/tradesafe/plugin-woocommerce/compare/v1.0.6...v1.1.0) (2021-06-25)
 
 
