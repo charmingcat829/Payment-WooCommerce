@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [1.2.1](https://github.com/tradesafe/plugin-woocommerce/compare/v1.2.0...v1.2.1) (2021-06-30)
+
+
+### Bug Fixes
+
+* Updated tradesafe php client to support tokens without id numbers ([c4e65c](https://github.com/tradesafe/plugin-woocommerce/commit/c4e65ccb2ecc5fa6895fd3f94f56bc3d581732c2))
+
+---
+
 ## [1.2.0](https://github.com/tradesafe/plugin-woocommerce/compare/v1.1.0...v1.2.0) (2021-06-30)
 
 

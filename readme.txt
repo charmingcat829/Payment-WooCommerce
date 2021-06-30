@@ -4,7 +4,7 @@ Tags: tradesafe, woocommerce, dokan, credit card, eft, instant eft
 Requires at least: 5.6
 Tested up to: 5.7
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -25,6 +25,9 @@ The plugin also includes support for paying multiple vendors when using the Doka
 For more information on how to setup the plugin, please refer to our [guide](https://developer.tradesafe.co.za/docs/1.1/plugins/woocommerce)
 
 == Changelog ==
+
+= 1.2.1 - 2021-06-30 =
+ * Updated tradesafe php client to support tokens without id numbers
 
 = 1.2.0 - 2021-06-30 =
  * Removed ID number field from checkout page as it will now be requested on the payment page
