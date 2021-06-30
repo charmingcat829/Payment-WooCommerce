@@ -32,9 +32,6 @@ class TradeSafeProfile {
 		add_action( 'woocommerce_edit_account_form', array( 'TradeSafeProfile', 'edit_account_form' ) );
 		add_action( 'woocommerce_save_account_details', array( 'TradeSafeProfile', 'save_account_details' ) );
 		add_action( 'woocommerce_checkout_update_customer', array( 'TradeSafeProfile', 'woocommerce_checkout_update_customer' ) );
-
-		// Filters.
-		add_filter( 'woocommerce_checkout_fields', array( 'TradeSafeProfile', 'woocommerce_checkout_fields' ), 10, 1 );
 	}
 
 	/**
@@ -165,60 +162,24 @@ class TradeSafeProfile {
 	public static function woocommerce_checkout_update_customer( WC_Customer $customer ) {
 		$client = tradesafe_api_client();
 
-		if ( '1' === get_option( 'tradesafe_require_id_number' ) && null !== $customer->get_meta( 'billing_id_number', true ) ) {
-			$user_info = array(
-				'givenName'  => $customer->first_name,
-				'familyName' => $customer->last_name,
-				'email'      => $customer->billing['email'],
-				'mobile'     => $customer->billing['phone'],
-				'idNumber'   => $customer->get_meta( 'billing_id_number', true ),
-				'idType'     => 'NATIONAL',
-				'idCountry'  => 'ZAF',
-			);
-
-			$meta_key = 'tradesafe_token_id';
-
-			if ( get_option( 'tradesafe_production_mode' ) ) {
-				$meta_key = 'tradesafe_prod_token_id';
-			}
-
-			if ( '' === $customer->get_meta( $meta_key, true ) ) {
-				$token_data = $client->createToken( $user_info, null, null );
-			} else {
-				$token_data = $client->updateToken( $customer->get_meta( $meta_key, true ), $user_info, null, null );
-			}
-
-			$customer->update_meta_data( $meta_key, sanitize_text_field( $token_data['id'] ) );
-			$customer->save_meta_data();
-		}
-	}
-
-	/**
-	 * Add ID number to checkout form if required.
-	 *
-	 * @param array $fields List of fields to display on checkout.
-	 * @return array
-	 */
-	public static function woocommerce_checkout_fields( array $fields ) {
-		$user     = wp_get_current_user();
 		$meta_key = 'tradesafe_token_id';
 
 		if ( get_option( 'tradesafe_production_mode' ) ) {
 			$meta_key = 'tradesafe_prod_token_id';
 		}
 
-		$token_id = get_user_meta( $user->ID, $meta_key, true );
-
-		if ( '1' === get_option( 'tradesafe_require_id_number' ) && '' === $token_id ) {
-			$fields['billing']['billing_id_number'] = array(
-				'label'       => __( 'ID Number', 'tradesafe-payment-gateway' ),
-				'placeholder' => _x( 'ID Number', 'placeholder', 'tradesafe-payment-gateway' ),
-				'required'    => true,
-				'class'       => array( 'form-row-wide' ),
-				'clear'       => true,
+		if ( '' === $customer->get_meta( $meta_key, true ) ) {
+			$user_info = array(
+				'givenName'  => $customer->first_name,
+				'familyName' => $customer->last_name,
+				'email'      => $customer->billing['email'],
+				'mobile'     => $customer->billing['phone'],
 			);
-		}
 
-		return $fields;
+			$token_data = $client->createToken( $user_info, null, null );
+
+			$customer->update_meta_data( $meta_key, sanitize_text_field( $token_data['id'] ) );
+			$customer->save_meta_data();
+		}
 	}
 }

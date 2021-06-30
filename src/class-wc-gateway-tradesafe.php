@@ -63,12 +63,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		$is_available          = false;
 		$is_available_currency = in_array( get_woocommerce_currency(), $this->available_currencies, true );
 
-		$meta_key = 'tradesafe_token_id';
-
-		if ( get_option( 'tradesafe_production_mode' ) ) {
-			$meta_key = 'tradesafe_prod_token_id';
-		}
-
 		if ( $is_available_currency
 			&& get_option( 'tradesafe_client_id' )
 			&& get_option( 'tradesafe_client_secret' ) ) {
@@ -77,15 +71,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 		if ( 'no' === $this->get_option( 'enabled' ) || null === $this->get_option( 'enabled' ) ) {
 			$is_available = false;
-		}
-
-		if ( ! is_admin() && '0' === get_option( 'tradesafe_require_id_number' ) ) {
-			$user = wp_get_current_user();
-
-			if ( '' === get_user_meta( $user->ID, $meta_key, true )
-				|| false === get_user_meta( $user->ID, $meta_key, true ) ) {
-				$is_available = false;
-			}
 		}
 
 		return $is_available;
