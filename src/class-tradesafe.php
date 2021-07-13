@@ -891,6 +891,23 @@ class TradeSafe {
 	}
 
 	/**
+	 * Display a message to a buyer if their vendor is incomplete.
+	 *
+	 * @deprecated ID Number captured on payment page
+	 */
+	public static function vendor_account_incomplete_notice() {
+		$valid_account = self::is_valid_token( 'buyer' );
+
+		if ( false === $valid_account ) {
+			$class   = 'notice notice-warning';
+			$title   = __( 'Your account is incomplete!', 'tradesafe-payment-gateway' );
+			$message = __( 'You may receive a message below that there are no available payment providers as your user account is incomplete. Please click on the button below to update your account to access additional payment methods. Once done, you will be able to proceed with checkout.', 'tradesafe-payment-gateway' );
+
+			printf( '<div class="%1$s"><h3>%2$s</h3><p>%3$s</p><p><a href="%4$s" class="button-secondary button alt button-large button-next">Update Account</a></p></div>', esc_attr( $class ), esc_html( $title ), esc_html( $message ), esc_url( wc_get_endpoint_url( 'edit-account', '', get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) ) ) );
+		}
+	}
+
+	/**
 	 * If a user has already added their mobile number. Automatically add it to the checkout page.
 	 *
 	 * @param array $fields Array of fields for the checkout form.

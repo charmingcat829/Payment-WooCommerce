@@ -203,7 +203,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 					$payout_fee = 0;
 
 					if ( 'VENDOR' === $payout_fee_allocation ) {
-						$payout_fee = 20;
+						$payout_fee = 10;
 					}
 
 					$parties[] = array(
@@ -224,7 +224,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 						$payout_fee = 0;
 
 						if ( 'VENDOR' === $payout_fee_allocation ) {
-							$payout_fee = 10 + ( 20 / $sub_order_count );
+							$payout_fee = 5 + ( 10 / $sub_order_count );
 						}
 
 						$parties[] = array(
@@ -256,6 +256,18 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 						'fee'           => $vendor['total'] - $fee,
 						'feeType'       => 'FLAT',
 						'feeAllocation' => 'SELLER',
+					);
+				}
+			}
+
+			// Check all parties have a token.
+			foreach ( $parties as $party ) {
+				if ( null === $party['token'] || '' === $party['token'] ) {
+					wc_add_notice( 'There was a problem processing your transaction. Please contact support.', $notice_type = 'error' );
+
+					return array(
+						'result'   => 'failure',
+						'messages' => 'Invalid token for ' . $party['role'],
 					);
 				}
 			}
