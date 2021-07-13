@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [1.2.2](https://github.com/tradesafe/plugin-woocommerce/compare/v1.2.1...v1.2.2) (2021-07-13)
+
+
+### Bug Fixes
+
+* Added check to avoid transcations with missing tokens ([c830bc](https://github.com/tradesafe/plugin-woocommerce/commit/c830bcbdd7dc227cc0fbd7fba91b12e4fa3a3323))
+
+---
+
 ## [1.2.1](https://github.com/tradesafe/plugin-woocommerce/compare/v1.2.0...v1.2.1) (2021-06-30)
 
 
