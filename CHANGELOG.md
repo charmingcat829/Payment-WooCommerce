@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [1.2.4](https://github.com/tradesafe/plugin-woocommerce/compare/v1.2.3...v1.2.4) (2021-07-14)
+
+
+### Bug Fixes
+
+* Improved error handeling when client details are invalid ([3a2e3d](https://github.com/tradesafe/plugin-woocommerce/commit/3a2e3d54dc65d6299c5e73d661a3fd4ae33e7685))
+
+---
+
 ## [1.2.3](https://github.com/tradesafe/plugin-woocommerce/compare/v1.2.2...v1.2.3) (2021-07-14)
 
 
