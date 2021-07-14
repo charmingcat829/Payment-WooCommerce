@@ -361,6 +361,83 @@ class TradeSafe {
         </tr>
         </tbody>
     </table>';
+
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
+			require plugin_dir_path( __FILE__ ) . '../config.php';
+
+			echo '<h2>Plugin Status</h2>';
+			echo '<table class="form-table"><tbody>';
+
+			// PHP Version.
+			echo '<tr><th>PHP Version</th><td>' . esc_attr( phpversion() ) . '</td></tr>';
+			echo '<tr><th>WordPress Version</th><td>' . esc_attr( get_bloginfo( 'version' ) ) . '</td></tr>';
+			echo '<tr><th>Woocommerce Version</th><td>' . esc_attr( WC_VERSION ) . '</td></tr>';
+			echo '<tr><th>Plugin Version</th><td>' . esc_attr( WC_GATEWAY_TRADESAFE_VERSION ) . '</td></tr>';
+
+			$domain = $api_domains['sit'];
+
+			if ( get_option( 'tradesafe_production_mode' ) ) {
+				$domain = $api_domains['prod'];
+			}
+
+			$api_status        = false;
+			$api_status_reason = null;
+
+			$auth_status        = false;
+			$auth_status_reason = null;
+
+			try {
+				$client = new \GuzzleHttp\Client(
+					array(
+						'base_uri' => sprintf( 'https://%s/', $domain ),
+						'timeout'  => 2.0,
+					)
+				);
+
+				$response = $client->request( 'GET', 'api/ping' );
+
+				if ( $response->getStatusCode() === 200 && $response->getBody()->getContents() === 'pong' ) {
+					$api_status = true;
+				} else {
+					$auth_status_reason = sprintf( '[%s]: %s', $response->getStatusCode(), $response->getBody()->getContents() );
+				}
+			} catch ( \Exception $e ) {
+				$api_status_reason = $e->getMessage();
+			}
+
+			echo '<tr><th>API Domain</th><td>' . esc_attr( $domain ) . ' [' . ( $api_status ? 'OK' : 'ERROR' ) . ']</td></tr>';
+
+			if ( $api_status_reason ) {
+				echo '<tr><th>API Error</th><td>' . esc_attr( $api_status_reason ) . '</td></tr>';
+			}
+
+			try {
+				$client = new \GuzzleHttp\Client(
+					array(
+						'base_uri' => sprintf( 'https://%s/', $auth_domain ),
+						'timeout'  => 2.0,
+					)
+				);
+
+				$response = $client->request( 'GET', 'ping' );
+
+				if ( $response->getStatusCode() === 200 && $response->getBody()->getContents() === 'pong' ) {
+					$auth_status = true;
+				} else {
+					$auth_status_reason = sprintf( '[%s]: %s', $response->getStatusCode(), $response->getBody()->getContents() );
+				}
+			} catch ( \Exception $e ) {
+				$auth_status_reason = $e->getMessage();
+			}
+
+			echo '<tr><th>Authentication Domain</th><td>' . esc_attr( $auth_domain ) . ' [' . ( $auth_status ? 'OK' : 'ERROR' ) . ']</td></tr>';
+
+			if ( $auth_status_reason ) {
+				echo '<tr><th>Authentication Error</th><td>' . esc_attr( $auth_status_reason ) . '</td></tr>';
+			}
+
+			echo '</tbody></table>';
+		}
 	}
 
 	/**
