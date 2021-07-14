@@ -131,7 +131,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 		$client = tradesafe_api_client();
 
-		if ( is_null( $client ) ) {
+		if ( is_null( $client ) || is_array( $client ) ) {
 			return null;
 		}
 

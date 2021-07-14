@@ -299,7 +299,7 @@ class TradeSafe {
 		$meta_key = 'tradesafe_token_id';
 		$valid    = false;
 
-		if ( is_null( $client ) ) {
+		if ( is_null( $client ) || is_array( $client ) ) {
 			return false;
 		}
 
@@ -310,19 +310,23 @@ class TradeSafe {
 		$token_id = get_user_meta( $user->ID, $meta_key, true );
 
 		if ( $token_id ) {
-			$token_data = $client->getToken( $token_id );
+			try {
+				$token_data = $client->getToken( $token_id );
 
-			switch ( $role ) {
-				case 'seller':
-					if ( isset( $token_data['bankAccount']['accountNumber'] ) && '' !== $token_data['bankAccount']['accountNumber'] ) {
-						$valid = true;
-					}
-					break;
-				case 'buyer':
-					if ( isset( $token_data['user']['idNumber'] ) && '' !== $token_data['user']['idNumber'] ) {
-						$valid = true;
-					}
-					break;
+				switch ( $role ) {
+					case 'seller':
+						if ( isset( $token_data['bankAccount']['accountNumber'] ) && '' !== $token_data['bankAccount']['accountNumber'] ) {
+							$valid = true;
+						}
+						break;
+					case 'buyer':
+						if ( isset( $token_data['user']['idNumber'] ) && '' !== $token_data['user']['idNumber'] ) {
+							$valid = true;
+						}
+						break;
+				}
+			} catch ( \Exception $e ) {
+				$valid = false;
 			}
 		}
 
@@ -449,17 +453,15 @@ class TradeSafe {
 		if ( get_option( 'tradesafe_client_id' ) && get_option( 'tradesafe_client_secret' ) ) {
 			$client = tradesafe_api_client();
 
-			if ( is_null( $client ) ) {
-				echo "<table class='form-table' role='presentation'><tbody>";
-				echo "<tr><th scope='row'>Error:</th><td> Could not connect to server</td></tr>";
-				echo '</tbody></table>';
-				return;
-			}
-
 			if ( is_array( $client ) && isset( $client['error'] ) ) {
 				echo "<table class='form-table' role='presentation'><tbody>";
 				echo "<tr><th scope='row'>Error:</th><td> Could not connect to server</td></tr>";
 				echo "<tr><th scope='row'>Reason:</th><td> " . esc_attr( $client['error'] ) . '</td></tr>';
+				echo '</tbody></table>';
+				return;
+			} elseif ( is_null( $client ) ) {
+				echo "<table class='form-table' role='presentation'><tbody>";
+				echo "<tr><th scope='row'>Error:</th><td> Could not connect to server?</td></tr>";
 				echo '</tbody></table>';
 				return;
 			}
@@ -534,7 +536,7 @@ class TradeSafe {
 			),
 		);
 
-		if ( ! is_null( $client ) ) {
+		if ( ! is_null( $client ) && is_object( $client ) ) {
 			$industries = $client->getEnums( 'Industry' );
 		}
 
@@ -789,7 +791,7 @@ class TradeSafe {
 	public static function add_gateway_fee() {
 		$client = tradesafe_api_client();
 
-		if ( is_admin() && ! defined( 'DOING_AJAX' ) || is_null( $client ) ) {
+		if ( is_admin() && ! defined( 'DOING_AJAX' ) || is_null( $client ) || is_array( $client ) ) {
 			return;
 		}
 

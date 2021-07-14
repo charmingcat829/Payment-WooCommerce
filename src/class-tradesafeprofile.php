@@ -41,7 +41,7 @@ class TradeSafeProfile {
 		$client = tradesafe_api_client();
 		$user   = wp_get_current_user();
 
-		if ( is_null( $client ) ) {
+		if ( is_null( $client ) || is_array( $client ) ) {
 			echo "<table class='form-table' role='presentation'><tbody>";
 			echo "<tr><th scope='row'>Error:</th><td> TradeSafe Payment Gateway not configured</td></tr>";
 			echo '</tbody></table>';
@@ -62,13 +62,6 @@ class TradeSafeProfile {
 
 		if ( $token_id ) {
 			$token_data = $client->getToken( $token_id );
-		}
-
-		if ( is_null( $client ) ) {
-			echo "<table class='form-table' role='presentation'><tbody>";
-			echo "<tr><th scope='row'>Error:</th><td> Could not connect to server</td></tr>";
-			echo '</tbody></table>';
-			return;
 		}
 
 		include_once dirname( __DIR__ ) . '/templates/myaccount/form-tradesafe-token-user.php';
@@ -95,7 +88,7 @@ class TradeSafeProfile {
 			return;
 		}
 
-		if ( empty( $_POST['action'] ) || 'save_account_details' !== $_POST['action'] || is_null( $client ) ) {
+		if ( empty( $_POST['action'] ) || 'save_account_details' !== $_POST['action'] || is_null( $client ) || is_array( $client ) ) {
 			return;
 		}
 

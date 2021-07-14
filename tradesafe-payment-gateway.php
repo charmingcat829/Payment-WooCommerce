@@ -143,11 +143,13 @@ function tradesafe_api_client() {
 	} catch ( Exception $e ) {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
 		    // phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( 'TradeSafe: ERROR: ' . $e->getMessage() );
+			error_log( 'TradeSafe Error: ' . $e->getMessage() );
             // phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		}
 
-		return null;
+		return array(
+			'error' => 'TradeSafe Error: ' . $e->getMessage(),
+		);
 	}
 
 	return $client;
