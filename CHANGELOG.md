@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [1.2.3](https://github.com/tradesafe/plugin-woocommerce/compare/v1.2.2...v1.2.3) (2021-07-14)
+
+
+### Bug Fixes
+
+* Added status section to plugin settings page to help with debugging ([d304a6](https://github.com/tradesafe/plugin-woocommerce/commit/d304a65a203fe20cdc474fcb2d0427abe20da668))
+
+---
+
 ## [1.2.2](https://github.com/tradesafe/plugin-woocommerce/compare/v1.2.1...v1.2.2) (2021-07-13)
 
 
