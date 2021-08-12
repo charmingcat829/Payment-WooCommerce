@@ -24,7 +24,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	public function __construct() {
 		$this->id                 = 'tradesafe';
 		$this->method_title       = __( 'TradeSafe Escrow', 'tradesafe-payment-gateway' );
-		$this->method_description = __( 'TradeSafe Escrow', 'tradesafe-payment-gateway' );
+		$this->method_description = __( 'TradeSafe keeps the funds (in trust) until you get what you’re paying for. Pay with Ozow, credit/debit card, EFT, or SnapScan', 'tradesafe-payment-gateway' );
 		$this->icon               = WP_PLUGIN_URL . '/' . plugin_basename( dirname( dirname( __FILE__ ) ) ) . '/assets/images/icon.svg';
 
 		$this->version              = WC_GATEWAY_TRADESAFE_VERSION;
