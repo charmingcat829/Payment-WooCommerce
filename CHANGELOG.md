@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [1.2.5](https://github.com/tradesafe/plugin-woocommerce/compare/v1.2.4...v1.2.5) (2021-08-12)
+### Bug Fixes
+
+* Updated to WordPress support to version 5.8 and WooCommerce support to version 5.5 ([560333](https://github.com/tradesafe/plugin-woocommerce/commit/56033394ff038bda11af88cd3f5e3e7f9f3e57be))
+
+---
+
 ## [1.2.4](https://github.com/tradesafe/plugin-woocommerce/compare/v1.2.3...v1.2.4) (2021-07-14)
 
 
