@@ -285,6 +285,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			);
 
 			$order->add_meta_data( 'tradesafe_transaction_id', $transaction['id'], true );
+			$order->save_meta_data();
 			$transaction_id = $transaction['id'];
 		} else {
 			$transaction_id = $order->get_meta( 'tradesafe_transaction_id', true );
