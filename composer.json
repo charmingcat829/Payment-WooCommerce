@@ -14,8 +14,9 @@
         }
     ],
     "require": {
-        "tradesafe/api": "dev-master",
-        "symfony/polyfill-php80": "^1.23"
+        "symfony/polyfill-php80": "^1.23",
+        "gmostafa/php-graphql-client": "^1.13",
+        "league/oauth2-client": "^2.6"
     },
     "require-dev": {
         "marcocesarato/php-conventional-changelog": "^1.10"
@@ -23,6 +24,7 @@
     "autoload": {
         "psr-4": {
             "TradeSafe\\WooCommerce\\": "src/",
+            "TradeSafe\\Helpers\\": "helpers/",
             "TradeSafe\\": "vendor/tradesafe/src/"
         }
     },

@@ -21,8 +21,8 @@ defined( 'ABSPATH' ) || exit;
 		<select name="tradesafe_token_organization_type">
 			<option selected="selected" disabled="disabled" hidden="hidden"></option>
 			<?php
-			foreach ( $organization_types as $organization_type ) {
-				echo '<option value="' . esc_attr( $organization_type['name'] ) . '" ' . ( ( $token_data['organization']['name'] ?? null ) === $organization_type ? 'selected' : '' ) . '>' . esc_attr( $organization_type['description'] ) . '</option>';
+			foreach ( $organization_types as $organization_name => $organization_description ) {
+				echo '<option value="' . esc_attr( $organization_name ) . '" ' . ( ( $token_data['organization']['type'] ?? null ) === $organization_name ? 'selected' : '' ) . '>' . esc_attr( $organization_description ) . '</option>';
 			}
 			?>
 		</select>

@@ -17,10 +17,8 @@ class TradeSafe {
 	 */
 	public static function init() {
 		// Actions.
-		add_action( 'admin_init', array( 'TradeSafe', 'settings_api_init' ) );
-		add_action( 'admin_menu', array( 'TradeSafe', 'register_options_page' ) );
 
-		add_action( 'woocommerce_cart_calculate_fees', array( 'TradeSafe', 'add_gateway_fee' ), PHP_INT_MAX );
+//		add_action( 'woocommerce_cart_calculate_fees', array( 'TradeSafe', 'add_gateway_fee' ), PHP_INT_MAX );
 		add_action( 'woocommerce_order_status_completed', array( 'TradeSafe', 'complete_transaction' ), PHP_INT_MAX );
 		add_action( 'woocommerce_review_order_before_payment', array( 'TradeSafe', 'refresh_checkout' ) );
 		add_action( 'admin_notices', array( 'TradeSafe', 'seller_account_incomplete_notice' ), -10000, 0 );
@@ -49,6 +47,11 @@ class TradeSafe {
 
 		add_rewrite_endpoint( 'tradesafe', EP_PAGES );
 
+		if (is_admin()) {
+		    wp_enqueue_script('tradesafe-payment-gateway-settings', TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/js/settings.js', ['jquery'], WC_GATEWAY_TRADESAFE_VERSION, true);
+		    wp_enqueue_style('tradesafe-payment-gateway-settings', TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/css/style.css', [], WC_GATEWAY_TRADESAFE_VERSION);
+        }
+
 		add_filter(
 			'query_vars',
 			function ( $query_vars ) {
@@ -58,219 +61,6 @@ class TradeSafe {
 				return $query_vars;
 			}
 		);
-	}
-
-	/**
-	 * Settings Page.
-	 */
-	public static function settings_api_init() {
-		add_settings_section(
-			'tradesafe_info_section',
-			'Callback URL\'s',
-			array(
-				'TradeSafe',
-				'settings_info_callback',
-			),
-			'tradesafe'
-		);
-
-		add_settings_section(
-			'tradesafe_settings_section',
-			'Application Settings',
-			array(
-				'TradeSafe',
-				'settings_application_callback',
-			),
-			'tradesafe'
-		);
-
-		add_settings_field(
-			'tradesafe_client_id',
-			'Client ID',
-			array(
-				'TradeSafe',
-				'setting_client_id_callback',
-			),
-			'tradesafe',
-			'tradesafe_settings_section'
-		);
-		register_setting( 'tradesafe', 'tradesafe_client_id' );
-
-		add_settings_field(
-			'tradesafe_client_secret',
-			'Client Secret',
-			array(
-				'TradeSafe',
-				'setting_client_secret_callback',
-			),
-			'tradesafe',
-			'tradesafe_settings_section'
-		);
-		register_setting( 'tradesafe', 'tradesafe_client_secret' );
-
-		add_settings_field(
-			'tradesafe_production_mode',
-			'Production Mode',
-			array(
-				'TradeSafe',
-				'setting_production_mode_callback',
-			),
-			'tradesafe',
-			'tradesafe_settings_section'
-		);
-		register_setting( 'tradesafe', 'tradesafe_production_mode' );
-
-		add_settings_section(
-			'tradesafe_transaction_section',
-			'Transaction Settings',
-			array(
-				'TradeSafe',
-				'settings_transaction_callback',
-			),
-			'tradesafe'
-		);
-
-		add_settings_field(
-			'tradesafe_transaction_industry',
-			'Industry',
-			array(
-				'TradeSafe',
-				'setting_transaction_industry_callback',
-			),
-			'tradesafe',
-			'tradesafe_transaction_section'
-		);
-		register_setting( 'tradesafe', 'tradesafe_transaction_industry' );
-
-		add_settings_field(
-			'tradesafe_fee_allocation',
-			'Who absorbs TradeSafe’s fee (this is 0.75% of the transaction value)?',
-			array(
-				'TradeSafe',
-				'setting_tradesafe_fee_allocation_callback',
-			),
-			'tradesafe',
-			'tradesafe_transaction_section'
-		);
-		register_setting( 'tradesafe', 'tradesafe_fee_allocation' );
-
-		add_settings_field(
-			'tradesafe_gateway_fee_allocation',
-			'Who absorbs the remaining payment gateway fee?',
-			array(
-				'TradeSafe',
-				'setting_tradesafe_gateway_fee_allocation_callback',
-			),
-			'tradesafe',
-			'tradesafe_transaction_section'
-		);
-		register_setting( 'tradesafe', 'tradesafe_gateway_fee_allocation' );
-
-		add_settings_field(
-			'tradesafe_accept_transaction',
-			'Allow buyers to accept goods to release funds',
-			array(
-				'TradeSafe',
-				'setting_tradesafe_accept_transaction_callback',
-			),
-			'tradesafe',
-			'tradesafe_transaction_section'
-		);
-		register_setting( 'tradesafe', 'tradesafe_accept_transaction' );
-
-		if ( tradesafe_has_dokan() ) {
-			add_settings_field(
-				'tradesafe_payout_fee',
-				'Who absorbs the pay-out fee (R10 for every additional vendor)?',
-				array(
-					'TradeSafe',
-					'setting_payout_fee_dokan_callback',
-				),
-				'tradesafe',
-				'tradesafe_transaction_section'
-			);
-			add_settings_field(
-				'tradesafe_transaction_fee',
-				'Marketplace Commission Fee',
-				array(
-					'TradeSafe',
-					'setting_transaction_fee_dokan_callback',
-				),
-				'tradesafe',
-				'tradesafe_transaction_section'
-			);
-
-			add_settings_field(
-				'tradesafe_transaction_fee_type',
-				'Marketplace Commission Type',
-				array(
-					'TradeSafe',
-					'setting_transaction_fee_type_dokan_callback',
-				),
-				'tradesafe',
-				'tradesafe_transaction_section'
-			);
-
-			add_settings_field(
-				'tradesafe_transaction_fee_allocation',
-				'Marketplace Commission Fee Allocation',
-				array(
-					'TradeSafe',
-					'setting_transaction_fee_allocation_dokan_callback',
-				),
-				'tradesafe',
-				'tradesafe_transaction_section'
-			);
-		} else {
-			add_settings_field(
-				'tradesafe_transaction_marketplace',
-				'Is this website a Marketplace?',
-				array(
-					'TradeSafe',
-					'setting_transaction_agent_callback',
-				),
-				'tradesafe',
-				'tradesafe_transaction_section'
-			);
-			register_setting( 'tradesafe', 'tradesafe_transaction_marketplace' );
-
-			add_settings_field(
-				'tradesafe_transaction_fee',
-				'Marketplace Commission Fee',
-				array(
-					'TradeSafe',
-					'setting_transaction_fee_callback',
-				),
-				'tradesafe',
-				'tradesafe_transaction_section'
-			);
-
-			add_settings_field(
-				'tradesafe_transaction_fee_type',
-				'Marketplace Commission Type',
-				array(
-					'TradeSafe',
-					'setting_transaction_fee_type_callback',
-				),
-				'tradesafe',
-				'tradesafe_transaction_section'
-			);
-
-			add_settings_field(
-				'tradesafe_transaction_fee_allocation',
-				'Marketplace Commission Fee Allocation',
-				array(
-					'TradeSafe',
-					'setting_transaction_fee_allocation_callback',
-				),
-				'tradesafe',
-				'tradesafe_transaction_section'
-			);
-		}
-
-		register_setting( 'tradesafe', 'tradesafe_transaction_fee' );
-		register_setting( 'tradesafe', 'tradesafe_transaction_fee_type' );
-		register_setting( 'tradesafe', 'tradesafe_transaction_fee_allocation' );
 	}
 
 	/**
@@ -294,7 +84,7 @@ class TradeSafe {
 	 * @return bool
 	 */
 	private static function is_valid_token( string $role ): bool {
-		$client   = tradesafe_api_client();
+		$client   = new \TradeSafe\Helpers\TradeSafeApiClient();
 		$user     = wp_get_current_user();
 		$meta_key = 'tradesafe_token_id';
 		$valid    = false;
@@ -331,336 +121,6 @@ class TradeSafe {
 		}
 
 		return $valid;
-	}
-
-	/**
-	 * Generate the required urls needed for application registration.
-	 */
-	public static function settings_info_callback() {
-		$urls = array(
-			'oauth_callback' => site_url( '/tradesafe/oauth/callback/' ),
-			'callback'       => site_url( '/tradesafe/callback/' ),
-			'success'        => wc_get_endpoint_url( 'orders', '', get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) ),
-			'failure'        => wc_get_endpoint_url( 'orders', '', get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) ),
-		);
-
-		echo '<p>The following URL\'s can be used to register your application with TradeSafe.</p>';
-		echo '<table class="form-table">
-        <tbody>
-        <tr>
-            <th scope="row">OAuth Callback URL</th>
-            <td>' . esc_attr( $urls['oauth_callback'] ) . '</td>
-        </tr>
-        <tr>
-            <th scope="row">API Callback URL</th>
-            <td>' . esc_attr( $urls['callback'] ) . '</td>
-        </tr>
-        <tr>
-            <th scope="row">Success URL</th>
-            <td>' . esc_attr( $urls['success'] ) . '</td>
-        </tr>
-        <tr>
-            <th scope="row">Failure URL</th>
-            <td>' . esc_attr( $urls['failure'] ) . '</td>
-        </tr>
-        </tbody>
-    </table>';
-
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
-			require plugin_dir_path( __FILE__ ) . '../config.php';
-
-			echo '<h2>Plugin Status</h2>';
-			echo '<table class="form-table"><tbody>';
-
-			// PHP Version.
-			echo '<tr><th>PHP Version</th><td>' . esc_attr( phpversion() ) . '</td></tr>';
-			echo '<tr><th>WordPress Version</th><td>' . esc_attr( get_bloginfo( 'version' ) ) . '</td></tr>';
-			echo '<tr><th>Woocommerce Version</th><td>' . esc_attr( WC_VERSION ) . '</td></tr>';
-			echo '<tr><th>Plugin Version</th><td>' . esc_attr( WC_GATEWAY_TRADESAFE_VERSION ) . '</td></tr>';
-
-			$domain = $api_domains['sit'];
-
-			if ( get_option( 'tradesafe_production_mode' ) ) {
-				$domain = $api_domains['prod'];
-			}
-
-			$api_status        = false;
-			$api_status_reason = null;
-
-			$auth_status        = false;
-			$auth_status_reason = null;
-
-			try {
-				$client = new \GuzzleHttp\Client(
-					array(
-						'base_uri' => sprintf( 'https://%s/', $domain ),
-						'timeout'  => 2.0,
-					)
-				);
-
-				$response = $client->request( 'GET', 'api/ping' );
-
-				if ( $response->getStatusCode() === 200 && $response->getBody()->getContents() === 'pong' ) {
-					$api_status = true;
-				} else {
-					$auth_status_reason = sprintf( '[%s]: %s', $response->getStatusCode(), $response->getBody()->getContents() );
-				}
-			} catch ( \Exception $e ) {
-				$api_status_reason = $e->getMessage();
-			}
-
-			echo '<tr><th>API Domain</th><td>' . esc_attr( $domain ) . ' [' . ( $api_status ? 'OK' : 'ERROR' ) . ']</td></tr>';
-
-			if ( $api_status_reason ) {
-				echo '<tr><th>API Error</th><td>' . esc_attr( $api_status_reason ) . '</td></tr>';
-			}
-
-			try {
-				$client = new \GuzzleHttp\Client(
-					array(
-						'base_uri' => sprintf( 'https://%s/', $auth_domain ),
-						'timeout'  => 2.0,
-					)
-				);
-
-				$response = $client->request( 'GET', 'ping' );
-
-				if ( $response->getStatusCode() === 200 && $response->getBody()->getContents() === 'pong' ) {
-					$auth_status = true;
-				} else {
-					$auth_status_reason = sprintf( '[%s]: %s', $response->getStatusCode(), $response->getBody()->getContents() );
-				}
-			} catch ( \Exception $e ) {
-				$auth_status_reason = $e->getMessage();
-			}
-
-			echo '<tr><th>Authentication Domain</th><td>' . esc_attr( $auth_domain ) . ' [' . ( $auth_status ? 'OK' : 'ERROR' ) . ']</td></tr>';
-
-			if ( $auth_status_reason ) {
-				echo '<tr><th>Authentication Error</th><td>' . esc_attr( $auth_status_reason ) . '</td></tr>';
-			}
-
-			echo '</tbody></table>';
-		}
-	}
-
-	/**
-	 * Display the status of connection to the API.
-	 *
-	 * If a request is successful display the admins details. Otherwise display an error message.
-	 */
-	public static function settings_application_callback() {
-		if ( get_option( 'tradesafe_client_id' ) && get_option( 'tradesafe_client_secret' ) ) {
-			$client = tradesafe_api_client();
-
-			if ( is_array( $client ) && isset( $client['error'] ) ) {
-				echo "<table class='form-table' role='presentation'><tbody>";
-				echo "<tr><th scope='row'>Error:</th><td> Could not connect to server</td></tr>";
-				echo "<tr><th scope='row'>Reason:</th><td> " . esc_attr( $client['error'] ) . '</td></tr>';
-				echo '</tbody></table>';
-				return;
-			} elseif ( is_null( $client ) ) {
-				echo "<table class='form-table' role='presentation'><tbody>";
-				echo "<tr><th scope='row'>Error:</th><td> Could not connect to server?</td></tr>";
-				echo '</tbody></table>';
-				return;
-			}
-
-			try {
-				$profile    = $client->getProfile();
-				$token_data = $client->getToken( $profile['token'] );
-
-				echo "<table class='form-table' role='presentation'><tbody>";
-				echo "<tr><th scope='row'>Organization Name:</th><td>" . esc_attr( $token_data['organization']['name'] ) . '</td></tr>';
-				echo "<tr><th scope='row'>Registration Number:</th><td>" . esc_attr( $token_data['organization']['registration'] ) . '</td></tr>';
-				if ( $token_data['organization']['taxNumber'] ) {
-					echo "<tr><th scope='row'>Tax Number:</th><td>" . esc_attr( $token_data['organization']['taxNumber'] ) . '</td></tr>';
-				}
-				echo "<tr><th scope='row'>Name:</th><td>" . esc_attr( $token_data['user']['givenName'] ) . ' ' . esc_attr( $token_data['user']['familyName'] ) . '</td></tr>';
-				echo "<tr><th scope='row'>Email:</th><td>" . esc_attr( $token_data['user']['email'] ) . '</td></tr>';
-				echo "<tr><th scope='row'>Mobile:</th><td>" . esc_attr( $token_data['user']['mobile'] ) . '</td></tr>';
-				echo '</tbody></table>';
-			} catch ( \GuzzleHttp\Exception\ClientException $e ) {
-				echo "<table class='form-table' role='presentation'><tbody>";
-				echo "<tr><th scope='row'>Error:</th><td> Could not connect to server</td></tr>";
-				echo "<tr><th scope='row'>Code:</th><td> " . esc_attr( $e->getCode() ) . '</td></tr>';
-				echo '</tbody></table>';
-				return;
-			} catch ( Exception $e ) {
-				echo "<table class='form-table' role='presentation'><tbody>";
-				echo "<tr><th scope='row'>Error:</th><td> " . esc_attr( $e->getMessage() ) . '</td></tr>';
-				echo '</tbody></table>';
-				return;
-			}
-		}
-	}
-
-	/**
-	 * Transaction settings section.
-	 */
-	public static function settings_transaction_callback() {
-	}
-
-	/**
-	 * Client ID field.
-	 */
-	public static function setting_client_id_callback() {
-		echo '<input name="tradesafe_client_id" id="tradesafe_client_id" type="text" value="' . esc_attr( get_option( 'tradesafe_client_id' ) ) . '" class="regular-text ltr" />';
-	}
-
-	/**
-	 * Client secret field.
-	 */
-	public static function setting_client_secret_callback() {
-		echo '<input name="tradesafe_client_secret" id="tradesafe_client_secret" type="password" value="' . esc_attr( get_option( 'tradesafe_client_secret' ) ) . '" class="regular-text ltr" />';
-	}
-
-	/**
-	 * Production mode toggle.
-	 */
-	public static function setting_production_mode_callback() {
-		echo '<input name="tradesafe_production_mode" id="tradesafe_production_mode" type="checkbox" value="1" ' . checked( 1, esc_attr( get_option( 'tradesafe_production_mode', 0 ) ), false ) . ' />';
-		echo '<p class="description" id="tradesafe_production_mode_description">Use the production API. <strong>Do not enable this option until you have completed testing and have requested your application to be approved.</strong></p>';
-	}
-
-	/**
-	 * Default industry for transactions.
-	 */
-	public static function setting_transaction_industry_callback() {
-		$client = tradesafe_api_client();
-
-		$industries = array(
-			array(
-				'name'        => 'GENERAL_GOODS_SERVICES',
-				'description' => 'General Goods & Services',
-			),
-		);
-
-		if ( ! is_null( $client ) && is_object( $client ) ) {
-			$industries = $client->getEnums( 'Industry' );
-		}
-
-		echo '<select name="tradesafe_transaction_industry" class="small-text ltr">';
-
-		foreach ( $industries as $industry ) {
-			echo '<option ' . ( esc_attr( get_option( 'tradesafe_transaction_industry', 'GENERAL_GOODS_SERVICES' ) ) === $industry['name'] ? 'selected' : '' ) . ' value="' . esc_attr( $industry['name'] ) . '">' . esc_attr( $industry['description'] ) . '</option>';
-		}
-
-		echo '</select>';
-	}
-
-	/**
-	 * Set which role should cover TradeSafe's fee.
-	 */
-	public static function setting_tradesafe_fee_allocation_callback() {
-		echo '<select name="tradesafe_fee_allocation" class="small-text ltr">';
-		echo '<option ' . ( get_option( 'tradesafe_fee_allocation', 'SELLER' ) === 'seller' ? 'selected' : '' ) . ' value="SELLER">Seller / Marketplace</option>';
-		echo '<option ' . ( get_option( 'tradesafe_fee_allocation' ) === 'BUYER' ? 'selected' : '' ) . ' value="BUYER">Buyer</option>';
-		echo '</select>';
-	}
-
-	/**
-	 * Set which role should pay the additional gateway fee (Credit Card, Instant EFT, Snapscan).
-	 */
-	public static function setting_tradesafe_gateway_fee_allocation_callback() {
-		echo '<select name="tradesafe_gateway_fee_allocation" class="small-text ltr">';
-		echo '<option ' . ( get_option( 'tradesafe_gateway_fee_allocation', 'SELLER' ) === 'seller' ? 'selected' : '' ) . ' value="SELLER">Seller / Marketplace</option>';
-		echo '<option ' . ( get_option( 'tradesafe_gateway_fee_allocation' ) === 'BUYER' ? 'selected' : '' ) . ' value="BUYER">Buyer</option>';
-		echo '</select>';
-	}
-
-	/**
-	 * Allow/Disable the acceptance of an order/transaction by the buyer.
-	 */
-	public static function setting_tradesafe_accept_transaction_callback() {
-		echo '<input name="tradesafe_accept_transaction" id="tradesafe_accept_transaction" type="checkbox" value="1" ' . checked( 1, get_option( 'tradesafe_accept_transaction', true ), false ) . ' />';
-	}
-
-	/**
-	 * Enable support for multiple vendors is not using a multi-vendor plugin.
-	 */
-	public static function setting_transaction_agent_callback() {
-		echo '<input name="tradesafe_transaction_marketplace" id="tradesafe_transaction_marketplace" type="checkbox" value="1" ' . checked( 1, get_option( 'tradesafe_transaction_marketplace' ), false ) . ' />';
-	}
-
-	/**
-	 * Set the commission fee.
-	 */
-	public static function setting_transaction_fee_callback() {
-		echo '<input name="tradesafe_transaction_fee" id="tradesafe_transaction_fee" type="number" value="' . esc_attr( get_option( 'tradesafe_transaction_fee' ) ) . '" class="small-text ltr" />';
-	}
-
-	/**
-	 * Set the commission type.
-	 */
-	public static function setting_transaction_fee_type_callback() {
-		echo '<select name="tradesafe_transaction_fee_type" class="small-text ltr">';
-		echo '<option ' . ( esc_attr( get_option( 'tradesafe_transaction_fee_type' ) ) === 'PERCENT' ? 'selected' : '' ) . ' value="PERCENT">Percent</option>';
-		echo '<option ' . ( esc_attr( get_option( 'tradesafe_transaction_fee_type' ) ) === 'FIXED' ? 'selected' : '' ) . ' value="FIXED">Fixed</option>';
-		echo '</select>';
-	}
-
-	/**
-	 * Set which role should pay the commission fee.
-	 */
-	public static function setting_transaction_fee_allocation_callback() {
-		echo '<select name="tradesafe_transaction_fee_allocation" class="small-text ltr">';
-		echo '<option ' . ( esc_attr( get_option( 'tradesafe_transaction_fee_allocation', 'SELLER' ) ) === 'seller' ? 'selected' : '' ) . ' value="SELLER">Vendor</option>';
-		echo '<option ' . ( esc_attr( get_option( 'tradesafe_transaction_fee_allocation' ) ) === 'BUYER' ? 'selected' : '' ) . ' value="BUYER">Buyer</option>';
-		echo '</select>';
-	}
-
-	/**
-	 * Set the role to pay the commission when using Dokan.
-	 */
-	public static function setting_payout_fee_dokan_callback() {
-		echo '<select name="tradesafe_payout_fee" class="small-text ltr">';
-		echo '<option ' . ( get_option( 'tradesafe_payout_fee', 'SELLER' ) === 'seller' ? 'selected' : '' ) . ' value="SELLER">Marketplace</option>';
-		echo '<option ' . ( get_option( 'tradesafe_payout_fee' ) === 'BUYER' ? 'selected' : '' ) . ' value="BUYER">Buyer</option>';
-		echo '<option ' . ( get_option( 'tradesafe_payout_fee' ) === 'VENDOR' ? 'selected' : '' ) . ' value="VENDOR">Vendor</option>';
-		echo '</select>';
-	}
-
-	/**
-	 * Show the commission set by the Dokan plugin.
-	 */
-	public static function setting_transaction_fee_dokan_callback() {
-		echo esc_attr( dokan_get_option( 'admin_percentage', 'dokan_selling', 0 ) )
-			. ' (<a href="' . esc_attr( admin_url( 'admin.php?page=dokan#/settings' ) ) . '">Change</a>)';
-	}
-
-
-	/**
-	 * Show the commission type set by the Dokan plugin.
-	 */
-	public static function setting_transaction_fee_type_dokan_callback() {
-		echo esc_attr( ucwords( dokan_get_option( 'commission_type', 'dokan_selling', 'percentage' ) ) )
-			. ' (<a href="' . esc_attr( admin_url( 'admin.php?page=dokan#/settings' ) ) . '">Change</a>)';
-	}
-
-	/**
-	 * Show who will pay the commission set by the Dokan plugin.
-	 */
-	public static function setting_transaction_fee_allocation_dokan_callback() {
-		echo 'Vendor';
-	}
-
-	/**
-	 * Add a link to the admin sidebar.
-	 */
-	public static function register_options_page() {
-		add_menu_page(
-			__( 'TradeSafe', 'tradesafe-payment-gateway' ),
-			__( 'TradeSafe', 'tradesafe-payment-gateway' ),
-			'manage_options',
-			'tradesafe',
-			array(
-				'TradeSafe',
-				'settings_page',
-			),
-			'dashicons-admin-settings',
-			58
-		);
 	}
 
 	/**
@@ -738,7 +198,7 @@ class TradeSafe {
 						}
 
 						if ( ( $order->has_status( 'on-hold' ) || $order->has_status( 'pending' ) ) && 'FUNDS_RECEIVED' === $data['state'] ) {
-							$client = tradesafe_api_client();
+							$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 
 							$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
 							$client->allocationStartDelivery( $transaction['allocations'][0]['id'] );
@@ -789,7 +249,7 @@ class TradeSafe {
 	 * Calculate and add escrow fee to checkout page.
 	 */
 	public static function add_gateway_fee() {
-		$client = tradesafe_api_client();
+		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 
 		if ( is_admin() && ! defined( 'DOING_AJAX' ) || is_null( $client ) || is_array( $client ) ) {
 			return;
@@ -888,7 +348,7 @@ class TradeSafe {
 	 * @param int $order_id WooCommerce order id.
 	 */
 	public static function complete_transaction( int $order_id ) {
-		$client = tradesafe_api_client();
+		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 		$order  = wc_get_order( $order_id );
 
 		try {
@@ -993,7 +453,7 @@ class TradeSafe {
 	 * @return array
 	 */
 	public static function checkout_field_defaults( array $fields ): array {
-		$client = tradesafe_api_client();
+		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 		$user   = wp_get_current_user();
 
 		$meta_key = 'tradesafe_token_id';

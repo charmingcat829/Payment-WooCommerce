@@ -10,7 +10,7 @@
  * Requires at least: 5.5
  * Requires PHP: 7.4
  * Tested up to: 5.8
- * WC tested up to: 5.5
+ * WC tested up to: 5.6
  * WC requires at least: 4.6
  *
  * @package TradeSafe Payment Gateway
@@ -29,6 +29,7 @@ function woocommerce_tradesafe_init() {
 	}
 
 	define( 'WC_GATEWAY_TRADESAFE_VERSION', '1.2.5' );
+	define( 'TRADESAFE_PAYMENT_GATEWAY_BASE_DIR', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
 
 	$autoloader = dirname( __DIR__ ) . DIRECTORY_SEPARATOR . plugin_basename( __DIR__ ) . '/vendor/autoload.php';
 
@@ -41,9 +42,30 @@ function woocommerce_tradesafe_init() {
 		return;
 	}
 
+	$settings = get_option('woocommerce_tradesafe_settings');
+
+	if ( !isset($settings['client_id']) || ( '' === $settings['client_id'] && '' !== get_option('tradesafe_client_id', '') ) ) {
+	    $settings['client_id'] = get_option('tradesafe_client_id');
+	    $settings['client_secret'] = get_option('tradesafe_client_secret');
+	    $settings['industry'] = get_option('tradesafe_transaction_industry');
+
+        $settings['environment'] = get_option('tradesafe_production_mode', 'SANDBOX') ? 'PROD' : 'SANDBOX';
+
+        $settings['is_marketplace'] = get_option('tradesafe_transaction_marketplace', null) ? 'yes' : 'no';
+
+	    $settings['processing_fee'] = get_option('tradesafe_transaction_fee_allocation');
+        $settings['commission'] = get_option('tradesafe_transaction_fee', null);
+	    $settings['commission_type'] = get_option('tradesafe_transaction_fee_type', null);
+
+	    $settings['buyers_accept'] = get_option('tradesafe_accept_transaction', null) ? 'yes' : 'no';
+
+        update_option( 'woocommerce_tradesafe_settings', apply_filters( 'woocommerce_settings_api_sanitized_fields_tradesafe', $settings ), 'yes' );
+    }
+
 	require_once plugin_basename( 'src/class-tradesafe.php' );
 	require_once plugin_basename( 'src/class-tradesafeprofile.php' );
 	require_once plugin_basename( 'src/class-wc-gateway-tradesafe.php' );
+	require_once plugin_basename( 'helpers/class-tradesafe-api-client.php' );
 
 	load_plugin_textdomain( 'tradesafe-payment-gateway', false, trailingslashit( dirname( plugin_basename( __FILE__ ) ) ) );
 	add_filter( 'woocommerce_payment_gateways', 'woocommerce_tradesafe_add_gateway' );
@@ -62,7 +84,9 @@ add_action( 'init', array( 'TradeSafeProfile', 'init' ) );
 function woocommerce_tradesafe_plugin_links( $links ): array {
 	$settings_url = add_query_arg(
 		array(
-			'page' => 'tradesafe',
+			'page' => 'wc-settings',
+            'tab' => 'checkout',
+            'section' => 'tradesafe'
 		),
 		admin_url( 'admin.php' )
 	);
@@ -108,51 +132,6 @@ add_filter( 'plugin_row_meta', 'tradesafe_payment_gateway_plugin_row_meta', 10, 
 function woocommerce_tradesafe_add_gateway( $methods ) {
 	$methods[] = 'WC_Gateway_TradeSafe';
 	return $methods;
-}
-
-/**
- * Initiate the TradeSafe API Client.
- *
- * @return \TradeSafe\Api\Client
- */
-function tradesafe_api_client() {
-	require 'config.php';
-
-	$domain = $api_domains['sit'];
-
-	if ( get_option( 'tradesafe_production_mode' ) ) {
-		$domain = $api_domains['prod'];
-	}
-
-	$client = new \TradeSafe\Api\Client( $domain, $auth_domain );
-
-	try {
-		$client->configure( get_option( 'tradesafe_client_id' ), get_option( 'tradesafe_client_secret' ), site_url( '/tradesafe/oauth/callback/' ) );
-
-		if ( get_transient( 'tradesafe_client_token' ) ) {
-			$client->setAuthToken( get_transient( 'tradesafe_client_token' ) );
-		} else {
-			$access_token = $client->generateAuthToken();
-
-			if ( is_array( $access_token ) ) {
-				// Get number of seconds token is valid.
-				$expires = $access_token['expires'] - time() - 30;
-				set_transient( 'tradesafe_client_token', $access_token['token'], $expires );
-			}
-		}
-	} catch ( Exception $e ) {
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
-		    // phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( 'TradeSafe Error: ' . $e->getMessage() );
-            // phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
-		}
-
-		return array(
-			'error' => 'TradeSafe Error: ' . $e->getMessage(),
-		);
-	}
-
-	return $client;
 }
 
 /**

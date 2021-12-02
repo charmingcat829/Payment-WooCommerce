@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e555a1bd3b573283689d0065ddcaff0d",
+    "content-hash": "a9c0cd6a28a45a3bad0d6a5cdccf3051",
     "packages": [
         {
             "name": "gmostafa/php-graphql-client",
@@ -715,60 +715,6 @@
                 }
             ],
             "time": "2021-07-28T13:41:28+00:00"
-        },
-        {
-            "name": "tradesafe/api",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/tradesafe/tradesafe-api-php.git",
-                "reference": "3dd8a75eeaf6e85a281f9bbf5a0b67c74677b871"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/tradesafe/tradesafe-api-php/zipball/3dd8a75eeaf6e85a281f9bbf5a0b67c74677b871",
-                "reference": "3dd8a75eeaf6e85a281f9bbf5a0b67c74677b871",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "gmostafa/php-graphql-client": "^1.8",
-                "guzzlehttp/guzzle": "^6.0|^7.0",
-                "league/oauth2-client": "^2.5",
-                "php": ">=7.3.0"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "TradeSafe\\Api\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Richard Banks",
-                    "email": "richard.banks@tradesafe.co.za",
-                    "homepage": "https://www.tradesafe.co.za"
-                }
-            ],
-            "description": "PHP client for the TradeSafe GraphQL API",
-            "homepage": "https://developer.tradesafe.co.za",
-            "keywords": [
-                "api",
-                "graphql",
-                "oauth",
-                "payment",
-                "tradesafe"
-            ],
-            "support": {
-                "issues": "https://github.com/tradesafe/tradesafe-api-php/issues",
-                "source": "https://github.com/tradesafe/tradesafe-api-php"
-            },
-            "time": "2021-06-30T12:59:03+00:00"
         }
     ],
     "packages-dev": [
@@ -1628,9 +1574,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "tradesafe/api": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],

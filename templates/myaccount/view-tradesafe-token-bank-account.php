@@ -21,9 +21,9 @@ defined( 'ABSPATH' ) || exit;
 	<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
 		<label for="tradesafe_token_bank"><?php esc_html_e( 'Bank', 'woocommerce-tradesafe-gateway' ); ?></label>
 		<?php
-		foreach ( $banks as $bank ) {
-			if ( $bank['name'] === $token_data['bankAccount']['bank'] ?? null ) {
-				echo esc_attr( $bank['description'] );
+		foreach ( $banks as $bank_name => $bank_description ) {
+			if ( $bank_name === $token_data['bankAccount']['bank'] ?? null ) {
+				echo esc_attr( $bank_description );
 			}
 		}
 		?>
@@ -38,9 +38,9 @@ defined( 'ABSPATH' ) || exit;
 	<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-last">
 		<label for="tradesafe_token_bank_account_type"><?php esc_html_e( 'Account type', 'woocommerce-tradesafe-gateway' ); ?></label>
 		<?php
-		foreach ( $bank_account_types as $bank_account_type ) {
-			if ( $bank_account_type['name'] === $token_data['bankAccount']['accountType'] ?? null ) {
-				echo esc_attr( $bank_account_type['description'] );
+		foreach ( $bank_account_types as $bank_account_name => $bank_account_description ) {
+			if ( $bank_account_name === $token_data['bankAccount']['accountType'] ?? null ) {
+				echo esc_attr( $bank_account_description );
 			}
 		}
 		?>

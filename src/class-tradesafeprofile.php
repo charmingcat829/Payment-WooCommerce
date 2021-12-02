@@ -11,8 +11,6 @@ defined( 'ABSPATH' ) || exit;
  * Class TradeSafeProfile
  */
 class TradeSafeProfile {
-
-
 	/**
 	 * Initiate the class.
 	 */
@@ -38,7 +36,7 @@ class TradeSafeProfile {
 	 * Add TradeSafe fields to user account form.
 	 */
 	public static function edit_account_form() {
-		$client = tradesafe_api_client();
+	    $client = new \TradeSafe\Helpers\TradeSafeApiClient();
 		$user   = wp_get_current_user();
 
 		if ( is_null( $client ) || is_array( $client ) ) {
@@ -55,9 +53,9 @@ class TradeSafeProfile {
 		}
 
 		$token_id           = get_user_meta( $user->ID, $meta_key, true );
-		$banks              = $client->getEnums( 'UniversalBranchCode' );
-		$bank_account_types = $client->getEnums( 'BankAccountType' );
-		$organization_types = $client->getEnums( 'OrganizationType' );
+		$banks              = $client->getEnum( 'UniversalBranchCode' );
+		$bank_account_types = $client->getEnum( 'BankAccountType' );
+		$organization_types = $client->getEnum( 'OrganizationType' );
 		$token_data         = null;
 
 		if ( $token_id ) {
@@ -82,7 +80,7 @@ class TradeSafeProfile {
 	public static function save_account_details( int $user_id ) {
 		// Nonce check copied from woocommerce/includes/class-wc-form-handler.php@save_account_details.
         $nonce_value = wc_get_var($_REQUEST['save-account-details-nonce'], wc_get_var($_REQUEST['_wpnonce'], '')); // @codingStandardsIgnoreLine.
-		$client      = tradesafe_api_client();
+		$client      = new \TradeSafe\Helpers\TradeSafeApiClient();
 
 		if ( ! wp_verify_nonce( $nonce_value, 'save_account_details' ) ) {
 			return;
@@ -153,7 +151,7 @@ class TradeSafeProfile {
 	 * @param WC_Customer $customer User account details.
 	 */
 	public static function woocommerce_checkout_update_customer( WC_Customer $customer ) {
-		$client = tradesafe_api_client();
+		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 
 		$meta_key = 'tradesafe_token_id';
 

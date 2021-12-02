@@ -22,8 +22,8 @@ defined( 'ABSPATH' ) || exit;
 		<select name="tradesafe_token_bank" id="tradesafe_token_bank" class="woocommerce-Input">
 			<option selected="selected" disabled="disabled" hidden="hidden"></option>
 			<?php
-			foreach ( $banks as $bank ) {
-				echo '<option value="' . esc_attr( $bank['name'] ) . '">' . esc_attr( $bank['description'] ) . '</option>';
+            foreach ( $banks as $bank_name => $bank_description ) {
+				echo '<option value="' . esc_attr( $bank_name ) . '">' . esc_attr( $bank_description ) . '</option>';
 			}
 			?>
 		</select>
@@ -40,8 +40,8 @@ defined( 'ABSPATH' ) || exit;
 		<select name="tradesafe_token_bank_account_type" id="tradesafe_token_bank_account_type">
 			<option selected="selected" disabled="disabled" hidden="hidden"></option>
 			<?php
-			foreach ( $bank_account_types as $bank_account_type ) {
-				echo '<option value="' . esc_attr( $bank_account_type['name'] ) . '">' . esc_attr( $bank_account_type['description'] ) . '</option>';
+            foreach ( $bank_account_types as $bank_account_name => $bank_account_description ) {
+				echo '<option value="' . esc_attr( $bank_account_name ) . '">' . esc_attr( $bank_account_description ) . '</option>';
 			}
 			?>
 		</select>
