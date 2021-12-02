@@ -586,10 +586,24 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway
                 'daysToInspect' => 7,
             );
 
-            $parties[] = array(
-                'role' => 'BUYER',
-                'token' => get_user_meta($user->ID, $meta_key, true),
-            );
+            if ($user->ID === 0) {
+                $token_data = $client->createToken([
+                    'givenName' => $order->data['billing']['first_name'],
+                    'familyName' => $order->data['billing']['last_name'],
+                    'email' => $order->data['billing']['email'],
+                    'mobile' => $order->data['billing']['phone']
+                ]);
+
+                $parties[] = array(
+                    'role' => 'BUYER',
+                    'token' => $token_data['id'],
+                );
+            } else {
+                $parties[] = array(
+                    'role' => 'BUYER',
+                    'token' => get_user_meta($user->ID, $meta_key, true),
+                );
+            }
 
             $parties[] = array(
                 'role' => 'SELLER',
