@@ -42,30 +42,30 @@ function woocommerce_tradesafe_init() {
 		return;
 	}
 
-	$settings = get_option('woocommerce_tradesafe_settings');
+	$settings = get_option( 'woocommerce_tradesafe_settings' );
 
-	if ( !isset($settings['client_id']) || ( '' === $settings['client_id'] && '' !== get_option('tradesafe_client_id', '') ) ) {
-	    $settings['client_id'] = get_option('tradesafe_client_id');
-	    $settings['client_secret'] = get_option('tradesafe_client_secret');
-	    $settings['industry'] = get_option('tradesafe_transaction_industry');
+	if ( ! isset( $settings['client_id'] ) || ( '' === $settings['client_id'] && '' !== get_option( 'tradesafe_client_id', '' ) ) ) {
+		$settings['client_id']     = get_option( 'tradesafe_client_id' );
+		$settings['client_secret'] = get_option( 'tradesafe_client_secret' );
+		$settings['industry']      = get_option( 'tradesafe_transaction_industry' );
 
-        $settings['environment'] = get_option('tradesafe_production_mode', 'SANDBOX') ? 'PROD' : 'SANDBOX';
+		$settings['environment'] = get_option( 'tradesafe_production_mode', 'SANDBOX' ) ? 'PROD' : 'SANDBOX';
 
-        $settings['is_marketplace'] = get_option('tradesafe_transaction_marketplace', null) ? 'yes' : 'no';
+		$settings['is_marketplace'] = get_option( 'tradesafe_transaction_marketplace', null ) ? 'yes' : 'no';
 
-	    $settings['processing_fee'] = get_option('tradesafe_transaction_fee_allocation');
-        $settings['commission'] = get_option('tradesafe_transaction_fee', null);
-	    $settings['commission_type'] = get_option('tradesafe_transaction_fee_type', null);
+		$settings['processing_fee']  = get_option( 'tradesafe_transaction_fee_allocation' );
+		$settings['commission']      = get_option( 'tradesafe_transaction_fee', null );
+		$settings['commission_type'] = get_option( 'tradesafe_transaction_fee_type', null );
 
-	    $settings['buyers_accept'] = get_option('tradesafe_accept_transaction', null) ? 'yes' : 'no';
+		$settings['buyers_accept'] = get_option( 'tradesafe_accept_transaction', null ) ? 'yes' : 'no';
 
-        update_option( 'woocommerce_tradesafe_settings', apply_filters( 'woocommerce_settings_api_sanitized_fields_tradesafe', $settings ), 'yes' );
-    }
+		update_option( 'woocommerce_tradesafe_settings', apply_filters( 'woocommerce_settings_api_sanitized_fields_tradesafe', $settings ), 'yes' );
+	}
 
 	require_once plugin_basename( 'src/class-tradesafe.php' );
 	require_once plugin_basename( 'src/class-tradesafeprofile.php' );
 	require_once plugin_basename( 'src/class-wc-gateway-tradesafe.php' );
-	require_once plugin_basename( 'helpers/class-tradesafe-api-client.php' );
+	require_once plugin_basename( 'helpers/class-tradesafeapiclient.php' );
 
 	load_plugin_textdomain( 'tradesafe-payment-gateway', false, trailingslashit( dirname( plugin_basename( __FILE__ ) ) ) );
 	add_filter( 'woocommerce_payment_gateways', 'woocommerce_tradesafe_add_gateway' );
@@ -84,9 +84,9 @@ add_action( 'init', array( 'TradeSafeProfile', 'init' ) );
 function woocommerce_tradesafe_plugin_links( $links ): array {
 	$settings_url = add_query_arg(
 		array(
-			'page' => 'wc-settings',
-            'tab' => 'checkout',
-            'section' => 'tradesafe'
+			'page'    => 'wc-settings',
+			'tab'     => 'checkout',
+			'section' => 'tradesafe',
 		),
 		admin_url( 'admin.php' )
 	);

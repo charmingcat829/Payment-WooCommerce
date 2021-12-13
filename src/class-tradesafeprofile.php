@@ -36,7 +36,7 @@ class TradeSafeProfile {
 	 * Add TradeSafe fields to user account form.
 	 */
 	public static function edit_account_form() {
-	    $client = new \TradeSafe\Helpers\TradeSafeApiClient();
+		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 		$user   = wp_get_current_user();
 
 		if ( is_null( $client ) || is_array( $client ) ) {
