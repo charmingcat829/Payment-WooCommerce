@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.0.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v1.2.5...v1.3.0) (2021-12-14)
+### Features
+
+* Added new acceptance process ([c28975](https://github.com/tradesafe/tradesafe-payment-gateway/commit/c28975732a3a9b6de7f703867aa313c14431a52e))
+* Allow checkout without needing an account ([e02f6c](https://github.com/tradesafe/tradesafe-payment-gateway/commit/e02f6cd4c48f75b4608d6117941d77a16e705889))
+
+### Bug Fixes
+
+* Ensure transaction id is saved to order meta data before redirect ([550e89](https://github.com/tradesafe/tradesafe-payment-gateway/commit/550e89b85cb49e60a62a0a37e600e13b872d10bf))
+
+---
+
 ## [1.2.5](https://github.com/tradesafe/plugin-woocommerce/compare/v1.2.4...v1.2.5) (2021-08-12)
 ### Bug Fixes
 
