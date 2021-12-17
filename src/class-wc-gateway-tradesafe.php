@@ -80,6 +80,15 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			$is_available = true;
 		}
 
+		$settings = get_option( 'woocommerce_tradesafe_settings', array() );
+
+		if ( isset( $settings['client_id'] )
+			&& '' !== $settings['client_id']
+			&& isset( $settings['client_secret'] )
+			&& '' !== $settings['client_secret'] ) {
+			$is_available = true;
+		}
+
 		if ( 'no' === $this->get_option( 'enabled' ) || null === $this->get_option( 'enabled' ) ) {
 			$is_available = false;
 		}
@@ -627,7 +636,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				);
 
 				if ( ! $sub_orders ) {
-					$payout_fee_allocation = get_option( 'tradesafe_payout_fee', 'SELLER' );
+					$payout_fee_allocation = tradesafe_fee_allocation();
 
 					$payout_fee = 0;
 
@@ -648,7 +657,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 					foreach ( $sub_orders as $sub_order_post ) {
 						$sub_order = wc_get_order( $sub_order_post->ID );
 
-						$payout_fee_allocation = get_option( 'tradesafe_payout_fee', 'SELLER' );
+						$payout_fee_allocation = tradesafe_fee_allocation();
 
 						$payout_fee = 0;
 
@@ -668,13 +677,13 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			} else {
 				foreach ( $vendors as $vendor_id => $vendor ) {
 					$fee = 0;
-					if ( get_option( 'tradesafe_transaction_fee_allocation', 'SELLER' ) === 'SELLER' ) {
-						switch ( get_option( 'tradesafe_transaction_fee_type' ) ) {
+					if ( tradesafe_fee_allocation() === 'SELLER' ) {
+						switch ( tradesafe_commission_type() ) {
 							case 'PERCENT':
-								$fee = $vendor['total'] * ( get_option( 'tradesafe_transaction_fee' ) / 100 );
+								$fee = $vendor['total'] * ( tradesafe_commission_value() / 100 );
 								break;
 							case 'FIXED':
-								$fee = get_option( 'tradesafe_transaction_fee' );
+								$fee = tradesafe_commission_value();
 								break;
 						}
 					}
@@ -705,8 +714,8 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				array(
 					'title'         => 'Order ' . $order->get_id(),
 					'description'   => implode( PHP_EOL, $item_list ),
-					'industry'      => get_option( 'tradesafe_transaction_industry' ),
-					'feeAllocation' => get_option( 'tradesafe_fee_allocation' ),
+					'industry'      => tradesafe_industry(),
+					'feeAllocation' => tradesafe_fee_allocation(),
 					'reference'     => $order->get_order_key() . '-' . time(),
 				),
 				$allocations,

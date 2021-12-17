@@ -289,24 +289,24 @@ class TradeSafe {
 			$base_value += $tax;
 		}
 
-		$calculation = $client->getCalculation( $base_value, get_option( 'tradesafe_fee_allocation' ), get_option( 'tradesafe_transaction_industry' ) );
+		$calculation = $client->getCalculation( $base_value, tradesafe_fee_allocation(), tradesafe_industry() );
 
-		if ( get_option( 'tradesafe_transaction_fee_allocation' ) === 'BUYER' ) {
+		if ( tradesafe_fee_allocation() === 'BUYER' ) {
 			$fee = 0;
 
-			switch ( get_option( 'tradesafe_transaction_fee_type' ) ) {
+			switch ( tradesafe_commission_type() ) {
 				case 'FIXED':
-					$fee = get_option( 'tradesafe_transaction_fee' );
+					$fee = tradesafe_commission_value();
 					break;
 				case 'PERCENTAGE':
-					$fee = $base_value * ( get_option( 'tradesafe_transaction_fee' ) / 100 );
+					$fee = $base_value * ( tradesafe_commission_value() / 100 );
 					break;
 			}
 
 			WC()->cart->add_fee( 'Marketplace Fee', $fee, false );
 		}
 
-		if ( get_option( 'tradesafe_fee_allocation' ) === 'BUYER' ) {
+		if ( tradesafe_fee_allocation() === 'BUYER' ) {
 			WC()->cart->add_fee( 'Escrow Fee', $calculation['processingFeeTotal'], false );
 		}
 

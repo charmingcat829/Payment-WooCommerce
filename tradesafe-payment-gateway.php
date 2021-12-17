@@ -28,7 +28,7 @@ function woocommerce_tradesafe_init() {
 		return;
 	}
 
-	define( 'WC_GATEWAY_TRADESAFE_VERSION', '1.2.5' );
+	define( 'WC_GATEWAY_TRADESAFE_VERSION', '2.0.1' );
 	define( 'TRADESAFE_PAYMENT_GATEWAY_BASE_DIR', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
 
 	$autoloader = dirname( __DIR__ ) . DIRECTORY_SEPARATOR . plugin_basename( __DIR__ ) . '/vendor/autoload.php';
@@ -171,4 +171,64 @@ function tradesafe_is_marketplace(): bool {
  */
 function tradesafe_has_dokan(): bool {
 	return class_exists( 'WeDevs_Dokan' );
+}
+
+/**
+ * Who pays the escrow fee.
+ *
+ * @return string
+ */
+function tradesafe_fee_allocation(): string {
+	$settings = get_option( 'woocommerce_tradesafe_settings', array() );
+
+	if ( isset( $settings['processing_fee'] ) ) {
+		return $settings['processing_fee'];
+	}
+
+	return get_option( 'tradesafe_payout_fee', 'SELLER' );
+}
+
+/**
+ * Which industry does the store operate.
+ *
+ * @return string
+ */
+function tradesafe_industry(): string {
+	$settings = get_option( 'woocommerce_tradesafe_settings', array() );
+
+	if ( isset( $settings['industry'] ) ) {
+		return $settings['industry'];
+	}
+
+	return get_option( 'tradesafe_transaction_industry' );
+}
+
+/**
+ * What type of fee is charged.
+ *
+ * @return string
+ */
+function tradesafe_commission_type(): string {
+	$settings = get_option( 'woocommerce_tradesafe_settings', array() );
+
+	if ( isset( $settings['commission_type'] ) ) {
+		return $settings['commission_type'];
+	}
+
+	return get_option( 'tradesafe_transaction_fee_type' );
+}
+
+/**
+ * What is the value of the fee charged.
+ *
+ * @return string
+ */
+function tradesafe_commission_value(): string {
+	$settings = get_option( 'woocommerce_tradesafe_settings', array() );
+
+	if ( isset( $settings['commission'] ) ) {
+		return $settings['commission'];
+	}
+
+	return get_option( 'tradesafe_transaction_fee' );
 }
