@@ -206,14 +206,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			'class' => 'is-marketplace',
 		);
 
-		$form['buyers_accept'] = array(
-			'title'    => __( 'Allow buyers to accept goods to release funds', 'tradesafe-payment-gateway' ),
-			'label'    => 'Show Accept Button',
-			'type'     => 'checkbox',
-			'default'  => true,
-			'desc_tip' => false,
-		);
-
 		$form['commission'] = array(
 			'title'       => __( 'Marketplace Commission Fee', 'tradesafe-payment-gateway' ),
 			'type'        => 'number',

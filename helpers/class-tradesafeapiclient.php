@@ -40,9 +40,9 @@ class TradeSafeApiClient {
 		);
 
 		$httpOptions = array(
-            'connect_timeout' => 5,
-            'timeout' => 15,
-        );
+			'connect_timeout' => 5,
+			'timeout'         => 15,
+		);
 		if ( true === WP_DEBUG ) {
 			$httpOptions['verify'] = false;
 		}
@@ -284,14 +284,14 @@ class TradeSafeApiClient {
 			)
 		);
 
-        try {
-            $response = $this->client->runQuery( $gql, true );
-            $result   = $response->getData();
+		try {
+			$response = $this->client->runQuery( $gql, true );
+			$result   = $response->getData();
 
-            return $result['token'];
-        } catch (\Exception $e) {
-            return null;
-        }
+			return $result['token'];
+		} catch ( \Exception $e ) {
+			return null;
+		}
 	}
 
 	public function createToken( $user, $organization = null, $bankAccount = null ) {
@@ -522,10 +522,12 @@ class TradeSafeApiClient {
 		$gql->setSelectionSet(
 			array(
 				'id',
+				'state',
 				( new Query( 'allocations' ) )
 				->setSelectionSet(
 					array(
 						'id',
+						'state',
 					)
 				),
 			)

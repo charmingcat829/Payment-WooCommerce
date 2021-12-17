@@ -57,8 +57,6 @@ function woocommerce_tradesafe_init() {
 		$settings['commission']      = get_option( 'tradesafe_transaction_fee', null );
 		$settings['commission_type'] = get_option( 'tradesafe_transaction_fee_type', null );
 
-		$settings['buyers_accept'] = get_option( 'tradesafe_accept_transaction', null ) ? 'yes' : 'no';
-
 		update_option( 'woocommerce_tradesafe_settings', apply_filters( 'woocommerce_settings_api_sanitized_fields_tradesafe', $settings ), 'yes' );
 	}
 

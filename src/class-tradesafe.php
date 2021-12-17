@@ -38,7 +38,6 @@ class TradeSafe {
 
 		add_filter( 'pre_update_option_dokan_selling', array( 'TradeSafe', 'override_dokan_selling' ) );
 
-		add_filter( 'woocommerce_my_account_my_orders_actions', array( 'TradeSafe', 'accept_order' ), 10, 2 );
 		add_filter( 'woocommerce_available_payment_gateways', array( 'TradeSafe', 'availability' ), 10, 2 );
 
 		add_filter( 'woocommerce_checkout_fields', array( 'TradeSafe', 'checkout_field_defaults' ), 20 );
@@ -47,7 +46,6 @@ class TradeSafe {
 		add_filter( 'bulk_actions-edit-shop_order', array( 'TradeSafe', 'bulk_actions' ), 20 );
 
 		add_rewrite_rule( '^tradesafe/eft-details/([0-9]+)[/]?$', 'index.php?tradesafe=eft-details&order-id=$matches[1]', 'top' );
-		add_rewrite_rule( '^tradesafe/accept/([0-9]+)[/]?$', 'index.php?tradesafe=accept&order-id=$matches[1]', 'top' );
 		add_rewrite_rule( '^tradesafe/callback$', 'index.php?tradesafe=callback', 'top' );
 		add_rewrite_rule( '^tradesafe/unlink?$', 'index.php?tradesafe=unlink', 'top' );
 		add_action( 'parse_request', array( 'TradeSafe', 'parse_request' ) );
@@ -243,11 +241,6 @@ class TradeSafe {
 				case 'eft-details':
 					self::eft_details_page( $wp->query_vars['order-id'] );
 					break;
-				case 'accept':
-					$order = wc_get_order( $wp->query_vars['order-id'] );
-					$order->update_status( 'completed', 'Transaction Completed. Paying out funds to parties.' );
-					wp_safe_redirect( wc_get_endpoint_url( 'orders', '', get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) ) );
-					exit;
 				case 'unlink':
 					$user = wp_get_current_user();
 
@@ -346,26 +339,6 @@ class TradeSafe {
 	}
 
 	/**
-	 * Add accept button to orders that have been set to processing.
-	 *
-	 * @param array    $actions Array of existing actions.
-	 * @param WC_Order $order WooCommerce order.
-	 * @return array
-	 */
-	public static function accept_order( array $actions, WC_Order $order ): array {
-		if ( $order->has_status( 'processing' ) && get_option( 'tradesafe_accept_transaction', true ) ) {
-			$action_slug = 'tradesafe_accept';
-
-			$actions[ $action_slug ] = array(
-				'url'  => home_url( '/tradesafe/accept/' . $order->get_order_number() ),
-				'name' => 'Accept',
-			);
-		}
-
-		return $actions;
-	}
-
-	/**
 	 * Update a transaction when the order state has been changed to completed.
 	 *
 	 * @param int $order_id WooCommerce order id.
@@ -380,7 +353,8 @@ class TradeSafe {
 				$client->allocationCompleteDelivery( $transaction['allocations'][0]['id'] );
 				$order->set_status( 'delivered', null, false );
 			} elseif ( 'DELIVERED' === $transaction['allocations'][0]['state']
-				|| 'FUNDS_RELEASED' === $transaction['allocations'][0]['state'] ) {
+				|| 'FUNDS_RELEASED' === $transaction['allocations'][0]['state']
+				|| 'PENDING_ACCEPTANCE' === $transaction['allocations'][0]['state'] ) {
 				return;
 			} else {
 				throw new Exception( 'There was a problem updating this transaction' );
@@ -411,7 +385,10 @@ class TradeSafe {
 
 		try {
 			$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
-			$client->allocationCompleteDelivery( $transaction['allocations'][0]['id'] );
+
+			if ( 'PENDING_ACCEPTANCE' !== $transaction['allocations'][0]['state'] ) {
+				$client->allocationCompleteDelivery( $transaction['allocations'][0]['id'] );
+			}
 		} catch ( Exception $e ) {
 			$order->set_status( 'failed', null, false );
 			$order->save();
