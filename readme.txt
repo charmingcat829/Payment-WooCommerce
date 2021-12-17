@@ -26,6 +26,9 @@ For more information on how to setup the plugin, please refer to our [guide](htt
 
 == Changelog ==
 
+= 2.0.2 - 2021-12-17 =
+ * Added helper functions to ensure compatibility with older versions of the plugin
+
 = 2.0.1 - 2021-12-17 =
  * Added helper function for checking if production url is active
 
