@@ -39,7 +39,10 @@ class TradeSafeApiClient {
 			'Authorization' => 'Bearer ' . $this->token,
 		);
 
-		$httpOptions = array();
+		$httpOptions = array(
+            'connect_timeout' => 5,
+            'timeout' => 15,
+        );
 		if ( true === WP_DEBUG ) {
 			$httpOptions['verify'] = false;
 		}
@@ -112,9 +115,17 @@ class TradeSafeApiClient {
 	}
 
 	public function production() {
-		$info = $this->clientInfo();
+		try {
+			$info = $this->clientInfo();
 
-		return $info['production'];
+			if ( isset( $info['production'] ) ) {
+				return $info['production'];
+			}
+
+			return false;
+		} catch ( \Exception $e ) {
+			return false;
+		}
 	}
 
 	public function generateToken() {
@@ -206,24 +217,28 @@ class TradeSafeApiClient {
 			return get_transient( 'tradesafe_client_info' );
 		}
 
-		$gql = ( new Query( 'clientInfo' ) );
+			$gql = ( new Query( 'clientInfo' ) );
 
-		$gql->setSelectionSet(
-			array(
-				'id',
-				'name',
-				'callback',
-				'organizationId',
-				'production',
-			)
-		);
+			$gql->setSelectionSet(
+				array(
+					'id',
+					'name',
+					'callback',
+					'organizationId',
+					'production',
+				)
+			);
 
-		$response = $this->client->runQuery( $gql, true );
-		$result   = $response->getData();
+		try {
+			$response = $this->client->runQuery( $gql, true );
+			$result   = $response->getData();
 
-		set_transient( 'tradesafe_client_info', $result['clientInfo'], 600 );
+			set_transient( 'tradesafe_client_info', $result['clientInfo'], 600 );
 
-		return $result['clientInfo'];
+			return $result['clientInfo'];
+		} catch ( \Exception $e ) {
+			return array();
+		}
 	}
 
 	public function getToken( $id ) {
@@ -269,10 +284,14 @@ class TradeSafeApiClient {
 			)
 		);
 
-		$response = $this->client->runQuery( $gql, true );
-		$result   = $response->getData();
+        try {
+            $response = $this->client->runQuery( $gql, true );
+            $result   = $response->getData();
 
-		return $result['token'];
+            return $result['token'];
+        } catch (\Exception $e) {
+            return null;
+        }
 	}
 
 	public function createToken( $user, $organization = null, $bankAccount = null ) {
