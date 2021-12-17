@@ -30,7 +30,12 @@ class TradeSafeApiClient {
 		$this->clientRedirectUri = site_url( '/tradesafe/oauth/callback/' );
 
 		$this->authDomain = $auth_domain;
-		$this->apiDomain  = $api_domains['sit'];
+
+		if ( tradesafe_is_prod() ) {
+			$this->apiDomain = $api_domains['prod'];
+		} else {
+			$this->apiDomain = $api_domains['sit'];
+		}
 
 		$this->token = '';
 		$this->generateToken();

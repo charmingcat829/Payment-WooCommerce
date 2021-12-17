@@ -141,7 +141,7 @@ function tradesafe_is_prod(): bool {
 	$settings = get_option( 'woocommerce_tradesafe_settings', array() );
 
 	if ( isset( $settings['environment'] ) ) {
-		return $settings['environment'] === 'PROD';
+		return 'PROD' === $settings['environment'];
 	}
 
 	return get_option( 'tradesafe_production_mode', false );
