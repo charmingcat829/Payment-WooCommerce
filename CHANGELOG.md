@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.0.1](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.0.0...v2.0.1) (2021-12-17)
+### Bug Fixes
+
+* Added helper function for checking if production url is active ([b39a79](https://github.com/tradesafe/tradesafe-payment-gateway/commit/b39a796510365a346f6ce041388fc17be1a03c39))
+
+---
+
 ## [2.0.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v1.2.5...v1.3.0) (2021-12-14)
 ### Features
 
