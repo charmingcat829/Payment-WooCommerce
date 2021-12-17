@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.0.4](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.0.3...v2.0.4) (2021-12-17)
+### Bug Fixes
+
+* Removed depricated buyer accept option ([103c12](https://github.com/tradesafe/tradesafe-payment-gateway/commit/103c12002ee11e247063bfd0e19ed99772a84ee7))
+
+---
+
 ## [2.0.3](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.0.2...v2.0.3) (2021-12-17)
 ### Bug Fixes
 
