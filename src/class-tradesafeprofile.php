@@ -48,7 +48,7 @@ class TradeSafeProfile {
 
 		$meta_key = 'tradesafe_token_id';
 
-		if ( get_option( 'tradesafe_production_mode' ) ) {
+		if ( tradesafe_is_prod() ) {
 			$meta_key = 'tradesafe_prod_token_id';
 		}
 
@@ -92,7 +92,7 @@ class TradeSafeProfile {
 
 		$meta_key = 'tradesafe_token_id';
 
-		if ( get_option( 'tradesafe_production_mode' ) ) {
+		if ( tradesafe_is_prod() ) {
 			$meta_key = 'tradesafe_prod_token_id';
 		}
 
@@ -155,7 +155,7 @@ class TradeSafeProfile {
 
 		$meta_key = 'tradesafe_token_id';
 
-		if ( get_option( 'tradesafe_production_mode' ) ) {
+		if ( tradesafe_is_prod() ) {
 			$meta_key = 'tradesafe_prod_token_id';
 		}
 

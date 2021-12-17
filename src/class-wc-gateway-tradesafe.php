@@ -554,7 +554,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 			$meta_key = 'tradesafe_token_id';
 
-			if ( get_option( 'tradesafe_production_mode' ) ) {
+			if ( tradesafe_is_prod() ) {
 				$meta_key = 'tradesafe_prod_token_id';
 			}
 
@@ -564,7 +564,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				// Get product owner.
 				$product = get_post( $item['product_id'] );
 
-				if ( get_option( 'tradesafe_transaction_marketplace', 0 ) && ! tradesafe_has_dokan() ) {
+				if ( tradesafe_is_marketplace() && ! tradesafe_has_dokan() ) {
 					if ( ! isset( $vendors[ $product->post_author ] ) ) {
 						$vendors[ $product->post_author ]['total'] = 0;
 					}

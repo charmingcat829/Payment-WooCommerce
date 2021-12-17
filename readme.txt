@@ -3,7 +3,7 @@ Contributors: richardnbanks, tradesafeops
 Tags: tradesafe, woocommerce, dokan, credit card, eft, instant eft
 Requires at least: 5.6
 Tested up to: 5.8
-Requires PHP: 7.3
+Requires PHP: 7.4
 Stable tag: 2.0.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html

@@ -8,7 +8,7 @@
  * Author URI: https://www.tradesafe.co.za
  * Text Domain: tradesafe-payment-gateway
  * Requires at least: 5.5
- * Requires PHP: 7.3
+ * Requires PHP: 7.4
  * Tested up to: 5.8
  * WC tested up to: 5.6
  * WC requires at least: 4.6
@@ -132,6 +132,36 @@ add_filter( 'plugin_row_meta', 'tradesafe_payment_gateway_plugin_row_meta', 10, 
 function woocommerce_tradesafe_add_gateway( $methods ) {
 	$methods[] = 'WC_Gateway_TradeSafe';
 	return $methods;
+}
+
+/**
+ * Check if production environment is enabled.
+ *
+ * @return bool
+ */
+function tradesafe_is_prod(): bool {
+	$settings = get_option( 'woocommerce_tradesafe_settings', array() );
+
+	if ( isset( $settings['environment'] ) ) {
+		return $settings['environment'] === 'PROD';
+	}
+
+	return get_option( 'tradesafe_production_mode', false );
+}
+
+/**
+ * Check if production environment is enabled.
+ *
+ * @return bool
+ */
+function tradesafe_is_marketplace(): bool {
+	$settings = get_option( 'woocommerce_tradesafe_settings', array() );
+
+	if ( isset( $settings['is_marketplace'] ) ) {
+		return 'yes' === $settings['is_marketplace'];
+	}
+
+	return get_option( 'tradesafe_transaction_marketplace', false );
 }
 
 /**
