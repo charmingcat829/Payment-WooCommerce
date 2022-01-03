@@ -100,6 +100,8 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	 * Define Gateway settings fields.
 	 */
 	public function init_form_fields() {
+		$settings = get_option( 'woocommerce_tradesafe_settings', array() );
+
 		$form = array(
 			'enabled'     => array(
 				'title'       => __( 'Enable/Disable', 'tradesafe-payment-gateway' ),
@@ -183,6 +185,15 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				'description' => __( 'To access the live environment, you will need to complete the go-live process for your application', 'tradesafe-payment-gateway' ),
 				'value'       => 'Sandbox',
 			);
+
+			if ( isset( $settings['client_id'] ) && '' !== $settings['client_id'] ) {
+				$form['go_live'] = array(
+					'title'       => __( 'Go Live', 'tradesafe-payment-gateway' ),
+					'description' => __( 'Take your store live to start processing transactions with real world currency.', 'tradesafe-payment-gateway' ),
+					'type'        => 'go_live',
+					'value'       => $settings['client_id'],
+				);
+			}
 		}
 
 		$form['marketplace_section_title'] = array(
@@ -436,7 +447,9 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	}
 
 	/**
-	 *
+	 * @param $key
+	 * @param $data
+	 * @return false|string
 	 */
 	public function generate_application_details_html( $key, $data ) {
 		$profile = $this->client->profile();
@@ -478,6 +491,34 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		return ob_get_clean();
 	}
 
+	/**
+	 * @param $key
+	 * @param $data
+	 * @return void
+	 */
+	public function generate_go_live_html( $key, $data ) {
+		ob_start();
+		?>
+		<tr valign="top">
+			<th scope="row" class="titledesc">
+				<label for="woocommerce_tradesafe_environment"></label>
+			</th>
+			<td class="forminp">
+				<fieldset>
+					<a href="https://developer.tradesafe.co.za//applications/<?php esc_attr_e( $data['value'] ); ?>/go-live" class="button-primary" target="_blank">Request Go-Live</a>
+					<p class="description"><?php esc_attr_e( $data['description'] ); ?></p>
+				</fieldset>
+			</td>
+		</tr>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * @param $key
+	 * @param $data
+	 * @return false|string
+	 */
 	public function generate_row_html( $key, $data ) {
 		ob_start();
 		?>
