@@ -4,7 +4,7 @@ Tags: tradesafe, woocommerce, dokan, credit card, eft, instant eft
 Requires at least: 5.6
 Tested up to: 5.8
 Requires PHP: 7.4
-Stable tag: 2.0.5
+Stable tag: 2.1.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -26,25 +26,10 @@ For more information on how to setup the plugin, please refer to our [guide](htt
 
 == Changelog ==
 
-= 2.0.5 - 2021-12-17 =
- * Corrected issue where production url was not loading correctly
+= 2.1.0 - 2022-01-06 =
 
-= 2.0.4 - 2021-12-17 =
- * Removed depricated buyer accept option
+Features
+ * Added btton to start go live request
 
-= 2.0.3 - 2021-12-17 =
- * Improved error handeling
-
-= 2.0.2 - 2021-12-17 =
- * Added helper functions to ensure compatibility with older versions of the plugin
-
-= 2.0.1 - 2021-12-17 =
- * Added helper function for checking if production url is active
-
-= 2.0.0 - 2021-12-14 =
- * Added new acceptance process
- * Allow checkout without needing an account
- * Ensure transaction id is saved to order meta data before redirect
-
-== Upgrade Notice ==
-This is a significat update please test prior to deploying to production.
+Bug Fixes
+ * Changed formatting of line items added to the transaction description

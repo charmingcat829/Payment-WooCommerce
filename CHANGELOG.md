@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.0.5...v2.1.0) (2022-01-06)
+### Features
+
+* Added btton to start go live request ([43f2ac](https://github.com/tradesafe/tradesafe-payment-gateway/commit/43f2acdea6ed3127699b3a112a516152a3211013))
+
+### Bug Fixes
+
+* Changed formatting of line items added to the transaction description ([b1d4e4](https://github.com/tradesafe/tradesafe-payment-gateway/commit/b1d4e4caaeee8c9a82290bf0d58db20b4151ca79))
+
+---
+
 ## [2.0.5](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.0.4...v2.0.5) (2021-12-17)
 ### Bug Fixes
 
