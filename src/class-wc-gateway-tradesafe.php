@@ -615,7 +615,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				}
 
 				// Add item to list for description.
-				$item_list[] = esc_attr( $item->get_name() ) . ': ' . $order->get_item_subtotal( $item );
+				$item_list[] = esc_attr( $item->get_name() ) . ': ' . html_entity_decode( strip_tags( wc_price( $order->get_line_subtotal( $item ), array( 'currency' => $order->get_currency() ) ) ) ) . ' (excl)';
 			}
 
 			$allocations[] = array(
