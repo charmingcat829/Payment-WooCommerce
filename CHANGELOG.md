@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.1.1...v2.1.2) (2022-01-10)
+### Bug Fixes
+
+* Updated css to avoid any potential conflicts ([df65ef](https://github.com/tradesafe/tradesafe-payment-gateway/commit/df65ef03a9914073ee82b1ac23f1c8436bd1bb6c))
+
+---
+
 ## [2.1.1](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.1.0...v2.1.1) (2022-01-10)
 ### Bug Fixes
 
