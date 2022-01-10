@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.1](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.1.0...v2.1.1) (2022-01-10)
+### Bug Fixes
+
+* Updated publish check to only apply to products ([e996eb](https://github.com/tradesafe/tradesafe-payment-gateway/commit/e996eb0cd11fa2c3cbbc5af5534be1764335b4f5))
+
+---
+
 ## [2.1.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.0.5...v2.1.0) (2022-01-06)
 ### Features
 

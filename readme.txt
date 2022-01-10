@@ -4,7 +4,7 @@ Tags: tradesafe, woocommerce, dokan, credit card, eft, instant eft
 Requires at least: 5.6
 Tested up to: 5.8
 Requires PHP: 7.4
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -25,6 +25,11 @@ The plugin also includes support for paying multiple vendors when using the Doka
 For more information on how to setup the plugin, please refer to our [guide](https://developer.tradesafe.co.za/docs/1.2/plugins/woocommerce)
 
 == Changelog ==
+
+= 2.1.1 - 2022-01-10 =
+
+Bug Fixes
+ * Updated publish check to only apply to products
 
 = 2.1.0 - 2022-01-06 =
 
