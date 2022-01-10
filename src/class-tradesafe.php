@@ -520,7 +520,9 @@ class TradeSafe {
 		?>
 		<script type="text/javascript">
 			window.onload = function () {
-				document.getElementById('publish').disabled = true;
+                if (typeof pagenow !== 'undefined' && pagenow === 'product') {
+                    document.getElementById('publish').disabled = true;
+                }
 			}
 		</script>
 		<?php
