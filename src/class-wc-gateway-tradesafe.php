@@ -341,7 +341,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		ob_start();
 		?>
 		<tr>
-			<td colspan="2" class="details">
+			<td colspan="2" id="tradesafe-callback-details" class="details">
 				<div class="details-box callback-details">
 					<h3><?php esc_attr_e( $data['title'] ); ?></h3>
 					<p><?php esc_attr_e( $data['description'] ); ?></p>
@@ -386,7 +386,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		ob_start();
 		?>
 		<tr>
-			<td colspan="2" class="details">
+			<td colspan="2" id="tradesafe-plugin-details" class="details">
 				<div class="details-box plugin-details">
 					<h3><?php esc_attr_e( $data['title'] ); ?> <small>(<a href="#" class="toggle-plugin-details">show</a>)</small>
 					</h3>
@@ -475,7 +475,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		ob_start();
 		?>
 		<tr>
-			<td colspan="2" class="details">
+			<td colspan="2" id="tradesafe-application-details" class="details">
 				<div class="details-box application-details">
 					<h3><?php esc_attr_e( $data['title'] ); ?></h3>
 					<p><?php esc_attr_e( $data['description'] ); ?></p>

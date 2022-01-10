@@ -2,21 +2,27 @@
     width: 100px;
 }
 
-.form-table td.details {
+#tradesafe-callback-details.details,
+#tradesafe-plugin-details.details,
+#tradesafe-application-details.details {
     padding: 15px 10px 15px 0;
 }
 
-.form-table td div.details-box {
+#tradesafe-callback-details div.details-box,
+#tradesafe-plugin-details div.details-box,
+#tradesafe-application-details div.details-box {
     border: 1px solid #c3c4c7;
     background-color: #ffffff;
     padding: 1px 12px;
 }
 
-.form-table td div.details-box p {
+#tradesafe-callback-details div.details-box p,
+#tradesafe-plugin-details div.details-box p,
+#tradesafe-application-details div.details-box p {
     margin: .5em 0;
     padding: 2px;
 }
 
-.form-table td .plugin-details table {
+#tradesafe-plugin-details table {
     display: none;
 }
