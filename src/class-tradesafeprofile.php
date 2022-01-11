@@ -11,6 +11,7 @@ defined( 'ABSPATH' ) || exit;
  * Class TradeSafeProfile
  */
 class TradeSafeProfile {
+
 	/**
 	 * Initiate the class.
 	 */
@@ -29,6 +30,7 @@ class TradeSafeProfile {
 		// Actions.
 		add_action( 'woocommerce_edit_account_form', array( 'TradeSafeProfile', 'edit_account_form' ) );
 		add_action( 'woocommerce_save_account_details', array( 'TradeSafeProfile', 'save_account_details' ) );
+		add_action( 'woocommerce_save_account_details_errors', array( 'TradeSafeProfile', 'save_account_details_errors' ), 10, 1 );
 		add_action( 'woocommerce_checkout_update_customer', array( 'TradeSafeProfile', 'woocommerce_checkout_update_customer' ) );
 	}
 
@@ -142,6 +144,40 @@ class TradeSafeProfile {
 			$token_data = $client->createToken( $user_info, $organization, $bank_account );
 
 			update_user_meta( $user_id, $meta_key, sanitize_text_field( $token_data['id'] ) );
+		}
+	}
+
+	/**
+	 * Validate data before saving account details.
+	 *
+	 * @param array $args Arguments.
+	 */
+	public static function save_account_details_errors( $args ) {
+		// Are any of the organization fields not empty.
+		if ( ! empty( $_POST['tradesafe_token_organization_name'] )
+			|| ! empty( $_POST['tradesafe_token_organization_trading_name'] )
+			|| ! empty( $_POST['tradesafe_token_organization_type'] )
+			|| ! empty( $_POST['tradesafe_token_organization_registration_number'] )
+			|| ! empty( $_POST['tradesafe_token_organization_tax_number'] ) ) {
+
+			// Check that optional required fields are set before trying to save.
+			if ( empty( $_POST['tradesafe_token_organization_name'] )
+				|| empty( $_POST['tradesafe_token_organization_type'] )
+				|| empty( $_POST['tradesafe_token_organization_registration_number'] ) ) {
+				$args->add( 'error', __( 'Organization details are incomplete:', 'woocommerce' ), '' );
+			}
+
+			if ( empty( $_POST['tradesafe_token_organization_name'] ) ) {
+				$args->add( 'error', __( 'Organization name is missing.', 'woocommerce' ), '' );
+			}
+
+			if ( empty( $_POST['tradesafe_token_organization_type'] ) ) {
+				$args->add( 'error', __( 'Organization type is missing.', 'woocommerce' ), '' );
+			}
+
+			if ( empty( $_POST['tradesafe_token_organization_registration_number'] ) ) {
+				$args->add( 'error', __( 'Organization registration number is missing.', 'woocommerce' ), '' );
+			}
 		}
 	}
 
