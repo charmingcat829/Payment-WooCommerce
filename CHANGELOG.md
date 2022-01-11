@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.3](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.1.2...v2.1.3) (2022-01-11)
+### Bug Fixes
+
+* Added optional validation to organisation details to ensure basic details are captured ([59662e](https://github.com/tradesafe/tradesafe-payment-gateway/commit/59662e72eaaf39286a0b66a6ef651d201f0ab4c1))
+
+---
+
 ## [2.1.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.1.1...v2.1.2) (2022-01-10)
 ### Bug Fixes
 
