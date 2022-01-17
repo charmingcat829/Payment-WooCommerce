@@ -366,6 +366,13 @@ class TradeSafeApiClient {
 			);
 		}
 
+		$input .= '
+        settings: {
+            payout: {
+                interval: MONTHLY
+            }
+        }';
+
 		$input = '{' . $input . '}';
 
 		$gql->setArguments( array( 'input' => new RawObject( $input ) ) );
@@ -465,6 +472,13 @@ class TradeSafeApiClient {
 				$bankAccount['accountType']
 			);
 		}
+
+		$input .= '
+        settings: {
+            payout: {
+                interval: MONTHLY
+            }
+        }';
 
 		$input = '{' . $input . '}';
 
