@@ -366,12 +366,12 @@ class TradeSafeApiClient {
 			);
 		}
 
-		$input .= '
-        settings: {
-            payout: {
-                interval: MONTHLY
-            }
-        }';
+		// $input .= '
+		// settings: {
+		// payout: {
+		// interval: MONTHLY
+		// }
+		// }';
 
 		$input = '{' . $input . '}';
 
@@ -473,12 +473,12 @@ class TradeSafeApiClient {
 			);
 		}
 
-		$input .= '
-        settings: {
-            payout: {
-                interval: MONTHLY
-            }
-        }';
+		// $input .= '
+		// settings: {
+		// payout: {
+		// interval: MONTHLY
+		// }
+		// }';
 
 		$input = '{' . $input . '}';
 

@@ -671,16 +671,10 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				if ( ! $sub_orders ) {
 					$payout_fee_allocation = tradesafe_fee_allocation();
 
-					$payout_fee = 0;
-
-					if ( 'VENDOR' === $payout_fee_allocation ) {
-						$payout_fee = 10;
-					}
-
 					$parties[] = array(
 						'role'          => 'BENEFICIARY_MERCHANT',
 						'token'         => get_user_meta( $order->get_meta( '_dokan_vendor_id', true ), $meta_key, true ),
-						'fee'           => dokan()->commission->get_earning_by_order( $order ) - $payout_fee,
+						'fee'           => dokan()->commission->get_earning_by_order( $order ),
 						'feeType'       => 'FLAT',
 						'feeAllocation' => 'SELLER',
 					);
@@ -692,16 +686,10 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 						$payout_fee_allocation = tradesafe_fee_allocation();
 
-						$payout_fee = 0;
-
-						if ( 'VENDOR' === $payout_fee_allocation ) {
-							$payout_fee = 5 + ( 10 / $sub_order_count );
-						}
-
 						$parties[] = array(
 							'role'          => 'BENEFICIARY_MERCHANT',
 							'token'         => get_user_meta( $sub_order->get_meta( '_dokan_vendor_id', true ), $meta_key, true ),
-							'fee'           => dokan()->commission->get_earning_by_order( $sub_order ) - $payout_fee,
+							'fee'           => dokan()->commission->get_earning_by_order( $sub_order ),
 							'feeType'       => 'FLAT',
 							'feeAllocation' => 'SELLER',
 						);
