@@ -62,7 +62,7 @@ Absolutely. You can toggle between production and sandbox easily within your Tra
 
 = How do I sign up? =
 
-Simply go to https://tradesafe.co.za and sign up for a merchant account at the top right of the page. Complete a few wizards, and you will then be granted access to the developer dashboard where you can begin installing and testing the plug-in in a testing environment.
+Simply go to [www.tradesafe.co.za](https://www.tradesafe.co.za) and sign up for a merchant account at the top right of the page. Complete a few wizards, and you will then be granted access to the developer dashboard where you can begin installing and testing the plug-in in a testing environment.
 
 Once you have tested, and everything is working great, then we will perform some verification procedures before taking you live.
 
@@ -72,7 +72,7 @@ For more information on how to install and configure the plugin, please refer to
 
 = Who do I reach out to if I need technical support or if I have any further queries? =
 
-Please do not hesitate to email support@tradesafe.co.za or phone us on 010 020 3101. We are here to help you every step of the way. 
+Please do not hesitate to email [support@tradesafe.co.za](mailto:support@tradesafe.co.za) or phone us on 010 020 3101. We are here to help you every step of the way.
 
 == Changelog ==
 
