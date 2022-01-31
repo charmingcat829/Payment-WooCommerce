@@ -48,13 +48,7 @@ class TradeSafeProfile {
 			return;
 		}
 
-		$meta_key = 'tradesafe_token_id';
-
-		if ( tradesafe_is_prod() ) {
-			$meta_key = 'tradesafe_prod_token_id';
-		}
-
-		$token_id           = get_user_meta( $user->ID, $meta_key, true );
+		$token_id           = get_user_meta( $user->ID, tradesafe_token_meta_key(), true );
 		$banks              = $client->getEnum( 'UniversalBranchCode' );
 		$bank_account_types = $client->getEnum( 'BankAccountType' );
 		$organization_types = $client->getEnum( 'OrganizationType' );
@@ -88,17 +82,11 @@ class TradeSafeProfile {
 			return;
 		}
 
-		if ( empty( $_POST['action'] ) || 'save_account_details' !== $_POST['action'] || is_null( $client ) || is_array( $client ) ) {
+		if ( empty( $_POST['action'] ) || 'save_account_details' !== $_POST['action'] || is_array( $client ) ) {
 			return;
 		}
 
-		$meta_key = 'tradesafe_token_id';
-
-		if ( tradesafe_is_prod() ) {
-			$meta_key = 'tradesafe_prod_token_id';
-		}
-
-		$token_id = get_user_meta( $user_id, $meta_key, true );
+		$token_id = get_user_meta( $user_id, tradesafe_token_meta_key(), true );
 
 		$user_info = array(
 			'givenName'  => sanitize_text_field( wp_unslash( $_POST['account_first_name'] ?? null ) ),
@@ -138,12 +126,19 @@ class TradeSafeProfile {
 			);
 		}
 
-		if ( $token_id ) {
-			$token_data = $client->updateToken( $token_id, $user_info, $organization, $bank_account );
-		} else {
-			$token_data = $client->createToken( $user_info, $organization, $bank_account );
+		$payout_interval = 'IMMEDIATE';
+		$settings        = get_option( 'woocommerce_tradesafe_settings', array() );
 
-			update_user_meta( $user_id, $meta_key, sanitize_text_field( $token_data['id'] ) );
+		if ( isset( $settings['payout_method'] ) ) {
+			$payout_interval = $settings['payout_method'];
+		}
+
+		if ( $token_id ) {
+			$token_data = $client->updateToken( $token_id, $user_info, $organization, $bank_account, $payout_interval );
+		} else {
+			$token_data = $client->createToken( $user_info, $organization, $bank_account, $payout_interval );
+
+			update_user_meta( $user_id, tradesafe_token_meta_key(), sanitize_text_field( $token_data['id'] ) );
 		}
 	}
 
@@ -189,13 +184,7 @@ class TradeSafeProfile {
 	public static function woocommerce_checkout_update_customer( WC_Customer $customer ) {
 		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 
-		$meta_key = 'tradesafe_token_id';
-
-		if ( tradesafe_is_prod() ) {
-			$meta_key = 'tradesafe_prod_token_id';
-		}
-
-		if ( '' === $customer->get_meta( $meta_key, true ) ) {
+		if ( '' === $customer->get_meta( tradesafe_token_meta_key(), true ) ) {
 			$user_info = array(
 				'givenName'  => $customer->first_name,
 				'familyName' => $customer->last_name,
@@ -203,9 +192,16 @@ class TradeSafeProfile {
 				'mobile'     => $customer->billing['phone'],
 			);
 
-			$token_data = $client->createToken( $user_info, null, null );
+			$payout_interval = 'IMMEDIATE';
+			$settings        = get_option( 'woocommerce_tradesafe_settings', array() );
 
-			$customer->update_meta_data( $meta_key, sanitize_text_field( $token_data['id'] ) );
+			if ( isset( $settings['payout_method'] ) ) {
+				$payout_interval = $settings['payout_method'];
+			}
+
+			$token_data = $client->createToken( $user_info, null, null, $payout_interval );
+
+			$customer->update_meta_data( tradesafe_token_meta_key(), sanitize_text_field( $token_data['id'] ) );
 			$customer->save_meta_data();
 		}
 	}

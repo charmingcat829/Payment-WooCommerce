@@ -257,18 +257,33 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 			$form['commission_type'] = array(
 				'title'       => __( 'Marketplace Commission Type', 'tradesafe-payment-gateway' ),
-				'description' => __( 'What type of commission been changed', 'tradesafe-payment-gateway' ),
+				'description' => __( 'What type of commission been changed.', 'tradesafe-payment-gateway' ),
 				'type'        => 'row',
 				'value'       => ucwords( dokan_get_option( 'commission_type', 'dokan_selling', 'percentage' ) ),
 			);
 
 			$form['commission_allocation'] = array(
 				'title'       => __( 'Marketplace Commission Fee Allocation', 'tradesafe-payment-gateway' ),
-				'description' => __( 'Why will pay the commission' ),
+				'description' => __( 'Who will pay the commission.' ),
 				'type'        => 'row',
 				'value'       => 'Vendor',
 			);
 		}
+
+		$form['payout_method'] = array(
+			'title'       => __( 'How are Users Paid Out', 'tradesafe-payment-gateway' ),
+			'description' => 'A R5 fee (excl.) is incurred for payouts. If "Once a month" is selected this fee is waived.',
+			'type'        => 'select',
+			'default'     => 'IMMEDIATE',
+			'options'     => array(
+				'ACCOUNT'   => 'Manual Withdrawal',
+				'IMMEDIATE' => 'Immediate',
+				'DAILY'     => 'Once a Day',
+				'WEEKLY'    => 'Once a week',
+				'BIMONTHLY' => 'Twice a month',
+				'MONTHLY'   => 'Once a month',
+			),
+		);
 
 		$form['marketplace_section_close_box'] = array(
 			'type' => 'close_box',
@@ -594,12 +609,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 			$profile = $client->profile();
 
-			$meta_key = 'tradesafe_token_id';
-
-			if ( tradesafe_is_prod() ) {
-				$meta_key = 'tradesafe_prod_token_id';
-			}
-
 			$item_list = array();
 			$vendors   = array();
 			foreach ( $order->get_items() as $item ) {
@@ -626,6 +635,13 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				'daysToInspect' => 7,
 			);
 
+			$payout_interval = 'IMMEDIATE';
+			$settings        = get_option( 'woocommerce_tradesafe_settings', array() );
+
+			if ( isset( $settings['payout_method'] ) ) {
+				$payout_interval = $settings['payout_method'];
+			}
+
 			if ( $user->ID === 0 ) {
 				$token_data = $client->createToken(
 					array(
@@ -633,7 +649,10 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 						'familyName' => $order->data['billing']['last_name'],
 						'email'      => $order->data['billing']['email'],
 						'mobile'     => $order->data['billing']['phone'],
-					)
+					),
+					null,
+					null,
+					$payout_interval
 				);
 
 				$parties[] = array(
@@ -643,7 +662,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			} else {
 				$parties[] = array(
 					'role'  => 'BUYER',
-					'token' => get_user_meta( $user->ID, $meta_key, true ),
+					'token' => get_user_meta( $user->ID, tradesafe_token_meta_key(), true ),
 				);
 			}
 
@@ -673,7 +692,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 					$parties[] = array(
 						'role'          => 'BENEFICIARY_MERCHANT',
-						'token'         => get_user_meta( $order->get_meta( '_dokan_vendor_id', true ), $meta_key, true ),
+						'token'         => get_user_meta( $order->get_meta( '_dokan_vendor_id', true ), tradesafe_token_meta_key(), true ),
 						'fee'           => dokan()->commission->get_earning_by_order( $order ),
 						'feeType'       => 'FLAT',
 						'feeAllocation' => 'SELLER',
@@ -688,7 +707,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 						$parties[] = array(
 							'role'          => 'BENEFICIARY_MERCHANT',
-							'token'         => get_user_meta( $sub_order->get_meta( '_dokan_vendor_id', true ), $meta_key, true ),
+							'token'         => get_user_meta( $sub_order->get_meta( '_dokan_vendor_id', true ), tradesafe_token_meta_key(), true ),
 							'fee'           => dokan()->commission->get_earning_by_order( $sub_order ),
 							'feeType'       => 'FLAT',
 							'feeAllocation' => 'SELLER',
@@ -711,7 +730,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 					$parties[] = array(
 						'role'          => 'BENEFICIARY_MERCHANT',
-						'token'         => get_user_meta( $vendor_id, $meta_key, true ),
+						'token'         => get_user_meta( $vendor_id, tradesafe_token_meta_key(), true ),
 						'fee'           => $vendor['total'] - $fee,
 						'feeType'       => 'FLAT',
 						'feeAllocation' => 'SELLER',

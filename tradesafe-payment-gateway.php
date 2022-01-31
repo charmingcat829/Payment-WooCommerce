@@ -9,8 +9,8 @@
  * Text Domain: tradesafe-payment-gateway
  * Requires at least: 5.5
  * Requires PHP: 7.4
- * Tested up to: 5.8
- * WC tested up to: 6.0
+ * Tested up to: 5.9
+ * WC tested up to: 6.1
  * WC requires at least: 4.6
  *
  * @package TradeSafe Payment Gateway
@@ -61,6 +61,7 @@ function woocommerce_tradesafe_init() {
 	}
 
 	require_once plugin_basename( 'src/class-tradesafe.php' );
+	require_once plugin_basename( 'src/class-tradesafedokan.php' );
 	require_once plugin_basename( 'src/class-tradesafeprofile.php' );
 	require_once plugin_basename( 'src/class-wc-gateway-tradesafe.php' );
 	require_once plugin_basename( 'helpers/class-tradesafeapiclient.php' );
@@ -72,6 +73,7 @@ function woocommerce_tradesafe_init() {
 add_action( 'plugins_loaded', 'woocommerce_tradesafe_init', 0 );
 add_action( 'init', array( 'TradeSafe', 'init' ) );
 add_action( 'init', array( 'TradeSafeProfile', 'init' ) );
+add_action( 'init', array( 'TradeSafeDokan', 'init' ) );
 
 /**
  * Add action links to the entry on the plugin page.
@@ -229,4 +231,19 @@ function tradesafe_commission_value(): string {
 	}
 
 	return get_option( 'tradesafe_transaction_fee' );
+}
+
+/**
+ * Create meta key based on environment.
+ *
+ * @return string
+ */
+function tradesafe_token_meta_key(): string {
+	$meta_key = 'tradesafe_token_id';
+
+	if ( tradesafe_is_prod() ) {
+		$meta_key = 'tradesafe_prod_token_id';
+	}
+
+	return $meta_key;
 }

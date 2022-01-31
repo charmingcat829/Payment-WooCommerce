@@ -101,20 +101,15 @@ class TradeSafe {
 	 * @return bool
 	 */
 	private static function is_valid_token( string $role ): bool {
-		$client   = new \TradeSafe\Helpers\TradeSafeApiClient();
-		$user     = wp_get_current_user();
-		$meta_key = 'tradesafe_token_id';
-		$valid    = false;
+		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
+		$user   = wp_get_current_user();
+		$valid  = false;
 
 		if ( is_null( $client ) || is_array( $client ) ) {
 			return false;
 		}
 
-		if ( tradesafe_is_prod() ) {
-			$meta_key = 'tradesafe_prod_token_id';
-		}
-
-		$token_id = get_user_meta( $user->ID, $meta_key, true );
+		$token_id = get_user_meta( $user->ID, tradesafe_token_meta_key(), true );
 
 		if ( $token_id ) {
 			try {
@@ -244,13 +239,7 @@ class TradeSafe {
 				case 'unlink':
 					$user = wp_get_current_user();
 
-					$meta_key = 'tradesafe_token_id';
-
-					if ( tradesafe_is_prod() ) {
-						$meta_key = 'tradesafe_prod_token_id';
-					}
-
-					delete_user_meta( $user->ID, $meta_key );
+					delete_user_meta( $user->ID, tradesafe_token_meta_key() );
 					wp_safe_redirect( wc_get_endpoint_url( 'edit-account', '', get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) ) );
 					exit;
 				default:
@@ -487,13 +476,7 @@ class TradeSafe {
 		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 		$user   = wp_get_current_user();
 
-		$meta_key = 'tradesafe_token_id';
-
-		if ( tradesafe_is_prod() ) {
-			$meta_key = 'tradesafe_prod_token_id';
-		}
-
-		$token_id = get_user_meta( $user->ID, $meta_key, true );
+		$token_id = get_user_meta( $user->ID, tradesafe_token_meta_key(), true );
 
 		if ( $token_id ) {
 			$token_data = $client->getToken( $token_id );

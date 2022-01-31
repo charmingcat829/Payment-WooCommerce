@@ -256,6 +256,7 @@ class TradeSafeApiClient {
 				'id',
 				'name',
 				'reference',
+				'balance',
 				( new Query( 'user' ) )
 				->setSelectionSet(
 					array(
@@ -264,6 +265,8 @@ class TradeSafeApiClient {
 						'email',
 						'mobile',
 						'idNumber',
+						'idType',
+						'idCountry',
 					)
 				),
 				( new Query( 'organization' ) )
@@ -299,7 +302,7 @@ class TradeSafeApiClient {
 		}
 	}
 
-	public function createToken( $user, $organization = null, $bankAccount = null ) {
+	public function createToken( $user, $organization = null, $bankAccount = null, $payout_interval = 'IMMEDIATE' ) {
 		$gql = ( new Mutation( 'tokenCreate' ) );
 
 		if ( isset( $user['idNumber'] ) ) {
@@ -366,12 +369,14 @@ class TradeSafeApiClient {
 			);
 		}
 
-		// $input .= '
-		// settings: {
-		// payout: {
-		// interval: MONTHLY
-		// }
-		// }';
+		$input .= sprintf(
+			'settings: {
+             payout: {
+                interval: %s
+             }
+		 }',
+			$payout_interval
+		);
 
 		$input = '{' . $input . '}';
 
@@ -382,6 +387,7 @@ class TradeSafeApiClient {
 				'id',
 				'name',
 				'reference',
+				'balance',
 				( new Query( 'user' ) )
 				->setSelectionSet(
 					array(
@@ -421,7 +427,7 @@ class TradeSafeApiClient {
 		return $result['tokenCreate'];
 	}
 
-	public function updateToken( $tokenId, $user, $organization = null, $bankAccount = null ) {
+	public function updateToken( $tokenId, $user, $organization = null, $bankAccount = null, $payout_interval = 'IMMEDIATE' ) {
 		$gql = ( new Mutation( 'tokenUpdate' ) );
 
 		$input = sprintf(
@@ -473,12 +479,14 @@ class TradeSafeApiClient {
 			);
 		}
 
-		// $input .= '
-		// settings: {
-		// payout: {
-		// interval: MONTHLY
-		// }
-		// }';
+		$input .= sprintf(
+			'settings: {
+             payout: {
+                interval: %s
+             }
+		 }',
+			$payout_interval
+		);
 
 		$input = '{' . $input . '}';
 
@@ -494,6 +502,7 @@ class TradeSafeApiClient {
 				'id',
 				'name',
 				'reference',
+				'balance',
 				( new Query( 'user' ) )
 				->setSelectionSet(
 					array(
@@ -918,5 +927,21 @@ class TradeSafeApiClient {
 		$result   = $response->getData();
 
 		return $result['allocationAcceptDelivery'];
+	}
+
+	public function tokenAccountWithdraw( $id, $value ) {
+		$gql = ( new Mutation( 'tokenAccountWithdraw' ) );
+
+		$gql->setArguments(
+			array(
+				'id'    => $id,
+				'value' => $value,
+			)
+		);
+
+		$response = $this->client->runQuery( $gql, true );
+		$result   = $response->getData();
+
+		return $result['tokenAccountWithdraw'];
 	}
 }
