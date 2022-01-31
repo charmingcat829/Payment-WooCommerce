@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.2.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.1.3...v2.2.0) (2022-01-31)
+### Features
+
+* Added withdraw support for dokan ([a88689](https://github.com/tradesafe/tradesafe-payment-gateway/commit/a8868933ed25142b5f8f16d24e8c4aa7597d24f2))
+
+### Bug Fixes
+
+* Set tokens to payout on a montly basis ([0d27ad](https://github.com/tradesafe/tradesafe-payment-gateway/commit/0d27ad37d24e1099223371973b02b600444d3a8f))
+
+---
+
 ## [2.1.3](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.1.2...v2.1.3) (2022-01-11)
 ### Bug Fixes
 
