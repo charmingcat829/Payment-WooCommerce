@@ -496,7 +496,7 @@ class TradeSafe {
 	public static function disable_publish_button() {
 		$valid_account = self::is_valid_token( 'seller' );
 
-		if ( $valid_account ) {
+		if ( $valid_account || is_admin() ) {
 			return;
 		}
 
