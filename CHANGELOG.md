@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.2.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.2.1...v2.2.2) (2022-02-07)
+### Bug Fixes
+
+* Added additional validation to order state transisions ([eee15e](https://github.com/tradesafe/tradesafe-payment-gateway/commit/eee15e863f44f7f4c4787cf3aea9487d534ad069))
+
+---
+
 ## [2.2.1](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.2.0...v2.2.1) (2022-02-01)
 ### Bug Fixes
 
