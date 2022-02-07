@@ -335,6 +335,12 @@ class TradeSafe {
 	public static function complete_transaction( int $order_id, WC_Order $order ) {
 		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 
+		$payment_gateway = wc_get_payment_gateway_by_order( $order );
+
+		if ( $payment_gateway->id !== 'tradesafe' ) {
+			return;
+		}
+
 		try {
 			$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
 
@@ -359,6 +365,12 @@ class TradeSafe {
 	public static function cancel_transaction( int $order_id, WC_Order $order ) {
 		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 
+		$payment_gateway = wc_get_payment_gateway_by_order( $order );
+
+		if ( $payment_gateway->id !== 'tradesafe' ) {
+			return;
+		}
+
 		try {
 			$client->cancelTransaction( $order->get_meta( 'tradesafe_transaction_id', true ), 'Transaction canceled my store owner' );
 		} catch ( Exception $e ) {
@@ -371,6 +383,12 @@ class TradeSafe {
 
 	public static function complete_delivery( int $order_id, WC_Order $order ) {
 		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
+
+		$payment_gateway = wc_get_payment_gateway_by_order( $order );
+
+		if ( $payment_gateway->id !== 'tradesafe' ) {
+			return;
+		}
 
 		try {
 			$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
