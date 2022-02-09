@@ -2,7 +2,7 @@
 Contributors: richardnbanks, tradesafeops
 Tags: tradesafe, woocommerce, dokan, payment gateway, escrow, credit card, instant eft
 Requires at least: 5.6
-Tested up to: 5.8
+Tested up to: 5.9
 Requires PHP: 7.4
 Stable tag: 2.2.2
 License: GPLv3

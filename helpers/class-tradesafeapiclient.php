@@ -339,7 +339,7 @@ class TradeSafeApiClient {
 			);
 		}
 
-		if ( isset( $organization ) ) {
+		if ( ! empty( $organization ) ) {
 			$input .= sprintf(
 				'organization: {
                 name: "%s"
@@ -356,7 +356,7 @@ class TradeSafeApiClient {
 			);
 		}
 
-		if ( isset( $bankAccount ) ) {
+		if ( ! empty( $bankAccount ) ) {
 			$input .= sprintf(
 				'bankAccount: {
                 bank: %s
@@ -449,7 +449,7 @@ class TradeSafeApiClient {
 			$user['idCountry']
 		);
 
-		if ( isset( $organization ) ) {
+		if ( ! empty( $organization ) ) {
 			$input .= sprintf(
 				'organization: {
                 name: "%s"
@@ -466,7 +466,7 @@ class TradeSafeApiClient {
 			);
 		}
 
-		if ( isset( $bankAccount ) ) {
+		if ( ! empty( $bankAccount ) ) {
 			$input .= sprintf(
 				'bankAccount: {
                 bank: %s

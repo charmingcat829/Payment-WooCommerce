@@ -114,14 +114,14 @@ class TradeSafeProfile {
 			);
 		}
 
-		if ( isset( $_POST['tradesafe_token_organization_name'] )
-			&& isset( $_POST['tradesafe_token_organization_type'] )
-			&& isset( $_POST['tradesafe_token_organization_registration_number'] ) ) {
+		if ( ! empty( $_POST['tradesafe_token_organization_name'] )
+			&& ! empty( $_POST['tradesafe_token_organization_type'] )
+			&& ! empty( $_POST['tradesafe_token_organization_registration_number'] ) ) {
 			$organization = array(
-				'name'               => sanitize_text_field( wp_unslash( $_POST['tradesafe_token_organization_name'] ?? null ) ),
+				'name'               => sanitize_text_field( wp_unslash( $_POST['tradesafe_token_organization_name'] ) ),
 				'tradeName'          => sanitize_text_field( wp_unslash( $_POST['tradesafe_token_organization_trading_name'] ?? null ) ),
-				'type'               => sanitize_text_field( wp_unslash( $_POST['tradesafe_token_organization_type'] ?? null ) ),
-				'registrationNumber' => sanitize_text_field( wp_unslash( $_POST['tradesafe_token_organization_registration_number'] ?? null ) ),
+				'type'               => sanitize_text_field( wp_unslash( $_POST['tradesafe_token_organization_type'] ) ),
+				'registrationNumber' => sanitize_text_field( wp_unslash( $_POST['tradesafe_token_organization_registration_number'] ) ),
 				'taxNumber'          => sanitize_text_field( wp_unslash( $_POST['tradesafe_token_organization_tax_number'] ?? null ) ),
 			);
 		}
