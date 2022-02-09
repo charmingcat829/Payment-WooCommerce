@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.2.3](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.2.2...v2.2.3) (2022-02-09)
+### Bug Fixes
+
+* Changed how the existence of data is validated when creating a token ([f6f603](https://github.com/tradesafe/tradesafe-payment-gateway/commit/f6f6030b3f153b4e1f1a10445a4a7a3241709647))
+
+---
+
 ## [2.2.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.2.1...v2.2.2) (2022-02-07)
 ### Bug Fixes
 
