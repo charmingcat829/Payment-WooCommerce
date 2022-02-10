@@ -47,6 +47,9 @@ class TradeSafeApiClient {
 		$httpOptions = array(
 			'connect_timeout' => 5,
 			'timeout'         => 15,
+            'headers' => [
+                'User-Agent' => 'WooCommerce Plugin - ' . WC_GATEWAY_TRADESAFE_VERSION
+            ]
 		);
 		if ( true === WP_DEBUG ) {
 			$httpOptions['verify'] = false;
@@ -814,6 +817,7 @@ class TradeSafeApiClient {
 		);
 
 		$response = $this->client->runQuery( $gql, true );
+
 		$result   = $response->getData();
 
 		return $result['transactionCreate'];
