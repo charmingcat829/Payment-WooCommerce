@@ -593,6 +593,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	 *
 	 * @param int $order_id WooCommerce Order Id.
 	 * @return array|null
+	 * @throws Exception
 	 */
 	public function process_payment( $order_id ): ?array {
 		global $woocommerce;
@@ -662,7 +663,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			} else {
 				$parties[] = array(
 					'role'  => 'BUYER',
-					'token' => get_user_meta( $user->ID, tradesafe_token_meta_key(), true ),
+					'token' => tradesafe_get_token_id( $user->ID ),
 				);
 			}
 
@@ -688,26 +689,20 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				);
 
 				if ( ! $sub_orders ) {
-					$payout_fee_allocation = tradesafe_fee_allocation();
-
 					$parties[] = array(
 						'role'          => 'BENEFICIARY_MERCHANT',
-						'token'         => get_user_meta( $order->get_meta( '_dokan_vendor_id', true ), tradesafe_token_meta_key(), true ),
+						'token'         => tradesafe_get_token_id( $order->get_meta( '_dokan_vendor_id', true ) ),
 						'fee'           => dokan()->commission->get_earning_by_order( $order ),
 						'feeType'       => 'FLAT',
 						'feeAllocation' => 'SELLER',
 					);
 				} else {
-					$sub_order_count = count( $sub_orders );
-
 					foreach ( $sub_orders as $sub_order_post ) {
 						$sub_order = wc_get_order( $sub_order_post->ID );
 
-						$payout_fee_allocation = tradesafe_fee_allocation();
-
 						$parties[] = array(
 							'role'          => 'BENEFICIARY_MERCHANT',
-							'token'         => get_user_meta( $sub_order->get_meta( '_dokan_vendor_id', true ), tradesafe_token_meta_key(), true ),
+							'token'         => tradesafe_get_token_id( $order->get_meta( '_dokan_vendor_id', true ) ),
 							'fee'           => dokan()->commission->get_earning_by_order( $sub_order ),
 							'feeType'       => 'FLAT',
 							'feeAllocation' => 'SELLER',
@@ -730,7 +725,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 					$parties[] = array(
 						'role'          => 'BENEFICIARY_MERCHANT',
-						'token'         => get_user_meta( $vendor_id, tradesafe_token_meta_key(), true ),
+						'token'         => tradesafe_get_token_id( $vendor_id ),
 						'fee'           => $vendor['total'] - $fee,
 						'feeType'       => 'FLAT',
 						'feeAllocation' => 'SELLER',
