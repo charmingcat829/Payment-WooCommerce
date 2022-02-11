@@ -47,9 +47,9 @@ class TradeSafeApiClient {
 		$httpOptions = array(
 			'connect_timeout' => 5,
 			'timeout'         => 15,
-            'headers' => [
-                'User-Agent' => 'WooCommerce Plugin - ' . WC_GATEWAY_TRADESAFE_VERSION
-            ]
+			'headers'         => array(
+				'User-Agent' => 'WooCommerce Plugin - ' . WC_GATEWAY_TRADESAFE_VERSION,
+			),
 		);
 		if ( true === WP_DEBUG ) {
 			$httpOptions['verify'] = false;
@@ -308,82 +308,21 @@ class TradeSafeApiClient {
 	public function createToken( $user, $organization = null, $bankAccount = null, $payout_interval = 'IMMEDIATE' ) {
 		$gql = ( new Mutation( 'tokenCreate' ) );
 
-		if ( isset( $user['idNumber'] ) ) {
-			$input = sprintf(
-				'user: {
-                givenName: "%s"
-                familyName: "%s"
-                email: "%s"
-                mobile: "%s"
-                idNumber: "%s"
-                idType: %s
-                idCountry: %s
-            }',
-				$user['givenName'],
-				$user['familyName'],
-				$user['email'],
-				$user['mobile'],
-				$user['idNumber'],
-				$user['idType'],
-				$user['idCountry']
-			);
-		} else {
-			$input = sprintf(
-				'user: {
-                givenName: "%s"
-                familyName: "%s"
-                email: "%s"
-                mobile: "%s"
-            }',
-				$user['givenName'],
-				$user['familyName'],
-				$user['email'],
-				$user['mobile']
-			);
-		}
-
-		if ( ! empty( $organization ) ) {
-			$input .= sprintf(
-				'organization: {
-                name: "%s"
-                tradeName: "%s"
-                type: %s
-                registrationNumber: "%s"
-                taxNumber: "%s"
-            }',
-				$organization['name'],
-				$organization['tradeName'],
-				$organization['type'],
-				$organization['registrationNumber'],
-				$organization['taxNumber']
-			);
-		}
-
-		if ( ! empty( $bankAccount ) ) {
-			$input .= sprintf(
-				'bankAccount: {
-                bank: %s
-                accountNumber: "%s"
-                accountType: %s
-            }',
-				$bankAccount['bank'],
-				$bankAccount['accountNumber'],
-				$bankAccount['accountType']
-			);
-		}
-
-		$input .= sprintf(
-			'settings: {
-             payout: {
-                interval: %s
-             }
-		 }',
-			$payout_interval
+		$variables = array(
+			'input' => array(
+				'user'         => $user,
+				'organization' => $organization,
+				'bankAccount'  => $bankAccount,
+				'settings'     => array(
+					'payout' => array(
+						'interval' => $payout_interval,
+					),
+				),
+			),
 		);
 
-		$input = '{' . $input . '}';
-
-		$gql->setArguments( array( 'input' => new RawObject( $input ) ) );
+		$gql->setVariables( array( new Variable( 'input', 'TokenInput', true ) ) );
+		$gql->setArguments( array( 'input' => '$input' ) );
 
 		$gql->setSelectionSet(
 			array(
@@ -424,7 +363,7 @@ class TradeSafeApiClient {
 			)
 		);
 
-		$response = $this->client->runQuery( $gql, true );
+		$response = $this->client->runQuery( $gql, true, $variables );
 		$result   = $response->getData();
 
 		return $result['tokenCreate'];
@@ -433,70 +372,31 @@ class TradeSafeApiClient {
 	public function updateToken( $tokenId, $user, $organization = null, $bankAccount = null, $payout_interval = 'IMMEDIATE' ) {
 		$gql = ( new Mutation( 'tokenUpdate' ) );
 
-		$input = sprintf(
-			'user: {
-            givenName: "%s"
-            familyName: "%s"
-            email: "%s"
-            mobile: "%s"
-            idNumber: "%s"
-            idType: %s
-            idCountry: %s
-        }',
-			$user['givenName'],
-			$user['familyName'],
-			$user['email'],
-			$user['mobile'],
-			$user['idNumber'],
-			$user['idType'],
-			$user['idCountry']
+		$variables = array(
+			'id'    => $tokenId,
+			'input' => array(
+				'user'         => $user,
+				'organization' => $organization,
+				'bankAccount'  => $bankAccount,
+				'settings'     => array(
+					'payout' => array(
+						'interval' => $payout_interval,
+					),
+				),
+			),
 		);
 
-		if ( ! empty( $organization ) ) {
-			$input .= sprintf(
-				'organization: {
-                name: "%s"
-                tradeName: "%s"
-                type: %s
-                registrationNumber: "%s"
-                taxNumber: "%s"
-            }',
-				$organization['name'],
-				$organization['tradeName'],
-				$organization['type'],
-				$organization['registrationNumber'],
-				$organization['taxNumber']
-			);
-		}
-
-		if ( ! empty( $bankAccount ) ) {
-			$input .= sprintf(
-				'bankAccount: {
-                bank: %s
-                accountNumber: "%s"
-                accountType: %s
-            }',
-				$bankAccount['bank'],
-				$bankAccount['accountNumber'],
-				$bankAccount['accountType']
-			);
-		}
-
-		$input .= sprintf(
-			'settings: {
-             payout: {
-                interval: %s
-             }
-		 }',
-			$payout_interval
+		$gql->setVariables(
+			array(
+				new Variable( 'id', 'ID', true ),
+				new Variable( 'input', 'TokenInput', true ),
+			)
 		);
-
-		$input = '{' . $input . '}';
 
 		$gql->setArguments(
 			array(
-				'id'    => $tokenId,
-				'input' => new RawObject( $input ),
+				'id'    => '$id',
+				'input' => '$input',
 			)
 		);
 
@@ -539,7 +439,7 @@ class TradeSafeApiClient {
 			)
 		);
 
-		$response = $this->client->runQuery( $gql, true );
+		$response = $this->client->runQuery( $gql, true, $variables );
 		$result   = $response->getData();
 
 		return $result['tokenUpdate'];
@@ -818,7 +718,7 @@ class TradeSafeApiClient {
 
 		$response = $this->client->runQuery( $gql, true );
 
-		$result   = $response->getData();
+		$result = $response->getData();
 
 		return $result['transactionCreate'];
 	}
