@@ -234,7 +234,7 @@ function tradesafe_commission_value(): string {
 }
 
 /**
- * Create meta key based on environment.
+ * Set meta key based on environment.
  *
  * @return string
  */
@@ -246,4 +246,47 @@ function tradesafe_token_meta_key(): string {
 	}
 
 	return $meta_key;
+}
+
+/**
+ * Get or create token ID for user.
+ *
+ * @param int $user_id
+ * @return string
+ * @throws Exception
+ */
+function tradesafe_get_token_id( int $user_id ): string {
+	$token = get_user_meta( $user_id, tradesafe_token_meta_key(), true );
+
+	if ( ! empty( $token ) ) {
+		return $token;
+	}
+
+	// If Token was not found for user create one and return the id
+	$client   = new \TradeSafe\Helpers\TradeSafeApiClient();
+	$settings = get_option( 'woocommerce_tradesafe_settings', array() );
+
+	$customer = new WC_Customer( $user_id );
+
+	$payout_interval = 'ACCOUNT';
+
+	if ( isset( $settings['payout_method'] ) ) {
+		$payout_interval = $settings['payout_method'];
+	}
+
+	$token_data = $client->createToken(
+		array(
+			'givenName'  => $customer->get_first_name(),
+			'familyName' => $customer->get_last_name(),
+			'email'      => $customer->get_email(),
+			'mobile'     => $customer->get_billing_phone(),
+		),
+		null,
+		null,
+		$payout_interval
+	);
+
+	$customer->update_meta_data( tradesafe_token_meta_key(), sanitize_text_field( $token_data['id'] ) );
+
+	return sanitize_text_field( $token_data['id'] );
 }
