@@ -33,7 +33,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	public function __construct() {
 		$this->id                 = 'tradesafe';
 		$this->method_title       = __( 'TradeSafe Escrow', 'tradesafe-payment-gateway' );
-		$this->method_description = __( 'TradeSafe keeps your funds (in trust) until you get what you’re paying for. Pay with Ozow, credit/debit card, EFT, or SnapScan', 'tradesafe-payment-gateway' );
+		$this->method_description = __( 'TradeSafe payment option allows for your money to be kept safely until you receive what you ordered. Simply pay using Credit/Debit card, EFT, SnapScan or Ozow.', 'tradesafe-payment-gateway' );
 		$this->icon               = TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/images/icon.svg';
 
 		$this->client = new \TradeSafe\Helpers\TradeSafeApiClient();
