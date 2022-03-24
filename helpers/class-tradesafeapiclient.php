@@ -136,8 +136,8 @@ class TradeSafeApiClient {
 		}
 	}
 
-	public function generateToken() {
-		if ( get_transient( 'tradesafe_client_token' ) ) {
+	public function generateToken( $force = false ) {
+		if ( get_transient( 'tradesafe_client_token' ) && $force !== true ) {
 			$this->token = get_transient( 'tradesafe_client_token' );
 			return;
 		}
@@ -260,6 +260,7 @@ class TradeSafeApiClient {
 				'name',
 				'reference',
 				'balance',
+				'valid',
 				( new Query( 'user' ) )
 				->setSelectionSet(
 					array(
@@ -292,6 +293,17 @@ class TradeSafeApiClient {
 						'bankName',
 					)
 				),
+				( new Query( 'settings' ) )
+				->setSelectionSet(
+					array(
+						( new Query( 'payout' ) )
+							->setSelectionSet(
+								array(
+									'interval',
+								)
+							),
+					)
+				),
 			)
 		);
 
@@ -305,7 +317,7 @@ class TradeSafeApiClient {
 		}
 	}
 
-	public function createToken( $user, $organization = null, $bankAccount = null, $payout_interval = 'IMMEDIATE' ) {
+	public function createToken( $user, $organization = null, $bankAccount = null, $payout_interval = 'WEEKLY' ) {
 		$gql = ( new Mutation( 'tokenCreate' ) );
 
 		$variables = array(
@@ -330,6 +342,7 @@ class TradeSafeApiClient {
 				'name',
 				'reference',
 				'balance',
+				'valid',
 				( new Query( 'user' ) )
 				->setSelectionSet(
 					array(
@@ -369,7 +382,7 @@ class TradeSafeApiClient {
 		return $result['tokenCreate'];
 	}
 
-	public function updateToken( $tokenId, $user, $organization = null, $bankAccount = null, $payout_interval = 'IMMEDIATE' ) {
+	public function updateToken( $tokenId, $user, $organization = null, $bankAccount = null, $payout_interval = 'WEEKLY' ) {
 		$gql = ( new Mutation( 'tokenUpdate' ) );
 
 		$variables = array(
@@ -406,6 +419,7 @@ class TradeSafeApiClient {
 				'name',
 				'reference',
 				'balance',
+				'valid',
 				( new Query( 'user' ) )
 				->setSelectionSet(
 					array(

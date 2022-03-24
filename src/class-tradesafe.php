@@ -25,7 +25,7 @@ class TradeSafe {
 		add_action( 'woocommerce_order_status_refunded', array( 'TradeSafe', 'cancel_transaction' ), PHP_INT_MAX, 2 );
 		add_action( 'woocommerce_order_status_cancelled', array( 'TradeSafe', 'cancel_transaction' ), PHP_INT_MAX, 2 );
 		add_action( 'woocommerce_review_order_before_payment', array( 'TradeSafe', 'refresh_checkout' ) );
-		add_action( 'admin_notices', array( 'TradeSafe', 'seller_account_incomplete_notice' ), -10000, 0 );
+		add_action( 'admin_notices', array( 'TradeSafe', 'seller_account_incomplete_notice' ), 99, 0 );
 		add_action( 'dokan_dashboard_content_inside_before', array( 'TradeSafe', 'seller_account_incomplete_notice' ) );
 
 		// Disable publish for standard woocommerce products.

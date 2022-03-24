@@ -110,7 +110,7 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'woocommerce_t
 function tradesafe_payment_gateway_plugin_row_meta( array $links, string $file ): array {
 	if ( strpos( $file, 'tradesafe-payment-gateway.php' ) !== false ) {
 		$new_links = array(
-			'<a href="https://developer.tradesafe.co.za/docs/1.1/plugins/woocommerce">' . __( 'Docs', 'tradesafe-payment-gateway' ) . '</a>',
+			'<a href="https://developer.tradesafe.co.za/docs/1.2/plugins/woocommerce">' . __( 'Docs', 'tradesafe-payment-gateway' ) . '</a>',
 			'<a href="https://www.tradesafe.co.za/support/">' . __( 'Support', 'tradesafe-payment-gateway' ) . '</a>',
 		);
 
@@ -156,6 +156,10 @@ function tradesafe_is_prod(): bool {
  */
 function tradesafe_is_marketplace(): bool {
 	$settings = get_option( 'woocommerce_tradesafe_settings', array() );
+
+	if ( tradesafe_has_dokan() ) {
+		return true;
+	}
 
 	if ( isset( $settings['is_marketplace'] ) ) {
 		return 'yes' === $settings['is_marketplace'];
@@ -268,7 +272,7 @@ function tradesafe_get_token_id( int $user_id ): string {
 
 	$customer = new WC_Customer( $user_id );
 
-	$payout_interval = 'ACCOUNT';
+	$payout_interval = 'IMMEDIATE';
 
 	if ( isset( $settings['payout_method'] ) ) {
 		$payout_interval = $settings['payout_method'];

@@ -12,6 +12,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
+
 	/**
 	 * Api Client
 	 *
@@ -32,10 +33,11 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	public function __construct() {
 		$this->id                 = 'tradesafe';
 		$this->method_title       = __( 'TradeSafe Escrow', 'tradesafe-payment-gateway' );
-		$this->method_description = __( 'TradeSafe keeps the funds (in trust) until you get what you’re paying for. Pay with Ozow, credit/debit card, EFT, or SnapScan', 'tradesafe-payment-gateway' );
+		$this->method_description = __( 'TradeSafe keeps your funds (in trust) until you get what you’re paying for. Pay with Ozow, credit/debit card, EFT, or SnapScan', 'tradesafe-payment-gateway' );
 		$this->icon               = TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/images/icon.svg';
 
 		$this->client = new \TradeSafe\Helpers\TradeSafeApiClient();
+		$this->client->generateToken( true );
 
 		$this->version              = WC_GATEWAY_TRADESAFE_VERSION;
 		$this->available_countries  = array( 'ZA' );
@@ -57,6 +59,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_receipt_tradesafe', array( $this, 'receipt_page' ) );
+		add_action( 'admin_notices', array( $this, 'tradesafe_payment_gateway_admin_notice' ), 1 );
 
 		if ( is_admin() ) {
 			wp_enqueue_script( 'tradesafe-payment-gateway-settings', TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/js/settings.js', array( 'jquery' ), WC_GATEWAY_TRADESAFE_VERSION, true );
@@ -89,6 +92,12 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			$is_available = true;
 		}
 
+		$profile = $this->client->profile();
+
+		if ( isset( $profile['error'] ) ) {
+			return false;
+		}
+
 		if ( 'no' === $this->get_option( 'enabled' ) || null === $this->get_option( 'enabled' ) ) {
 			$is_available = false;
 		}
@@ -97,9 +106,55 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Display warning if API has been enabled for production but not configured on the settings.
+	 *
+	 * @return void
+	 */
+	function tradesafe_payment_gateway_admin_notice() {
+		if ( isset( $_GET['page'] )
+			&& isset( $_GET['tab'] )
+			&& isset( $_GET['section'] )
+			&& $_GET['page'] === 'wc-settings'
+			&& $_GET['tab'] === 'checkout'
+			&& $_GET['section'] === 'tradesafe' ) {
+			return;
+		}
+
+		$client       = new \TradeSafe\Helpers\TradeSafeApiClient();
+		$profile      = $client->profile();
+		$settings_url = add_query_arg(
+			array(
+				'page'    => 'wc-settings',
+				'tab'     => 'checkout',
+				'section' => 'tradesafe',
+			),
+			admin_url( 'admin.php' )
+		);
+
+		if ( true === $this->is_valid_for_use()
+			&& true === $client->production()
+			&& false === tradesafe_is_prod() ) {
+			echo '<div class="notice notice-warning is-dismissible">
+                <h2>Warning you are running the TradeSafe plugin in sandbox mode!</h2>
+                <p>Any users who crate orders while in this mode will not be charged! To fix this go to the TradeSafe settings page and change the environment to "Live".</p>
+                <p><a href="' . esc_url( $settings_url ) . '" class="button button-primary button-large">Take me to the settings page!</a></p>
+            </div>';
+		}
+
+		if ( isset( $profile['error'] ) ) {
+			echo '<div class="notice notice-error">
+                <h2>TradeSafe plugin cannot connect to the API!</h2>
+                <p>There is a problem connecting to the TradeSafe API please check that the client ID and client secred are correcctly configured. If the the problem persists please contact TradeSafe support.</p>
+                <p><a href="' . esc_url( $settings_url ) . '" class="button button-primary button-large">Take me to the settings page!</a></p>
+            </div>';
+		}
+	}
+
+	/**
 	 * Define Gateway settings fields.
 	 */
 	public function init_form_fields() {
+		delete_transient( 'tradesafe_client_info' );
 		$settings = get_option( 'woocommerce_tradesafe_settings', array() );
 
 		$form = array(
@@ -325,6 +380,14 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	 */
 	public function init_settings() {
 		parent::init_settings();
+
+		if ( empty( $this->settings['industry'] ) ) {
+			$this->settings['industry'] = 'GENERAL_GOODS_SERVICES';
+		}
+
+		if ( empty( $this->settings['processing_fee'] ) ) {
+			$this->settings['processing_fee'] = 'SELLER';
+		}
 	}
 
 	/**
@@ -337,6 +400,18 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		delete_transient( 'tradesafe_client_token' );
 
 		return parent::process_admin_options();
+	}
+
+	public function validate_client_id_field( $key, $value ): string {
+		if ( empty( $value ) ) {
+			return '';
+		}
+
+		if ( preg_match( '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $value ) === 1 ) {
+			return $value;
+		}
+
+		return '';
 	}
 
 	/**
@@ -427,11 +502,11 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 						<tr>
 							<th scope="row">API Domain</th>
 							<td>
-							<?php
-							esc_attr_e( $ping_result['api']['domain'] );
+								<?php
+								esc_attr_e( $ping_result['api']['domain'] );
 								esc_attr_e( ' [' . ( $ping_result['api']['status'] ? 'OK' : 'ERROR' ) . ']' )
-							?>
-								</td>
+								?>
+							</td>
 						</tr>
 						<?php
 						if ( $ping_result['api']['reason'] ) {
@@ -441,11 +516,11 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 						<tr>
 							<th scope="row">Authentication Domain</th>
 							<td>
-							<?php
-							esc_attr_e( $ping_result['auth']['domain'] );
+								<?php
+								esc_attr_e( $ping_result['auth']['domain'] );
 								esc_attr_e( ' [' . ( $ping_result['auth']['status'] ? 'OK' : 'ERROR' ) . ']' )
-							?>
-								</td>
+								?>
+							</td>
 						</tr>
 						<?php
 						if ( $ping_result['auth']['reason'] ) {
@@ -520,7 +595,8 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			</th>
 			<td class="forminp">
 				<fieldset>
-					<a href="https://developer.tradesafe.co.za//applications/<?php esc_attr_e( $data['value'] ); ?>/go-live" class="button-primary" target="_blank">Request Go-Live</a>
+					<a href="https://developer.tradesafe.co.za//applications/<?php esc_attr_e( $data['value'] ); ?>/go-live"
+					   class="button-primary" target="_blank">Request Go-Live</a>
 					<p class="description"><?php esc_attr_e( $data['description'] ); ?></p>
 				</fieldset>
 			</td>
