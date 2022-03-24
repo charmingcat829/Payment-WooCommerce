@@ -4,7 +4,7 @@ Tags: tradesafe, woocommerce, dokan, payment gateway, escrow, credit card, insta
 Requires at least: 5.6
 Tested up to: 5.9
 Requires PHP: 7.4
-Stable tag: 2.2.3
+Stable tag: 2.3.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -76,30 +76,14 @@ Please do not hesitate to email [support@tradesafe.co.za](mailto:support@tradesa
 
 == Changelog ==
 
-= 2.2.3  2022-02-07 =
-
-### Bug Fixes
-
-* Changed how the existence of data is validated when creating a token
-
-= 2.2.2 - 2022-02-07 =
-
-### Bug Fixes
-
-* Added additional validation to order state transisions
-
-= 2.2.1 - 2022-01-31 =
-
-### Bug Fixes
-
-* Do not disable updates for products if user is admin
-
-= 2.2.0 - 2022-01-31 =
+= 2.3.0  2022-03-24 =
 
 ### Features
 
-* Added withdraw support for dokan
+* Added function to retrieve or create a token id for a user
+* Added withdraw function with support for the doken dashboard
+* Changed how token id's are retrieved when creating a transaction
 
 ### Bug Fixes
 
-* Set tokens to payout on a montly basis
+* Simplified the qraphql mutation used for creating or updating a token

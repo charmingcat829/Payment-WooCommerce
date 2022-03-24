@@ -4,6 +4,19 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.3.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.2.3...v2.3.0) (2022-03-24)
+### Features
+
+* Added function to retrieve or create a token id for a user ([fec055](https://github.com/tradesafe/tradesafe-payment-gateway/commit/fec055e11e9e8c963d839686395e13dfadacab87))
+* Added withdraw function with support for the doken dashboard ([be0c68](https://github.com/tradesafe/tradesafe-payment-gateway/commit/be0c68986ec8a3fa539af62d72a42706622efe3a))
+* Changed how token id's are retrieved when creating a transaction ([4d4c62](https://github.com/tradesafe/tradesafe-payment-gateway/commit/4d4c62b844274f54912d4e48e94e15ede4916f5d))
+
+### Bug Fixes
+
+* Simplified the qraphql mutation used for creating or updating a token ([75570b](https://github.com/tradesafe/tradesafe-payment-gateway/commit/75570b31c6c8cbb5c9f171f8ba2960456251dbdd))
+
+---
+
 ## [2.2.3](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.2.2...v2.2.3) (2022-02-09)
 ### Bug Fixes
 
