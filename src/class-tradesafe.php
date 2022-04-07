@@ -25,8 +25,6 @@ class TradeSafe {
 		add_action( 'woocommerce_order_status_refunded', array( 'TradeSafe', 'cancel_transaction' ), PHP_INT_MAX, 2 );
 		add_action( 'woocommerce_order_status_cancelled', array( 'TradeSafe', 'cancel_transaction' ), PHP_INT_MAX, 2 );
 		add_action( 'woocommerce_review_order_before_payment', array( 'TradeSafe', 'refresh_checkout' ) );
-		add_action( 'admin_notices', array( 'TradeSafe', 'seller_account_incomplete_notice' ), 99, 0 );
-		add_action( 'dokan_dashboard_content_inside_before', array( 'TradeSafe', 'seller_account_incomplete_notice' ) );
 
 		// Disable publish for standard woocommerce products.
 		add_action( 'admin_head', array( 'TradeSafe', 'disable_publish_button' ) );
@@ -432,56 +430,6 @@ class TradeSafe {
 		}
 
 		return $available_gateways;
-	}
-
-	/**
-	 * Display a message to a seller/vender if their account is incomplete.
-	 */
-	public static function seller_account_incomplete_notice() {
-		$valid_account = self::is_valid_token( 'seller' );
-
-		if ( false === $valid_account && ! current_user_can( 'administrator' ) ) {
-			$class   = 'notice notice-warning';
-			$title   = __( 'Your account is incomplete!', 'tradesafe-payment-gateway' );
-			$message = __( 'Our payment service provider is TradeSafe Escrow. TradeSafe keeps the funds safe in the middle and will release the funds to you once delivery is completed successfully. Sellers are guaranteed payment.', 'tradesafe-payment-gateway' );
-			$more    = __( 'TradeSafe forces HTTPS for all services using TLS (SSL) including their public website and the Application. All bank account details are encrypted with AES-256. Decryption keys are stored on separate machines from the application. In English, your details are encrypted with the highest industry-specific standards (which can be found in most banks), making your information confidential, secure, and safe.', 'tradesafe-payment-gateway' );
-
-			printf( '<div class="%1$s"><h3>%2$s</h3><p>%3$s</p><p>%4$s</p><p><a href="%5$s" class="button-secondary button alt button-large button-next">Update Account</a></p></div>', esc_attr( $class ), esc_html( $title ), esc_html( $message ), esc_html( $more ), esc_url( wc_get_endpoint_url( 'edit-account', '', get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) ) ) );
-		}
-	}
-
-	/**
-	 * Display a message to a buyer if their account is incomplete.
-	 *
-	 * @deprecated ID Number captured on payment page
-	 */
-	public static function buyer_account_incomplete_notice() {
-		$valid_account = self::is_valid_token( 'buyer' );
-
-		if ( false === $valid_account ) {
-			$class   = 'notice notice-warning';
-			$title   = __( 'Your account is incomplete!', 'tradesafe-payment-gateway' );
-			$message = __( 'You may receive a message below that there are no available payment providers as your user account is incomplete. Please click on the button below to update your account to access additional payment methods. Once done, you will be able to proceed with checkout.', 'tradesafe-payment-gateway' );
-
-			printf( '<div class="%1$s"><h3>%2$s</h3><p>%3$s</p><p><a href="%4$s" class="button-secondary button alt button-large button-next">Update Account</a></p></div>', esc_attr( $class ), esc_html( $title ), esc_html( $message ), esc_url( wc_get_endpoint_url( 'edit-account', '', get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) ) ) );
-		}
-	}
-
-	/**
-	 * Display a message to a buyer if their vendor is incomplete.
-	 *
-	 * @deprecated ID Number captured on payment page
-	 */
-	public static function vendor_account_incomplete_notice() {
-		$valid_account = self::is_valid_token( 'buyer' );
-
-		if ( false === $valid_account ) {
-			$class   = 'notice notice-warning';
-			$title   = __( 'Your account is incomplete!', 'tradesafe-payment-gateway' );
-			$message = __( 'You may receive a message below that there are no available payment providers as your user account is incomplete. Please click on the button below to update your account to access additional payment methods. Once done, you will be able to proceed with checkout.', 'tradesafe-payment-gateway' );
-
-			printf( '<div class="%1$s"><h3>%2$s</h3><p>%3$s</p><p><a href="%4$s" class="button-secondary button alt button-large button-next">Update Account</a></p></div>', esc_attr( $class ), esc_html( $title ), esc_html( $message ), esc_url( wc_get_endpoint_url( 'edit-account', '', get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) ) ) );
-		}
 	}
 
 	/**
