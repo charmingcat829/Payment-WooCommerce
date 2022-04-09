@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.3.3](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.3.2...v2.3.3) (2022-04-09)
+### Bug Fixes
+
+* Added check to ensure fee allocation is set correctly ([036547](https://github.com/tradesafe/tradesafe-payment-gateway/commit/036547e281dadaf89412c68bd8a6b1d4098ce52b))
+
+---
+
 ## [2.3.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.3.1...v2.3.2) (2022-04-07)
 ### Bug Fixes
 
