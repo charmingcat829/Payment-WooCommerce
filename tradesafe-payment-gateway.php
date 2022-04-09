@@ -185,11 +185,21 @@ function tradesafe_has_dokan(): bool {
 function tradesafe_fee_allocation(): string {
 	$settings = get_option( 'woocommerce_tradesafe_settings', array() );
 
+    $fee_allocation = get_option( 'processing_fee', 'SELLER' );
+
 	if ( isset( $settings['processing_fee'] ) ) {
-		return $settings['processing_fee'];
+        $fee_allocation = $settings['processing_fee'];
 	}
 
-	return get_option( 'tradesafe_payout_fee', 'SELLER' );
+    // Check that valid value is set
+	switch ($fee_allocation) {
+        case "BUYER":
+        case "SELLER":
+        case "BUYER_SELLER":
+            return $fee_allocation;
+        default:
+            return 'SELLER';
+    }
 }
 
 /**
