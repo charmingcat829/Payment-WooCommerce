@@ -774,7 +774,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 					);
 				} else {
 					foreach ( $sub_orders as $sub_order_post ) {
-						$sub_order = wc_get_order( $sub_order_post->get_id() );
+						$sub_order = wc_get_order( $sub_order_post->ID );
 
 						$parties[] = array(
 							'role'          => 'BENEFICIARY_MERCHANT',
