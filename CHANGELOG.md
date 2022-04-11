@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.3.5](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.3.4...v2.3.5) (2022-04-11)
+### Bug Fixes
+
+* Changed how id for sub order post is retrieved ([1db173](https://github.com/tradesafe/tradesafe-payment-gateway/commit/1db173ec6044c68cf1677bfac663b51f86114d0b))
+
+---
+
 ## [2.3.4](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.3.3...v2.3.4) (2022-04-11)
 ### Bug Fixes
 
