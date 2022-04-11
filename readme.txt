@@ -76,6 +76,12 @@ Please do not hesitate to email [support@tradesafe.co.za](mailto:support@tradesa
 
 == Changelog ==
 
+= 2.3.4 2022-04-11 =
+
+### Bug Fixes
+
+* Changed how data is validated when creating a token with basic infomation
+
 = 2.3.3 2022-04-09 =
 
 ### Bug Fixes
