@@ -185,21 +185,21 @@ function tradesafe_has_dokan(): bool {
 function tradesafe_fee_allocation(): string {
 	$settings = get_option( 'woocommerce_tradesafe_settings', array() );
 
-    $fee_allocation = get_option( 'processing_fee', 'SELLER' );
+	$fee_allocation = get_option( 'processing_fee', 'SELLER' );
 
 	if ( isset( $settings['processing_fee'] ) ) {
-        $fee_allocation = $settings['processing_fee'];
+		$fee_allocation = $settings['processing_fee'];
 	}
 
-    // Check that valid value is set
-	switch ($fee_allocation) {
-        case "BUYER":
-        case "SELLER":
-        case "BUYER_SELLER":
-            return $fee_allocation;
-        default:
-            return 'SELLER';
-    }
+	// Check that valid value is set
+	switch ( $fee_allocation ) {
+		case 'BUYER':
+		case 'SELLER':
+		case 'BUYER_SELLER':
+			return $fee_allocation;
+		default:
+			return 'SELLER';
+	}
 }
 
 /**
@@ -288,17 +288,23 @@ function tradesafe_get_token_id( int $user_id ): string {
 		$payout_interval = $settings['payout_method'];
 	}
 
-	$token_data = $client->createToken(
-		array(
-			'givenName'  => $customer->get_first_name(),
-			'familyName' => $customer->get_last_name(),
-			'email'      => $customer->get_email(),
-			'mobile'     => $customer->get_billing_phone(),
-		),
-		null,
-		null,
-		$payout_interval
+	$user = array(
+		'givenName'  => $customer->get_first_name(),
+		'familyName' => $customer->get_last_name(),
+		'email'      => $customer->get_email(),
+		'mobile'     => $customer->get_billing_phone(),
 	);
+
+	try {
+		$token_data = $client->createToken(
+			$user,
+			null,
+			null,
+			$payout_interval
+		);
+	} catch ( \GraphQL\Exception\QueryError $e ) {
+		error_log( $e->getMessage() . ': ' . $e->getErrorDetails()['debugMessage'] ?? null, 3 );
+	}
 
 	$customer->update_meta_data( tradesafe_token_meta_key(), sanitize_text_field( $token_data['id'] ) );
 

@@ -320,6 +320,10 @@ class TradeSafeApiClient {
 	public function createToken( $user, $organization = null, $bankAccount = null, $payout_interval = 'WEEKLY' ) {
 		$gql = ( new Mutation( 'tokenCreate' ) );
 
+		if ( empty( $user['mobile'] ) ) {
+			unset( $user['mobile'] );
+		}
+
 		$variables = array(
 			'input' => array(
 				'user'         => $user,
