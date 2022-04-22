@@ -273,11 +273,15 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		);
 
 		$form['commission'] = array(
-			'title'       => __( 'Marketplace Commission Fee', 'tradesafe-payment-gateway' ),
-			'type'        => 'number',
-			'description' => __( 'What is the amount that is payable to you the marketplace owner for every transaction', 'tradesafe-payment-gateway' ),
-			'default'     => 10,
-			'desc_tip'    => false,
+			'title'             => __( 'Marketplace Commission Fee', 'tradesafe-payment-gateway' ),
+			'type'              => 'number',
+			'description'       => __( 'What is the amount that is payable to you the marketplace owner for every transaction', 'tradesafe-payment-gateway' ),
+			'default'           => 10,
+			'desc_tip'          => false,
+			'custom_attributes' => array(
+				'min'  => 1,
+				'step' => 0.01,
+			),
 		);
 
 		$form['commission_type'] = array(
@@ -387,6 +391,10 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 		if ( empty( $this->settings['processing_fee'] ) ) {
 			$this->settings['processing_fee'] = 'SELLER';
+		}
+
+		if ( empty( $this->settings['commission_allocation'] ) ) {
+			$this->settings['commission_allocation'] = 'VENDOR';
 		}
 	}
 
