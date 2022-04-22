@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.3.6](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.3.5...v2.3.6) (2022-04-22)
+### Bug Fixes
+
+* Allow decimal values for marketplace commission ([7f2576](https://github.com/tradesafe/tradesafe-payment-gateway/commit/7f25762dfd84325d2b63138ac6b71a27cee39b97))
+
+---
+
 ## [2.3.5](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.3.4...v2.3.5) (2022-04-11)
 ### Bug Fixes
 
