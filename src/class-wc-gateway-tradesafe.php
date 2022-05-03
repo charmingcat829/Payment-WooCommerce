@@ -330,7 +330,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		}
 
 		$form['payout_method'] = array(
-			'title'       => __( 'How are Users Paid Out', 'tradesafe-payment-gateway' ),
+			'title'       => __( 'When should Vendors be Paid Out?', 'tradesafe-payment-gateway' ),
 			'description' => 'A R5 fee (excl.) is incurred for payouts. If "Once a month" is selected this fee is waived.',
 			'type'        => 'select',
 			'default'     => 'IMMEDIATE',
