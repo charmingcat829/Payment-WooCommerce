@@ -307,6 +307,7 @@ function tradesafe_get_token_id( int $user_id ): string {
 	}
 
 	$customer->update_meta_data( tradesafe_token_meta_key(), sanitize_text_field( $token_data['id'] ) );
+	$customer->save_meta_data();
 
 	return sanitize_text_field( $token_data['id'] );
 }
