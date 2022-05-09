@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.3.7](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.3.6...v2.3.7) (2022-05-09)
+### Bug Fixes
+
+* Changed option title to reduce confusion ([589b0b](https://github.com/tradesafe/tradesafe-payment-gateway/commit/589b0b9a5d403ff01a269c1d2359ae7671c5e07c))
+* Ensure that token metadata is properly saved ([2dff6c](https://github.com/tradesafe/tradesafe-payment-gateway/commit/2dff6cedae9daf6897b61b0842956e93689538bb))
+
+---
+
 ## [2.3.6](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.3.5...v2.3.6) (2022-04-22)
 ### Bug Fixes
 
