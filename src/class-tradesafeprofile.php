@@ -13,6 +13,7 @@ defined( 'ABSPATH' ) || exit;
 class TradeSafeProfile {
 
 
+
 	/**
 	 * Initiate the class.
 	 */
@@ -46,6 +47,11 @@ class TradeSafeProfile {
 
 			// Add scripts
 			wp_enqueue_script( 'tradesafe-payment-gateway-withdrawal', TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/js/withdrawal.js', array( 'jquery' ), WC_GATEWAY_TRADESAFE_VERSION, true );
+		}
+
+		if ( is_admin() ) {
+			add_action( 'edit_user_profile', array( 'TradeSafeProfile', 'edit_user_profile_token' ) );
+			add_action( 'show_user_profile', array( 'TradeSafeProfile', 'edit_user_profile_token' ) );
 		}
 
 		// Rewrites.
@@ -442,6 +448,48 @@ class TradeSafeProfile {
 			print '<div class="woocommerce-error">';
 			esc_html_e( $error['message'] . '. ' . $error['extensions']['reason'] );
 			print '</div>';
+		}
+	}
+
+	public static function edit_user_profile_token( WP_User $user ) {
+		$token_id = get_user_meta( $user->ID, tradesafe_token_meta_key(), true );
+
+		echo '<h2>TradeSafe Details</h2>';
+
+		if ( $token_id ) {
+			$client     = new \TradeSafe\Helpers\TradeSafeApiClient();
+			$token_data = $client->getToken( $token_id );
+
+			ob_start();
+			?>
+			<table class="form-table" role="presentation">
+				<tbody>
+				<tr id="token_id">
+					<th><label>Token ID</label></th>
+					<td><?php echo sanitize_text_field( $token_data['id'] ); ?></td>
+				</tr>
+				<tr id="reference">
+					<th><label>Reference</label></th>
+					<td><?php echo sanitize_text_field( $token_data['reference'] ); ?></td>
+				</tr>
+				<tr id="bank_account">
+					<th><label>Has Bank Account assigned</label></th>
+					<td><?php echo ! empty( $token_data['bankAccount'] ) ? 'Yes' : 'No'; ?></td>
+				</tr>
+				<tr id="payout">
+					<th><label>Payout Method</label></th>
+					<td><?php echo sanitize_text_field( $token_data['settings']['payout']['interval'] ); ?></td>
+				</tr>
+				<tr id="balance">
+					<th><label>Account Balance</label></th>
+					<td><?php echo 'R ' . number_format(sanitize_text_field( $token_data['balance'] ), 2, '.', ' '); ?></td>
+				</tr>
+				</tbody>
+			</table>
+			<?php
+			ob_end_flush();
+		} else {
+			echo '<p>No information available.</p>';
 		}
 	}
 }
