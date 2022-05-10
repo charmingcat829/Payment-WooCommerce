@@ -13,6 +13,9 @@ Thumbs.db
 # Ignore config file
 config.php
 
+# Ignore duplicate changelog
+changelog.txt
+
 # -------------------------
 # BEGIN Whitelisted Files
 # -------------------------

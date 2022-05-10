@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.4.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.3.7...v2.4.0) (2022-05-10)
+### Features
+
+* Allow admin users to view basic tradesafe details when editing a user ([7887e2](https://github.com/tradesafe/tradesafe-payment-gateway/commit/7887e214d9163755225c21c34e57bb3288c90e11))
+
+---
+
 ## [2.3.7](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.3.6...v2.3.7) (2022-05-09)
 ### Bug Fixes
 
