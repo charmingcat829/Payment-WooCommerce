@@ -482,7 +482,7 @@ class TradeSafeProfile {
 				</tr>
 				<tr id="balance">
 					<th><label>Account Balance</label></th>
-					<td><?php echo 'R ' . number_format(sanitize_text_field( $token_data['balance'] ), 2, '.', ' '); ?></td>
+					<td><?php echo 'R ' . number_format( sanitize_text_field( $token_data['balance'] ), 2, '.', ' ' ); ?></td>
 				</tr>
 				</tbody>
 			</table>

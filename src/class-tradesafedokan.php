@@ -420,9 +420,9 @@ class TradeSafeDokan {
 	 *
 	 * @return array
 	 */
-	public static function active_payment_methods( $active_payment_methods, $vendor_id ) {
+	public static function active_payment_methods( $active_payment_methods ) {
 		$client     = new \TradeSafe\Helpers\TradeSafeApiClient();
-		$token_id   = get_user_meta( $vendor_id, tradesafe_token_meta_key(), true );
+		$token_id   = get_user_meta( dokan_get_current_user_id(), tradesafe_token_meta_key(), true );
 		$token_data = $client->getToken( $token_id );
 
 		if ( ! empty( $token_data['bankAccount']['accountNumber'] ) ) {
