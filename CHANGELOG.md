@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.4.3](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.2...v2.4.3) (2022-05-17)
+### Bug Fixes
+
+* Added extra debug information to error response when saving a token while debug is set to true ([4dd511](https://github.com/tradesafe/tradesafe-payment-gateway/commit/4dd511975d9cc9544dcc0ffb868f75333d9f69c8))
+
+---
+
 ## [2.4.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.1...v2.4.2) (2022-05-17)
 ### Bug Fixes
 
