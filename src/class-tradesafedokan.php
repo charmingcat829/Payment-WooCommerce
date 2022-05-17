@@ -408,7 +408,13 @@ class TradeSafeDokan {
 
 					return;
 				} catch ( \GraphQL\Exception\QueryError $e ) {
-					wp_send_json_error( 'There was a problem updating your account details' );
+					$error_message = 'There was a problem updating your account details';
+
+					if ( WP_DEBUG ) {
+						$error_message .= "\n\n<pre>" . json_encode( $e->getErrorDetails(), JSON_PRETTY_PRINT ) . '</pre>';
+					}
+
+					wp_send_json_error( $error_message );
 				}
 			}
 		}

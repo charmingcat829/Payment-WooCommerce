@@ -371,7 +371,13 @@ class TradeSafeProfile {
 						try {
 							$token = $client->updateToken( $tokenId, $user, $organization, $bank_account );
 						} catch ( \GraphQL\Exception\QueryError $e ) {
-							error_log( $e->getMessage() );
+							$error_message = $e->getMessage();
+
+							if ( WP_DEBUG ) {
+								$error_message .= "\n\n<pre>" . json_encode( $e->getErrorDetails(), JSON_PRETTY_PRINT ) . '</pre>';
+							}
+
+							error_log( $error_message );
 						}
 					}
 				}
