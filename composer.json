@@ -3,7 +3,7 @@
     "description": "Process payments using the TradeSafe as a payments provider",
     "homepage": "https://www.tradesafe.co.za/",
     "type": "wordpress-plugin",
-    "version": "2.4.0",
+    "version": "2.4.1",
     "prefer-stable": true,
     "minimum-stability": "dev",
     "license": "GPL-3.0-or-later",

@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.4.1](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.0...v2.4.1) (2022-05-17)
+### Bug Fixes
+
+* Updated how withdraw settings are saved to support new withdraw method page ([695521](https://github.com/tradesafe/tradesafe-payment-gateway/commit/695521eb65d748a73255328896b2bc5cc61f978a))
+
+---
+
 ## [2.4.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.3.7...v2.4.0) (2022-05-10)
 ### Features
 
