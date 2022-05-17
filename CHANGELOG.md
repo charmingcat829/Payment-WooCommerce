@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.4.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.1...v2.4.2) (2022-05-17)
+### Bug Fixes
+
+* Removed vendor id from active payment methods function ([31b96c](https://github.com/tradesafe/tradesafe-payment-gateway/commit/31b96ca150db7d318e33b17e1481ce7b1b444575))
+
+---
+
 ## [2.4.1](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.0...v2.4.1) (2022-05-17)
 ### Bug Fixes
 
