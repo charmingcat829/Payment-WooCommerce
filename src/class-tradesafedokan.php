@@ -296,7 +296,9 @@ class TradeSafeDokan {
 	 * @return void
 	 */
 	public static function save_withdraw_method( $store_id, $dokan_settings ) {
-		$post_data = wp_unslash( $_POST );
+		$existing_dokan_settings = get_user_meta( $store_id, 'dokan_profile_settings', true );
+		$prev_dokan_settings     = ! empty( $existing_dokan_settings ) ? $existing_dokan_settings : array();
+		$post_data               = wp_unslash( $_POST );
 
 		if ( wp_verify_nonce( $post_data['_wpnonce'], 'dokan_payment_settings_nonce' ) ) {
 			if ( isset( $post_data['settings']['tradesafe'] ) ) {
@@ -395,14 +397,21 @@ class TradeSafeDokan {
 				try {
 					$client->updateToken( $token_id, $user, $organization, $bank_account, sanitize_text_field( $post_data['settings']['tradesafe']['payout_interval'] ) );
 
+					$dokan_settings['payment']['tradesafe'] = array(
+						'user'         => $user,
+						'organization' => $organization,
+					);
+
+					$dokan_settings = array_merge( $prev_dokan_settings, $dokan_settings );
+
+					update_user_meta( $store_id, 'dokan_profile_settings', $dokan_settings );
+
 					return;
 				} catch ( \GraphQL\Exception\QueryError $e ) {
 					wp_send_json_error( 'There was a problem updating your account details' );
 				}
 			}
 		}
-
-		wp_send_json_error( 'There was a problem updating your account details' );
 	}
 
 
@@ -411,9 +420,9 @@ class TradeSafeDokan {
 	 *
 	 * @return array
 	 */
-	public static function active_payment_methods( $active_payment_methods ) {
+	public static function active_payment_methods( $active_payment_methods, $vendor_id ) {
 		$client     = new \TradeSafe\Helpers\TradeSafeApiClient();
-		$token_id   = get_user_meta( dokan_get_current_user_id(), tradesafe_token_meta_key(), true );
+		$token_id   = get_user_meta( $vendor_id, tradesafe_token_meta_key(), true );
 		$token_data = $client->getToken( $token_id );
 
 		if ( ! empty( $token_data['bankAccount']['accountNumber'] ) ) {
