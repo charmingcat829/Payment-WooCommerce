@@ -97,6 +97,7 @@ class TradeSafe {
 	 *
 	 * @param string $role the role to check.
 	 * @return bool
+	 * @throws Exception
 	 */
 	private static function is_valid_token( string $role ): bool {
 		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
@@ -107,7 +108,7 @@ class TradeSafe {
 			return false;
 		}
 
-		$token_id = get_user_meta( $user->ID, tradesafe_token_meta_key(), true );
+		$token_id = tradesafe_get_token_id( $user->ID );
 
 		if ( $token_id ) {
 			try {
@@ -442,7 +443,7 @@ class TradeSafe {
 		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 		$user   = wp_get_current_user();
 
-		$token_id = get_user_meta( $user->ID, tradesafe_token_meta_key(), true );
+		$token_id = tradesafe_get_token_id( $user->ID );
 
 		if ( $token_id ) {
 			$token_data = $client->getToken( $token_id );

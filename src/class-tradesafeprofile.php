@@ -84,7 +84,7 @@ class TradeSafeProfile {
 			return;
 		}
 
-		$token_id           = get_user_meta( $user->ID, tradesafe_token_meta_key(), true );
+		$token_id           = tradesafe_get_token_id( $user->ID );
 		$banks              = $client->getEnum( 'UniversalBranchCode' );
 		$bank_account_types = $client->getEnum( 'BankAccountType' );
 		$organization_types = $client->getEnum( 'OrganizationType' );
@@ -108,6 +108,7 @@ class TradeSafeProfile {
 	 * Save the details submitted by the user to their account.
 	 *
 	 * @param int $user_id User Id.
+	 * @throws Exception
 	 */
 	public static function save_account_details( int $user_id ) {
 		// Nonce check copied from woocommerce/includes/class-wc-form-handler.php@save_account_details.
@@ -122,7 +123,7 @@ class TradeSafeProfile {
 			return;
 		}
 
-		$token_id = get_user_meta( $user_id, tradesafe_token_meta_key(), true );
+		$token_id = tradesafe_get_token_id( $user_id );
 
 		$user_info = array(
 			'givenName'  => sanitize_text_field( wp_unslash( $_POST['account_first_name'] ?? null ) ),
@@ -457,8 +458,11 @@ class TradeSafeProfile {
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public static function edit_user_profile_token( WP_User $user ) {
-		$token_id = get_user_meta( $user->ID, tradesafe_token_meta_key(), true );
+		$token_id = tradesafe_get_token_id( $user->ID );
 
 		echo '<h2>TradeSafe Details</h2>';
 

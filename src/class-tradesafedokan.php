@@ -57,7 +57,7 @@ class TradeSafeDokan {
 	public static function dokan_withdraw_method( $store_settings ) {
 		$client             = new \TradeSafe\Helpers\TradeSafeApiClient();
 		$user               = wp_get_current_user();
-		$token_id           = get_user_meta( $user->ID, tradesafe_token_meta_key(), true );
+		$token_id           = tradesafe_get_token_id( dokan_get_current_user_id() );
 		$settings           = get_option( 'woocommerce_tradesafe_settings', array() );
 		$banks              = $client->getEnum( 'UniversalBranchCode' );
 		$bank_account_types = $client->getEnum( 'BankAccountType' );
@@ -294,6 +294,7 @@ class TradeSafeDokan {
 	 * Save store settings
 	 *
 	 * @return void
+	 * @throws Exception
 	 */
 	public static function save_withdraw_method( $store_id, $dokan_settings ) {
 		$existing_dokan_settings = get_user_meta( $store_id, 'dokan_profile_settings', true );
@@ -355,7 +356,7 @@ class TradeSafeDokan {
 				}
 
 				$client   = new \TradeSafe\Helpers\TradeSafeApiClient();
-				$token_id = get_user_meta( $store_id, tradesafe_token_meta_key(), true );
+				$token_id = tradesafe_get_token_id( $store_id );
 
 				$user = array(
 					'givenName'  => sanitize_text_field( $post_data['settings']['tradesafe']['given_name'] ),
@@ -428,7 +429,7 @@ class TradeSafeDokan {
 	 */
 	public static function active_payment_methods( $active_payment_methods ) {
 		$client     = new \TradeSafe\Helpers\TradeSafeApiClient();
-		$token_id   = get_user_meta( dokan_get_current_user_id(), tradesafe_token_meta_key(), true );
+		$token_id   = tradesafe_get_token_id( dokan_get_current_user_id() );
 		$token_data = $client->getToken( $token_id );
 
 		if ( ! empty( $token_data['bankAccount']['accountNumber'] ) ) {
@@ -448,7 +449,7 @@ class TradeSafeDokan {
 	public static function withdraw_is_valid_request( $valid, $args ) {
 		if ( 'tradesafe' === $args['method'] ) {
 			$client     = new \TradeSafe\Helpers\TradeSafeApiClient();
-			$token_id   = get_user_meta( sanitize_key( $args['user_id'] ), tradesafe_token_meta_key(), true );
+			$token_id   = tradesafe_get_token_id( dokan_get_current_user_id() );
 			$token_data = $client->getToken( $token_id );
 			$amount     = (float) sanitize_text_field( $args['amount'] );
 
@@ -469,7 +470,7 @@ class TradeSafeDokan {
 	public static function after_withdraw_request( $user_id, $amount, $method ) {
 		if ( 'tradesafe' === $method ) {
 			$client   = new \TradeSafe\Helpers\TradeSafeApiClient();
-			$token_id = get_user_meta( sanitize_key( $user_id ), tradesafe_token_meta_key(), true );
+			$token_id = tradesafe_get_token_id( dokan_get_current_user_id() );
 
 			$withdraw_requests = dokan()->withdraw->get_withdraw_requests( sanitize_key( $user_id ) );
 
@@ -495,10 +496,11 @@ class TradeSafeDokan {
 	 * Display the token balance on the withdrawal page.
 	 *
 	 * @return void
+	 * @throws Exception
 	 */
 	public static function show_tradesafe_balance() {
 		$client     = new \TradeSafe\Helpers\TradeSafeApiClient();
-		$token_id   = get_user_meta( dokan_get_current_user_id(), tradesafe_token_meta_key(), true );
+		$token_id   = tradesafe_get_token_id( dokan_get_current_user_id() );
 		$token_data = $client->getToken( $token_id );
 
 		$message = sprintf( __( 'TradeSafe Escrow Balance: %s ', 'tradesafe-payment-gateway' ), wc_price( $token_data['balance'] ) );
@@ -518,10 +520,11 @@ class TradeSafeDokan {
 	 * Display the token balance on the withdrawal page.
 	 *
 	 * @return void
+	 * @throws Exception
 	 */
 	public static function balance_widget() {
 		$client     = new \TradeSafe\Helpers\TradeSafeApiClient();
-		$token_id   = get_user_meta( dokan_get_current_user_id(), tradesafe_token_meta_key(), true );
+		$token_id   = tradesafe_get_token_id( dokan_get_current_user_id() );
 		$token_data = $client->getToken( $token_id );
 
 		$message = sprintf( __( 'TradeSafe Escrow Balance: %s ', 'tradesafe-payment-gateway' ), wc_price( $token_data['balance'] ) );
