@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.4.4](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.3...v2.4.4) (2022-05-19)
+### Bug Fixes
+
+* Always load token id through helper function instead of checking directly ([084fd9](https://github.com/tradesafe/tradesafe-payment-gateway/commit/084fd90748222365df449256976fb6648c87e3fe))
+
+
+---
+
 ## [2.4.3](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.2...v2.4.3) (2022-05-17)
 ### Bug Fixes
 
