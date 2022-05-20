@@ -4,7 +4,7 @@ Tags: tradesafe, woocommerce, dokan, payment gateway, escrow, credit card, insta
 Requires at least: 5.6
 Tested up to: 5.9
 Requires PHP: 7.4
-Stable tag: 2.4.4
+Stable tag: 2.4.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -75,6 +75,12 @@ For more information on how to install and configure the plugin, please refer to
 Please do not hesitate to email [support@tradesafe.co.za](mailto:support@tradesafe.co.za) or phone us on 010 020 3101. We are here to help you every step of the way.
 
 == Changelog ==
+
+= 2.4.5 2022-05-20 =
+
+### Bug Fixes
+
+* Add support for setting up payment settings in dokan wizard
 
 = 2.4.4 2022-05-19 =
 

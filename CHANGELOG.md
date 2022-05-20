@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.4.5](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.4...v2.4.5) (2022-05-20)
+### Bug Fixes
+
+* Add support for setting up payment settings in dokan wizard ([d7d166](https://github.com/tradesafe/tradesafe-payment-gateway/commit/d7d166a94809ccacdb932e7559efdccb9b1b5653))
+
+
+---
+
 ## [2.4.4](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.3...v2.4.4) (2022-05-19)
 ### Bug Fixes
 
