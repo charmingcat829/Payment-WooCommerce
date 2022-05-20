@@ -19,6 +19,7 @@ class TradeSafeDokan {
 	public static function init() {
 		// Actions
 		add_action( 'dokan_store_profile_saved', array( 'TradeSafeDokan', 'save_withdraw_method' ), 10, 2 );
+		add_action( 'dokan_seller_wizard_payment_field_save', array( 'TradeSafeDokan', 'dokan_seller_wizard_payment_field_save' ), 10, 2 );
 		add_action( 'dokan_after_withdraw_request', array( 'TradeSafeDokan', 'after_withdraw_request' ), 10, 3 );
 		add_action( 'dokan_withdraw_content', array( 'TradeSafeDokan', 'show_tradesafe_balance' ), 5 );
 		add_action( 'dokan_dashboard_left_widgets', array( 'TradeSafeDokan', 'balance_widget' ), 11 );
@@ -31,6 +32,7 @@ class TradeSafeDokan {
 		if ( tradesafe_has_dokan() ) {
 			// Add scripts
 			wp_enqueue_script( 'tradesafe-payment-gateway-withdrawal', TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/js/withdrawal.js', array( 'jquery' ), WC_GATEWAY_TRADESAFE_VERSION, true );
+			wp_enqueue_script( 'wc-setup', TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/js/withdrawal.js', array( 'jquery' ), WC_GATEWAY_TRADESAFE_VERSION, true );
 		}
 	}
 
@@ -106,14 +108,20 @@ class TradeSafeDokan {
 
 		?>
 
+        <?php if ( isset( $_GET['error'] ) ) : ?>
+			<div class="woocommerce-error">
+				<strong><?php echo sanitize_text_field( $_GET['error'] ); ?></strong>
+			</div>
+		<?php endif; ?>
+
 		<div class="dokan-form-group">
 			<div class="dokan-w12 dokan-text-left">
 				<div class="checkbox">
-					<label>
-						<input name="settings[tradesafe][is_organization]" value="no" type="hidden">
-						<input id="is_organization" name="settings[tradesafe][is_organization]" value="yes"
-							   type="checkbox" <?php echo $organization_name !== '' ? 'checked' : ''; ?>> Is this
-						account for an organisation?
+					<input name="settings[tradesafe][is_organization]" value="no" type="hidden">
+					<input id="is_organization" name="settings[tradesafe][is_organization]" value="yes"
+						   type="checkbox" class="switch-input" <?php echo $organization_name !== '' ? 'checked' : ''; ?>>
+					<label for="is_organization">
+						 Is this account for an organisation?
 					</label>
 				</div>
 			</div>
@@ -221,10 +229,11 @@ class TradeSafeDokan {
 		<div id="change_details_form" class="dokan-form-group">
 			<div class="dokan-w12 dokan-text-left">
 				<div class="checkbox">
-					<label>
-						<input name="settings[tradesafe][update_banking_details]" value="no" type="hidden">
-						<input id="change_details" name="settings[tradesafe][update_banking_details]" value="yes"
-							   type="checkbox"> I would like to change my banking details
+					<input name="settings[tradesafe][update_banking_details]" value="no" type="hidden">
+					<input id="change_details" name="settings[tradesafe][update_banking_details]" value="yes"
+						   type="checkbox">
+					<label for="change_details">
+						I would like to change my banking details
 					</label>
 				</div>
 			</div>
@@ -296,67 +305,191 @@ class TradeSafeDokan {
 	 * @return void
 	 * @throws Exception
 	 */
-	public static function save_withdraw_method( $store_id, $dokan_settings ) {
+	public static function save_withdraw_method( $store_id, $dokan_settings = array() ) {
 		$existing_dokan_settings = get_user_meta( $store_id, 'dokan_profile_settings', true );
 		$prev_dokan_settings     = ! empty( $existing_dokan_settings ) ? $existing_dokan_settings : array();
 		$post_data               = wp_unslash( $_POST );
 
 		if ( wp_verify_nonce( $post_data['_wpnonce'], 'dokan_payment_settings_nonce' ) ) {
 			if ( isset( $post_data['settings']['tradesafe'] ) ) {
+				try {
+					// Personal Details
+					if ( empty( $post_data['settings']['tradesafe']['given_name'] ) ) {
+						wp_send_json_error( 'First name is required' );
+					}
 
+					if ( empty( $post_data['settings']['tradesafe']['family_name'] ) ) {
+						wp_send_json_error( 'Last name is required' );
+					}
+
+					if ( empty( $post_data['settings']['tradesafe']['email'] ) ) {
+						wp_send_json_error( 'Email is required' );
+					}
+
+					if ( empty( $post_data['settings']['tradesafe']['mobile'] ) ) {
+						wp_send_json_error( 'Mobile number is required' );
+					}
+
+					if ( 'yes' !== $post_data['settings']['tradesafe']['is_organization'] ) {
+						if ( empty( $post_data['settings']['tradesafe']['id_number'] ) ) {
+							wp_send_json_error( 'ID number is required' );
+						}
+					} else {
+						if ( empty( $post_data['settings']['tradesafe']['organization_name'] ) ) {
+							wp_send_json_error( 'Organisation name is required' );
+						}
+
+						if ( empty( $post_data['settings']['tradesafe']['organization_type'] ) ) {
+							wp_send_json_error( 'Organisation type is required' );
+						}
+
+						if ( empty( $post_data['settings']['tradesafe']['organization_registration'] ) ) {
+							wp_send_json_error( 'Organisation registration number is required' );
+						}
+					}
+
+					// Banking Details
+					if ( ! empty( $post_data['settings']['tradesafe']['account_number'] )
+						&& ! is_numeric( $post_data['settings']['tradesafe']['account_number'] ) ) {
+						wp_send_json_error( 'Invalid Account Number' );
+					}
+
+					if ( ! empty( $post_data['settings']['tradesafe']['account_number'] )
+						&& empty( $post_data['settings']['tradesafe']['bank_name'] ) ) {
+						wp_send_json_error( 'Invalid Bank' );
+					}
+
+					if ( ! empty( $post_data['settings']['tradesafe']['account_number'] )
+						&& empty( $post_data['settings']['tradesafe']['account_type'] ) ) {
+						wp_send_json_error( 'Invalid Account Type' );
+					}
+
+					$client   = new \TradeSafe\Helpers\TradeSafeApiClient();
+					$token_id = tradesafe_get_token_id( $store_id );
+
+					$user = array(
+						'givenName'  => sanitize_text_field( $post_data['settings']['tradesafe']['given_name'] ),
+						'familyName' => sanitize_text_field( $post_data['settings']['tradesafe']['family_name'] ),
+						'email'      => sanitize_email( $post_data['settings']['tradesafe']['email'] ),
+						'mobile'     => sanitize_text_field( $post_data['settings']['tradesafe']['mobile'] ),
+					);
+
+					$organization = null;
+					if ( 'yes' !== $post_data['settings']['tradesafe']['is_organization'] ) {
+						$user['idNumber']  = sanitize_text_field( $post_data['settings']['tradesafe']['id_number'] );
+						$user['idType']    = 'NATIONAL';
+						$user['idCountry'] = 'ZAF';
+					} else {
+						$organization = array(
+							'name'               => $post_data['settings']['tradesafe']['organization_name'],
+							'type'               => $post_data['settings']['tradesafe']['organization_type'],
+							'registrationNumber' => $post_data['settings']['tradesafe']['organization_registration'],
+						);
+
+						if ( ! empty( $post_data['settings']['tradesafe']['organization_trade_name'] ) ) {
+							$organization['tradeName'] = $post_data['settings']['tradesafe']['organization_trade_name'];
+						}
+
+						if ( ! empty( $post_data['settings']['tradesafe']['organization_tax_number'] ) ) {
+							$organization['taxNumber'] = $post_data['settings']['tradesafe']['organization_tax_number'];
+						}
+					}
+
+					$bank_account = null;
+					if ( ! empty( $post_data['settings']['tradesafe']['account_number'] ) ) {
+						$bank_account = array(
+							'accountNumber' => sanitize_text_field( $post_data['settings']['tradesafe']['account_number'] ),
+							'accountType'   => sanitize_text_field( $post_data['settings']['tradesafe']['account_type'] ),
+							'bank'          => sanitize_text_field( $post_data['settings']['tradesafe']['bank_name'] ),
+						);
+					}
+
+					$client->updateToken( $token_id, $user, $organization, $bank_account, sanitize_text_field( $post_data['settings']['tradesafe']['payout_interval'] ) );
+
+					$dokan_settings['payment']['tradesafe'] = array(
+						'user'         => $user,
+						'organization' => $organization,
+					);
+				} catch ( \GraphQL\Exception\QueryError $e ) {
+					$error_message = 'There was a problem updating your account details';
+
+					if ( WP_DEBUG ) {
+						$error_message .= "\n\n<pre>" . json_encode( $e->getErrorDetails(), JSON_PRETTY_PRINT ) . '</pre>';
+					}
+
+					wp_send_json_error( $error_message );
+				}
+
+				$dokan_settings = array_merge( $prev_dokan_settings, $dokan_settings );
+
+				update_user_meta( $store_id, 'dokan_profile_settings', $dokan_settings );
+			}
+		}
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public static function dokan_seller_wizard_payment_field_save( \WeDevs\Dokan\Vendor\SetupWizard $wizard ) {
+		$existing_dokan_settings = get_user_meta( $wizard->store_id, 'dokan_profile_settings', true );
+		$dokan_settings          = ! empty( $existing_dokan_settings ) ? $existing_dokan_settings : array();
+		$post_data               = wp_unslash( $_POST );
+
+		if ( isset( $post_data['settings']['tradesafe'] ) ) {
+			try {
 				// Personal Details
 				if ( empty( $post_data['settings']['tradesafe']['given_name'] ) ) {
-					wp_send_json_error( 'First name is required' );
+					throw new Exception( 'First name is required' );
 				}
 
 				if ( empty( $post_data['settings']['tradesafe']['family_name'] ) ) {
-					wp_send_json_error( 'Last name is required' );
+					throw new Exception( 'Last name is required' );
 				}
 
 				if ( empty( $post_data['settings']['tradesafe']['email'] ) ) {
-					wp_send_json_error( 'Email is required' );
+					throw new Exception( 'Email is required' );
 				}
 
 				if ( empty( $post_data['settings']['tradesafe']['mobile'] ) ) {
-					wp_send_json_error( 'Mobile number is required' );
+					throw new Exception( 'Mobile number is required' );
 				}
 
 				if ( 'yes' !== $post_data['settings']['tradesafe']['is_organization'] ) {
 					if ( empty( $post_data['settings']['tradesafe']['id_number'] ) ) {
-						wp_send_json_error( 'ID number is required' );
+						throw new Exception( 'ID number is required' );
 					}
 				} else {
 					if ( empty( $post_data['settings']['tradesafe']['organization_name'] ) ) {
-						wp_send_json_error( 'Organisation name is required' );
+						throw new Exception( 'Organisation name is required' );
 					}
 
 					if ( empty( $post_data['settings']['tradesafe']['organization_type'] ) ) {
-						wp_send_json_error( 'Organisation type is required' );
+						throw new Exception( 'Organisation type is required' );
 					}
 
 					if ( empty( $post_data['settings']['tradesafe']['organization_registration'] ) ) {
-						wp_send_json_error( 'Organisation registration number is required' );
+						throw new Exception( 'Organisation registration number is required' );
 					}
 				}
 
 				// Banking Details
 				if ( ! empty( $post_data['settings']['tradesafe']['account_number'] )
 					&& ! is_numeric( $post_data['settings']['tradesafe']['account_number'] ) ) {
-					wp_send_json_error( 'Invalid Account Number' );
+					throw new Exception( 'Invalid Account Number' );
 				}
 
 				if ( ! empty( $post_data['settings']['tradesafe']['account_number'] )
 					&& empty( $post_data['settings']['tradesafe']['bank_name'] ) ) {
-					wp_send_json_error( 'Invalid Bank' );
+					throw new Exception( 'Invalid Bank' );
 				}
 
 				if ( ! empty( $post_data['settings']['tradesafe']['account_number'] )
 					&& empty( $post_data['settings']['tradesafe']['account_type'] ) ) {
-					wp_send_json_error( 'Invalid Account Type' );
+					throw new Exception( 'Invalid Account Type' );
 				}
 
 				$client   = new \TradeSafe\Helpers\TradeSafeApiClient();
-				$token_id = tradesafe_get_token_id( $store_id );
+				$token_id = tradesafe_get_token_id( $wizard->store_id );
 
 				$user = array(
 					'givenName'  => sanitize_text_field( $post_data['settings']['tradesafe']['given_name'] ),
@@ -395,32 +528,37 @@ class TradeSafeDokan {
 					);
 				}
 
-				try {
-					$client->updateToken( $token_id, $user, $organization, $bank_account, sanitize_text_field( $post_data['settings']['tradesafe']['payout_interval'] ) );
+				$client->updateToken( $token_id, $user, $organization, $bank_account, sanitize_text_field( $post_data['settings']['tradesafe']['payout_interval'] ) );
 
-					$dokan_settings['payment']['tradesafe'] = array(
-						'user'         => $user,
-						'organization' => $organization,
-					);
+				$dokan_settings['payment']['tradesafe'] = array(
+					'user'         => $user,
+					'organization' => $organization,
+				);
+			} catch ( \GraphQL\Exception\QueryError $e ) {
+				$error_message = 'There was a problem updating your account details';
 
-					$dokan_settings = array_merge( $prev_dokan_settings, $dokan_settings );
-
-					update_user_meta( $store_id, 'dokan_profile_settings', $dokan_settings );
-
-					return;
-				} catch ( \GraphQL\Exception\QueryError $e ) {
-					$error_message = 'There was a problem updating your account details';
-
-					if ( WP_DEBUG ) {
-						$error_message .= "\n\n<pre>" . json_encode( $e->getErrorDetails(), JSON_PRETTY_PRINT ) . '</pre>';
-					}
-
-					wp_send_json_error( $error_message );
+				if ( WP_DEBUG ) {
+					$error_message .= "\n\n<pre>" . json_encode( $e->getErrorDetails(), JSON_PRETTY_PRINT ) . '</pre>';
 				}
+
+				wp_die( $error_message );
+			} catch ( \Exception $e ) {
+				wp_redirect(
+					esc_url_raw(
+						add_query_arg(
+							array(
+								'step'  => 'payment',
+								'error' => $e->getMessage(),
+							)
+						)
+					)
+				);
+				exit( 1 );
 			}
+
+			update_user_meta( $wizard->store_id, 'dokan_profile_settings', $dokan_settings );
 		}
 	}
-
 
 	/**
 	 * Get active withdraw methods for seller.
