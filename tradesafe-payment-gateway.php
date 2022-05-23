@@ -289,10 +289,10 @@ function tradesafe_get_token_id( int $user_id ): string {
 	}
 
 	$user = array(
-		'givenName'  => $customer->get_first_name(),
-		'familyName' => $customer->get_last_name(),
+		'givenName'  => $customer->get_first_name() ?? null,
+		'familyName' => $customer->get_last_name() ?? null,
 		'email'      => $customer->get_email(),
-		'mobile'     => $customer->get_billing_phone(),
+		'mobile'     => $customer->get_billing_phone() ?? null,
 	);
 
 	try {
@@ -303,7 +303,8 @@ function tradesafe_get_token_id( int $user_id ): string {
 			$payout_interval
 		);
 	} catch ( \GraphQL\Exception\QueryError $e ) {
-		error_log( $e->getMessage() . ': ' . $e->getErrorDetails()['debugMessage'] ?? null, 3 );
+		$logger = wc_get_logger();
+		$logger->error( $e->getMessage() . ': ' . $e->getErrorDetails()['debugMessage'] ?? null, array( 'source' => 'tradesafe-payment-gateway' ) );
 	}
 
 	$customer->update_meta_data( tradesafe_token_meta_key(), sanitize_text_field( $token_data['id'] ) );

@@ -108,7 +108,7 @@ class TradeSafeDokan {
 
 		?>
 
-        <?php if ( isset( $_GET['error'] ) ) : ?>
+		<?php if ( isset( $_GET['error'] ) ) : ?>
 			<div class="woocommerce-error">
 				<strong><?php echo sanitize_text_field( $_GET['error'] ); ?></strong>
 			</div>

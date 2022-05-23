@@ -378,6 +378,9 @@ class TradeSafeProfile {
 								$error_message .= "\n\n<pre>" . json_encode( $e->getErrorDetails(), JSON_PRETTY_PRINT ) . '</pre>';
 							}
 
+							$logger = wc_get_logger();
+							$logger->error( $error_message, array( 'source' => 'tradesafe-payment-gateway' ) );
+
 							error_log( $error_message );
 						}
 					}
