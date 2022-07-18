@@ -74,22 +74,19 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	 * @since 1.0.0
 	 */
 	public function is_valid_for_use() {
-		$is_available          = false;
 		$is_available_currency = in_array( get_woocommerce_currency(), $this->available_currencies, true );
 
-		if ( $is_available_currency
-			&& get_option( 'tradesafe_client_id' )
-			&& get_option( 'tradesafe_client_secret' ) ) {
-			$is_available = true;
+		if ( ! $is_available_currency ) {
+			return false;
 		}
 
 		$settings = get_option( 'woocommerce_tradesafe_settings', array() );
 
-		if ( isset( $settings['client_id'] )
-			&& '' !== $settings['client_id']
-			&& isset( $settings['client_secret'] )
-			&& '' !== $settings['client_secret'] ) {
-			$is_available = true;
+		if ( ! isset( $settings['client_id'] )
+			|| '' === $settings['client_id']
+			|| ! isset( $settings['client_secret'] )
+			|| '' === $settings['client_secret'] ) {
+			return false;
 		}
 
 		$profile = $this->client->profile();
@@ -99,10 +96,24 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		}
 
 		if ( 'no' === $this->get_option( 'enabled' ) || null === $this->get_option( 'enabled' ) ) {
-			$is_available = false;
+			return false;
 		}
 
-		return $is_available;
+		return true;
+	}
+
+	/**
+	 * Check if the gateway is available for use.
+	 *
+	 * @return bool
+	 */
+	public function is_available() {
+		if ( 'yes' === $this->enabled ) {
+			// Prevent using this gateway on frontend if there are any configuration errors.
+			return true;
+		}
+
+		return parent::is_available();
 	}
 
 	/**
