@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.4.7](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.6...v2.4.7) (2022-07-18)
+### Bug Fixes
+
+* Allow callbacks to update orders with a failed status ([be4489](https://github.com/tradesafe/tradesafe-payment-gateway/commit/be4489f5ddbcf4bd4f6e280f472be1f988823c23))
+* Changed how plugin avalibility is checked ([a798a1](https://github.com/tradesafe/tradesafe-payment-gateway/commit/a798a16cc5adb56b93365e44d4a8b5a380881eff))
+
+
+---
+
 ## [2.4.6](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.5...v2.4.6) (2022-05-23)
 ### Bug Fixes
 

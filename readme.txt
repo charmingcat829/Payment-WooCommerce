@@ -76,6 +76,13 @@ Please do not hesitate to email [support@tradesafe.co.za](mailto:support@tradesa
 
 == Changelog ==
 
+= 2.4.7 2022-07-18 =
+
+### Bug Fixes
+
+* Allow callbacks to update orders with a failed status
+* Changed how plugin avalibility is checked
+
 = 2.4.6 2022-05-23 =
 
 ### Bug Fixes
