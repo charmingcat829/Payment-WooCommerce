@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.4.8](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.7...v2.4.8) (2022-07-20)
+### Bug Fixes
+
+* Updated avalibility filter to verify order total or cart total instead of both ([22045c](https://github.com/tradesafe/tradesafe-payment-gateway/commit/22045caa480f142a8fc4998b05b4d25866ff368c))
+
+
+---
+
 ## [2.4.7](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.6...v2.4.7) (2022-07-18)
 ### Bug Fixes
 
