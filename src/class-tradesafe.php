@@ -423,6 +423,8 @@ class TradeSafe {
 			if ( $order->get_total() < 50 ) {
 				unset( $available_gateways['tradesafe'] );
 			}
+
+			return $available_gateways;
 		}
         // phpcs:enable WordPress.Security.NonceVerification.Recommended
 

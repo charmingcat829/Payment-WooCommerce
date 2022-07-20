@@ -147,7 +147,6 @@ class TradeSafeApiClient {
 				array(
 					'clientId'                => $this->clientId,
 					'clientSecret'            => $this->clientSecret,
-					'redirectUri'             => $this->clientRedirectUri,
 					'urlAuthorize'            => 'https://' . $this->authDomain . '/oauth/authorize',
 					'urlAccessToken'          => 'https://' . $this->authDomain . '/oauth/token',
 					'urlResourceOwnerDetails' => 'https://' . $this->authDomain . '/oauth/resource',
