@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.4.9](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.8...v2.4.9) (2022-07-20)
+### Bug Fixes
+
+* Corrected issue where a vendor id is not loaded correctly when using dokan ([7d857d](https://github.com/tradesafe/tradesafe-payment-gateway/commit/7d857defc722582a2daa2514202cdaf7be3ec043))
+
+
+---
+
 ## [2.4.8](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.7...v2.4.8) (2022-07-20)
 ### Bug Fixes
 
