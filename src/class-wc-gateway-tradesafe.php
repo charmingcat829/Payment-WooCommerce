@@ -787,7 +787,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				if ( ! $sub_orders ) {
 					$parties[] = array(
 						'role'          => 'BENEFICIARY_MERCHANT',
-						'token'         => tradesafe_get_token_id( (int) $order->get_meta( '_dokan_vendor_id', true ) ),
+						'token'         => tradesafe_get_token_id( dokan_get_seller_id_by_order( $order->ID ) ),
 						'fee'           => dokan()->commission->get_earning_by_order( $order ),
 						'feeType'       => 'FLAT',
 						'feeAllocation' => 'SELLER',
@@ -798,7 +798,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 
 						$parties[] = array(
 							'role'          => 'BENEFICIARY_MERCHANT',
-							'token'         => tradesafe_get_token_id( (int) dokan_get_seller_id_by_order( $sub_order->get_id() ) ),
+							'token'         => tradesafe_get_token_id( dokan_get_seller_id_by_order( $sub_order->get_id() ) ),
 							'fee'           => dokan()->commission->get_earning_by_order( $sub_order ),
 							'feeType'       => 'FLAT',
 							'feeAllocation' => 'SELLER',
@@ -833,6 +833,10 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			foreach ( $parties as $party ) {
 				if ( null === $party['token'] || '' === $party['token'] ) {
 					wc_add_notice( 'There was a problem processing your transaction. Please contact support.', $notice_type = 'error' );
+
+					if ( WP_DEBUG ) {
+						wc_add_notice( json_encode( $parties, JSON_PRETTY_PRINT ), $notice_type = 'error' );
+					}
 
 					return array(
 						'result'   => 'failure',
