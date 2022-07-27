@@ -21,7 +21,7 @@ jQuery(document).ready(function ($) {
     }
 
     // Banking Details Check
-    if ($('#change_details_form').length) {
+    if ($('#change_details').length) {
         let checkbox = $('#change_details')
 
         function change_details(element) {
