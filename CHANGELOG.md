@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.4.10](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.9...v2.4.10) (2022-07-27)
+### Bug Fixes
+
+* Changed how bank details checkbox is checked ([9cf919](https://github.com/tradesafe/tradesafe-payment-gateway/commit/9cf9198182a9dcdcb874298c67b759d8a785fcae))
+
+
+---
+
 ## [2.4.9](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.8...v2.4.9) (2022-07-20)
 ### Bug Fixes
 
