@@ -240,7 +240,7 @@ class TradeSafeDokan {
 		</div>
 		<?php endif; ?>
 
-		<div class="dokan-form-group dokan-text-left <?php echo ! is_null( $account_number ) ? 'hidden' : ''; ?>" id="banking-details">
+		<div class="dokan-form-group dokan-text-left" id="banking-details">
 			<label>Banking Details</label>
 			<div class="dokan-form-group">
 				<div class="dokan-w12">
