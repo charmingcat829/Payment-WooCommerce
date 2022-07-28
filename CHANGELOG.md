@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.4.11](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.10...v2.4.11) (2022-07-28)
+### Bug Fixes
+
+* Removed hidden class from banking details when using Dokan ([32e0e5](https://github.com/tradesafe/tradesafe-payment-gateway/commit/32e0e5c973aa2cd6b4c5eb5fa8762d90d24079f6))
+
+
+---
+
 ## [2.4.10](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.4.9...v2.4.10) (2022-07-27)
 ### Bug Fixes
 
