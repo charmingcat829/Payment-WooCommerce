@@ -56,7 +56,7 @@ class TradeSafeApiClient {
 		}
 
 		$this->client = new Client(
-			sprintf( 'https://%s/graphql', $this->apiDomain ),
+			sprintf( '%s/graphql', $this->apiDomain ),
 			$authorizationHeaders,
 			$httpOptions,
 		);
@@ -73,7 +73,7 @@ class TradeSafeApiClient {
 		try {
 			$client = new \GuzzleHttp\Client(
 				array(
-					'base_uri' => sprintf( 'https://%s/', $this->apiDomain ),
+					'base_uri' => sprintf( '%s/', $this->apiDomain ),
 					'timeout'  => 2.0,
 				)
 			);
@@ -92,7 +92,7 @@ class TradeSafeApiClient {
 		try {
 			$client = new \GuzzleHttp\Client(
 				array(
-					'base_uri' => sprintf( 'https://%s/', $this->authDomain ),
+					'base_uri' => sprintf( '%s/', $this->authDomain ),
 					'timeout'  => 2.0,
 				)
 			);
@@ -147,9 +147,9 @@ class TradeSafeApiClient {
 				array(
 					'clientId'                => $this->clientId,
 					'clientSecret'            => $this->clientSecret,
-					'urlAuthorize'            => 'https://' . $this->authDomain . '/oauth/authorize',
-					'urlAccessToken'          => 'https://' . $this->authDomain . '/oauth/token',
-					'urlResourceOwnerDetails' => 'https://' . $this->authDomain . '/oauth/resource',
+					'urlAuthorize'            => $this->authDomain . '/oauth/authorize',
+					'urlAccessToken'          => $this->authDomain . '/oauth/token',
+					'urlResourceOwnerDetails' => $this->authDomain . '/oauth/resource',
 				)
 			);
 
@@ -776,24 +776,24 @@ class TradeSafeApiClient {
 	}
 
 	public function getTransactionDepositLink( $id ) {
-		$gql = ( new Query( 'transactionDepositLink' ) );
+		$gql = ( new Mutation( 'checkoutLink' ) );
 
 		$gql->setVariables(
 			array(
-				new Variable( 'id', 'ID', true ),
+				new Variable( 'transactionId', 'ID', true ),
 			)
 		);
 
 		$variables = array(
-			'id' => $id,
+			'transactionId' => $id,
 		);
 
-		$gql->setArguments( array( 'id' => '$id' ) );
+		$gql->setArguments( array( 'transactionId' => '$transactionId' ) );
 
 		$response = $this->client->runQuery( $gql, true, $variables );
 		$result   = $response->getData();
 
-		return $result['transactionDepositLink'];
+		return $result['checkoutLink'];
 	}
 
 	public function allocationStartDelivery( $id ) {
