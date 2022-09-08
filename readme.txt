@@ -1,6 +1,6 @@
 === TradeSafe Payment Gateway for WooCommerce ===
 Contributors: richardnbanks, tradesafeops
-Tags: tradesafe, woocommerce, dokan, payment gateway, escrow, credit card, instant eft
+Tags: tradesafe, woocommerce, dokan, payment gateway, escrow, credit card, instant eft, bnpl
 Requires at least: 5.6
 Tested up to: 5.9
 Requires PHP: 7.4
@@ -15,14 +15,14 @@ TradeSafe, backed by Standard Bank, provides an escrow payments-based solution t
 
 With an average documented cart abandonment rate of 70%, it’s reported that many South Africans are becoming fearful when buying online. This is where we come in. TradeSafe bridges the trust gap and eliminates the fear when customers want to make payment upfront in full, online. We give your customers the peace of mind that they will receive what they paid for, leading to a boost in purchase confidence, and ultimately improving conversion rates.
 
-The TradeSafe plugin includes payment gateways namely Ozow (Instant EFT), Visa/Mastercard, SnapScan and normal EFT, with many more to come.
+The TradeSafe plugin includes payment gateways namely Ozow (Instant EFT), Visa/Mastercard, PayJustNow (Buy Now Pay Later), SnapScan and normal EFT, with many more to come.
 
 The plugin also includes support for paying multiple vendors when using the Dokan plugin.
 
 ### How it Works
 
 - At checkout, the customer chooses to pay using TradeSafe.
-- The customer will be directed to a payment page, where they choose their payment option.
+- The customer will be directed to a payment page, where they choose their payment option namely EFT, Instant EFT (Ozow), Card, SnapScan, and Buy Now Pay Later (PayJustNow).
 - Once payment is successful, the order is marked as PROCESSING and delivery is kicked off.
 - When delivery has been completed, a new state called DELIVERED is reached. This triggers an email and sms which TradeSafe will send to the customer, asking them if they received what they ordered.
 - If yes, TradeSafe releases the funds to you, and/or your vendors if trading in a multi-vendor setup. 
