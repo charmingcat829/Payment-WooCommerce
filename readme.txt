@@ -4,7 +4,7 @@ Tags: tradesafe, woocommerce, dokan, payment gateway, escrow, credit card, insta
 Requires at least: 5.6
 Tested up to: 5.9
 Requires PHP: 7.4
-Stable tag: 2.4.11
+Stable tag: 2.5.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -76,76 +76,9 @@ Please do not hesitate to email [support@tradesafe.co.za](mailto:support@tradesa
 
 == Changelog ==
 
-= 2.4.11 2022-07-28 =
-
-### Bug Fixes
-
-* Removed hidden class from banking details when using Dokan
-
-= 2.4.10 2022-07-27 =
-
-### Bug Fixes
-
-* Changed how bank details checkbox is checked
-
-= 2.4.9 2022-07-20 =
-
-### Bug Fixes
-
-* Corrected issue where a vendor id is not loaded correctly when using dokan
-
-= 2.4.8 2022-07-20 =
-
-### Bug Fixes
-
-* Updated avalibility filter to verify order total or cart total instead of both
-
-= 2.4.7 2022-07-18 =
-
-### Bug Fixes
-
-* Allow callbacks to update orders with a failed status
-* Changed how plugin avalibility is checked
-
-= 2.4.6 2022-05-23 =
-
-### Bug Fixes
-
-* Changed how errors are logged
-
-= 2.4.5 2022-05-20 =
-
-### Bug Fixes
-
-* Add support for setting up payment settings in dokan wizard
-
-= 2.4.4 2022-05-19 =
-
-### Bug Fixes
-
-* Always load token id through helper function instead of checking directly
-
-= 2.4.3 2022-05-17 =
-
-### Bug Fixes
-
-* Added extra debug information to error response when saving a token while debug is set to true
-
-= 2.4.2 2022-05-17 =
-
-### Bug Fixes
-
-* Removed vendor id from active payment methods function
-
-= 2.4.1 2022-05-17 =
-
-### Bug Fixes
-
-* Updated how withdraw settings are saved to support new withdraw method page
-
-= 2.4.0 2022-05-10 =
+= 2.5.0 2022-09-08 =
 
 ### Features
 
-* Allow admin users to view basic tradesafe details when editing a user
+* Added new checkout page
 

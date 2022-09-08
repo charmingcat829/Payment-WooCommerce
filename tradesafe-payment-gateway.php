@@ -3,7 +3,7 @@
  * Plugin Name: TradeSafe Payment Gateway
  * Plugin URI: https://developer.tradesafe.co.za/docs/1.2/plugins/woocommerce
  * Description: Process payments using the TradeSafe as a payments provider.
- * Version: 2.4.11
+ * Version: 2.5.0
  * Author: TradeSafe Escrow
  * Author URI: https://www.tradesafe.co.za
  * Text Domain: tradesafe-payment-gateway
@@ -28,7 +28,7 @@ function woocommerce_tradesafe_init() {
 		return;
 	}
 
-	define( 'WC_GATEWAY_TRADESAFE_VERSION', '2.4.11' );
+	define( 'WC_GATEWAY_TRADESAFE_VERSION', '2.5.0' );
 	define( 'TRADESAFE_PAYMENT_GATEWAY_BASE_DIR', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
 
 	$autoloader = dirname( __DIR__ ) . DIRECTORY_SEPARATOR . plugin_basename( __DIR__ ) . '/vendor/autoload.php';
