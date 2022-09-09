@@ -2,7 +2,7 @@
 /**
  * Plugin Name: TradeSafe Payment Gateway
  * Plugin URI: https://developer.tradesafe.co.za/docs/1.2/plugins/woocommerce
- * Description: Process payments using the TradeSafe as a payments provider.
+ * Description: Process secure payments with TradeSafe. Customers can make payment either through Card, EFT, Instant EFT, Buy Now Pay Later, or QR code enabled devices. Give your store instant credibility. TradeSafe is backed by Standard Bank.
  * Version: 2.5.0
  * Author: TradeSafe Escrow
  * Author URI: https://www.tradesafe.co.za

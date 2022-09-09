@@ -33,8 +33,8 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	public function __construct() {
 		$this->id                 = 'tradesafe';
 		$this->method_title       = __( 'TradeSafe', 'tradesafe-payment-gateway' );
-		$this->method_description = __( 'TradeSafe payment option allows for your money to be kept safely until you receive what you ordered. Simply pay using Credit/Debit card, EFT, SnapScan or Ozow.', 'tradesafe-payment-gateway' );
-		$this->icon               = TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/images/icon.svg';
+		$this->method_description = __( 'TradeSafe, backed by Standard Bank, allows for your money to be kept safely until you receive what you ordered. Simply pay using Credit/Debit card, EFT, SnapScan, Ozow, or split your payment over three equal instalments with PayJustNow.', 'tradesafe-payment-gateway' );
+		$this->icon               = TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/images/logos.svg';
 
 		$this->client = new \TradeSafe\Helpers\TradeSafeApiClient();
 		$this->client->generateToken( true );
@@ -68,7 +68,34 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		}
 	}
 
-	/**
+    /**
+     * Get title function.
+     *
+     * @return string
+     */
+    public function get_title() {
+        // show the title with an icon on the checkout page alone
+        if ( ! is_checkout() ) {
+            return parent::get_title();
+        }
+
+        $logo_url = plugins_url( '../assets/images/icon.svg', __FILE__ );
+        $img = '<img src="' . $logo_url . '" style="height: 1.4em;margin-left: 0px;margin-right: 0.3em;display: inline;float: none;" class="' . $this->id . '-payment-method-title-icon" alt="TradeSafe logo" />';
+        $title = '<span style="display: inline-flex;align-items: center;vertical-align: middle;">' . $img . parent::get_title() . '</span>';
+        return apply_filters( 'woocommerce_gateway_title', $title, $this->id );
+    }
+
+    /**
+     * Get icon function.
+     *
+     * @return string
+     */
+    public function get_icon() {
+        $icon = '<img src="' . $this->icon . '" style="max-height:26px;" class="' . $this->id . '-payment-method-icon" alt="TradeSafe payment options" />';
+        return apply_filters( 'woocommerce_gateway_icon', $icon, $this->id );
+    }
+
+    /**
 	 * Check if this gateway is enabled and available in the base currency being traded with.
 	 *
 	 * @return bool
