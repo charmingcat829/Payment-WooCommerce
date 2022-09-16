@@ -66,14 +66,15 @@ function woocommerce_tradesafe_init() {
 	require_once plugin_basename( 'src/class-wc-gateway-tradesafe.php' );
 	require_once plugin_basename( 'helpers/class-tradesafeapiclient.php' );
 
+	add_action( 'init', array( 'TradeSafe', 'init' ) );
+	add_action( 'init', array( 'TradeSafeProfile', 'init' ) );
+	add_action( 'init', array( 'TradeSafeDokan', 'init' ) );
+
 	load_plugin_textdomain( 'tradesafe-payment-gateway', false, trailingslashit( dirname( plugin_basename( __FILE__ ) ) ) );
 	add_filter( 'woocommerce_payment_gateways', 'woocommerce_tradesafe_add_gateway' );
 }
 
 add_action( 'plugins_loaded', 'woocommerce_tradesafe_init', 0 );
-add_action( 'init', array( 'TradeSafe', 'init' ) );
-add_action( 'init', array( 'TradeSafeProfile', 'init' ) );
-add_action( 'init', array( 'TradeSafeDokan', 'init' ) );
 
 /**
  * Add action links to the entry on the plugin page.
@@ -269,7 +270,7 @@ function tradesafe_token_meta_key(): string {
  * @return string
  * @throws Exception
  */
-function tradesafe_get_token_id( int $user_id ): string {
+function tradesafe_get_token_id( int $user_id ): ?string {
 	$token = get_user_meta( $user_id, tradesafe_token_meta_key(), true );
 
 	if ( ! empty( $token ) ) {
@@ -302,13 +303,15 @@ function tradesafe_get_token_id( int $user_id ): string {
 			null,
 			$payout_interval
 		);
+
+		$customer->update_meta_data( tradesafe_token_meta_key(), sanitize_text_field( $token_data['id'] ) );
+		$customer->save_meta_data();
+
+		return sanitize_text_field( $token_data['id'] );
 	} catch ( \GraphQL\Exception\QueryError $e ) {
 		$logger = wc_get_logger();
-		$logger->error( $e->getMessage() . ': ' . $e->getErrorDetails()['debugMessage'] ?? null, array( 'source' => 'tradesafe-payment-gateway' ) );
+		$logger->error( $e->getMessage() . ': ' . $e->getErrorDetails()['message'] ?? null, array( 'source' => 'tradesafe-payment-gateway' ) );
 	}
 
-	$customer->update_meta_data( tradesafe_token_meta_key(), sanitize_text_field( $token_data['id'] ) );
-	$customer->save_meta_data();
-
-	return sanitize_text_field( $token_data['id'] );
+	return null;
 }
