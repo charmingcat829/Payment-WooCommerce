@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.5.3](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.5.2...v2.5.3) (2022-09-20)
+### Bug Fixes
+
+* Don't apply defaults to order if user id is zero ([23eecc](https://github.com/tradesafe/tradesafe-payment-gateway/commit/23eeccf367bb3182a1e037a985e40492d1b6cbbb))
+
+
+---
+
 ## [2.5.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.5.1...v2.5.2) (2022-09-16)
 ### Bug Fixes
 
