@@ -445,6 +445,10 @@ class TradeSafe {
 		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 		$user   = wp_get_current_user();
 
+		if ( $user->ID === 0 ) {
+			return $fields;
+		}
+
 		$token_id = tradesafe_get_token_id( $user->ID );
 
 		if ( $token_id ) {

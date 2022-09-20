@@ -767,13 +767,15 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			}
 
 			if ( $user->ID === 0 ) {
+				$userDetails = array(
+					'givenName'  => $order->data['billing']['first_name'],
+					'familyName' => $order->data['billing']['last_name'],
+					'email'      => $order->data['billing']['email'],
+					'mobile'     => $order->data['billing']['phone'],
+				);
+
 				$token_data = $client->createToken(
-					array(
-						'givenName'  => $order->data['billing']['first_name'],
-						'familyName' => $order->data['billing']['last_name'],
-						'email'      => $order->data['billing']['email'],
-						'mobile'     => $order->data['billing']['phone'],
-					),
+					$userDetails,
 					null,
 					null,
 					$payout_interval
