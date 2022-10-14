@@ -4,7 +4,7 @@ Tags: tradesafe, woocommerce, dokan, payment gateway, escrow, credit card, insta
 Requires at least: 5.6
 Tested up to: 5.9
 Requires PHP: 7.4
-Stable tag: 2.5.3
+Stable tag: 2.6.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -76,27 +76,8 @@ Please do not hesitate to email [support@tradesafe.co.za](mailto:support@tradesa
 
 == Changelog ==
 
-= 2.5.3 2022-09-20 =
-
-### Bug Fixes
-
-* Don't apply defaults to order if user id is zero
-
-= 2.5.2 2022-09-16 =
-
-### Bug Fixes
-
-* Changed when classes are initialised
-
-= 2.5.1 2022-09-09 =
-
-### Bug Fixes
-
-* Updated plugin descriptions
-
-= 2.5.0 2022-09-08 =
+= 2.6.0 2022-10-14 =
 
 ### Features
 
-* Added new checkout page
-
+* Added helper function to lookup token data

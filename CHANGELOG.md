@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.6.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.5.3...v2.6.0) (2022-10-14)
+### Features
+
+* Added helper function to lookup token data ([31c730](https://github.com/tradesafe/tradesafe-payment-gateway/commit/31c730feec9fa3be761fffec9f4473aa3e68168d))
+
+
+---
+
 ## [2.5.3](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.5.2...v2.5.3) (2022-09-20)
 ### Bug Fixes
 
