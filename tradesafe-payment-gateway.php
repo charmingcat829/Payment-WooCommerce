@@ -315,3 +315,25 @@ function tradesafe_get_token_id( int $user_id ): ?string {
 
 	return null;
 }
+
+/**
+ * Get or create token ID for user.
+ *
+ * @param int $user_id
+ * @return string
+ */
+function tradesafe_get_token( int $user_id ): ?array {
+	try {
+		$tokenId = get_user_meta( $user_id, tradesafe_token_meta_key(), true );
+
+		// If Token was not found for user create one and return the id
+		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
+
+		return $client->getToken( $tokenId );
+	} catch ( \GraphQL\Exception\QueryError $e ) {
+		$logger = wc_get_logger();
+		$logger->error( $e->getMessage() . ': ' . $e->getErrorDetails()['message'] ?? null, array( 'source' => 'tradesafe-payment-gateway' ) );
+	}
+
+	return null;
+}

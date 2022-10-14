@@ -12,8 +12,6 @@ defined( 'ABSPATH' ) || exit;
  */
 class TradeSafeProfile {
 
-
-
 	/**
 	 * Initiate the class.
 	 */
