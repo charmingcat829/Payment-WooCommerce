@@ -36,12 +36,17 @@ class TradeSafeApiClient {
 		} else {
 			$this->apiDomain = $api_domains['sit'];
 		}
+	}
 
-		$this->token = '';
-		$this->generateToken();
+	public function client() {
+		$token = get_transient( 'tradesafe_client_token' );
+
+		if ( $token === false ) {
+			$this->generateToken();
+		}
 
 		$authorizationHeaders = array(
-			'Authorization' => 'Bearer ' . $this->token,
+			'Authorization' => 'Bearer ' . $token,
 		);
 
 		$httpOptions = array(
@@ -51,16 +56,16 @@ class TradeSafeApiClient {
 				'User-Agent' => 'WooCommerce Plugin - ' . WC_GATEWAY_TRADESAFE_VERSION,
 			),
 		);
+
 		if ( true === WP_DEBUG ) {
 			$httpOptions['verify'] = false;
 		}
 
-		$this->client = new Client(
+		return new Client(
 			sprintf( '%s/graphql', $this->apiDomain ),
 			$authorizationHeaders,
 			$httpOptions,
 		);
-
 	}
 
 	public function ping() {
@@ -137,11 +142,6 @@ class TradeSafeApiClient {
 	}
 
 	public function generateToken( $force = false ) {
-		if ( get_transient( 'tradesafe_client_token' ) && $force !== true ) {
-			$this->token = get_transient( 'tradesafe_client_token' );
-			return;
-		}
-
 		try {
 			$provider = new \League\OAuth2\Client\Provider\GenericProvider(
 				array(
@@ -155,10 +155,10 @@ class TradeSafeApiClient {
 
 			$access_token = $provider->getAccessToken( 'client_credentials' );
 
-			$this->token = $access_token->getToken();
+			$token = $access_token->getToken();
 
 			$expires = $access_token->getExpires() - time() - 30;
-			set_transient( 'tradesafe_client_token', $this->token, $expires );
+			set_transient( 'tradesafe_client_token', $token, $expires );
 		} catch ( \Exception $e ) {
 			$this->error = $e->getMessage();
 		}
@@ -185,7 +185,7 @@ class TradeSafeApiClient {
 			)
 		);
 
-		$response = $this->client->runQuery( $gql, true );
+		$response = $this->client()->runQuery( $gql, true );
 		$data     = $response->getData();
 
 		$options = array();
@@ -208,7 +208,7 @@ class TradeSafeApiClient {
 				)
 			);
 
-			$response = $this->client->runQuery( $gql, true );
+			$response = $this->client()->runQuery( $gql, true );
 			$result   = $response->getData();
 
 			return $this->getToken( $result['apiProfile']['token'] );
@@ -237,7 +237,7 @@ class TradeSafeApiClient {
 			);
 
 		try {
-			$response = $this->client->runQuery( $gql, true );
+			$response = $this->client()->runQuery( $gql, true );
 			$result   = $response->getData();
 
 			set_transient( 'tradesafe_client_info', $result['clientInfo'], 600 );
@@ -307,7 +307,7 @@ class TradeSafeApiClient {
 		);
 
 		try {
-			$response = $this->client->runQuery( $gql, true );
+			$response = $this->client()->runQuery( $gql, true );
 			$result   = $response->getData();
 
 			return $result['token'];
@@ -379,7 +379,7 @@ class TradeSafeApiClient {
 			)
 		);
 
-		$response = $this->client->runQuery( $gql, true, $variables );
+		$response = $this->client()->runQuery( $gql, true, $variables );
 		$result   = $response->getData();
 
 		return $result['tokenCreate'];
@@ -456,7 +456,7 @@ class TradeSafeApiClient {
 			)
 		);
 
-		$response = $this->client->runQuery( $gql, true, $variables );
+		$response = $this->client()->runQuery( $gql, true, $variables );
 		$result   = $response->getData();
 
 		return $result['tokenUpdate'];
@@ -481,7 +481,7 @@ class TradeSafeApiClient {
 			)
 		);
 
-		$response = $this->client->runQuery( $gql, true );
+		$response = $this->client()->runQuery( $gql, true );
 		$result   = $response->getData();
 
 		return $result['transaction'];
@@ -733,7 +733,7 @@ class TradeSafeApiClient {
 			)
 		);
 
-		$response = $this->client->runQuery( $gql, true );
+		$response = $this->client()->runQuery( $gql, true );
 
 		$result = $response->getData();
 
@@ -769,7 +769,7 @@ class TradeSafeApiClient {
 			)
 		);
 
-		$response = $this->client->runQuery( $gql, true, $variables );
+		$response = $this->client()->runQuery( $gql, true, $variables );
 		$result   = $response->getData();
 
 		return $result['transactionCancel'];
@@ -790,7 +790,7 @@ class TradeSafeApiClient {
 
 		$gql->setArguments( array( 'transactionId' => '$transactionId' ) );
 
-		$response = $this->client->runQuery( $gql, true, $variables );
+		$response = $this->client()->runQuery( $gql, true, $variables );
 		$result   = $response->getData();
 
 		return $result['checkoutLink'];
@@ -808,7 +808,7 @@ class TradeSafeApiClient {
 			)
 		);
 
-		$response = $this->client->runQuery( $gql, true );
+		$response = $this->client()->runQuery( $gql, true );
 		$result   = $response->getData();
 
 		return $result['allocationStartDelivery'];
@@ -826,7 +826,7 @@ class TradeSafeApiClient {
 			)
 		);
 
-		$response = $this->client->runQuery( $gql, true );
+		$response = $this->client()->runQuery( $gql, true );
 		$result   = $response->getData();
 
 		return $result['allocationCompleteDelivery'];
@@ -844,7 +844,7 @@ class TradeSafeApiClient {
 			)
 		);
 
-		$response = $this->client->runQuery( $gql, true );
+		$response = $this->client()->runQuery( $gql, true );
 		$result   = $response->getData();
 
 		return $result['allocationAcceptDelivery'];
@@ -860,7 +860,7 @@ class TradeSafeApiClient {
 			)
 		);
 
-		$response = $this->client->runQuery( $gql, true );
+		$response = $this->client()->runQuery( $gql, true );
 		$result   = $response->getData();
 
 		return $result['tokenAccountWithdraw'];

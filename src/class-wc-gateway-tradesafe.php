@@ -37,7 +37,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		$this->icon               = TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/images/logos.svg';
 
 		$this->client = new \TradeSafe\Helpers\TradeSafeApiClient();
-		$this->client->generateToken( true );
 
 		$this->version              = WC_GATEWAY_TRADESAFE_VERSION;
 		$this->available_countries  = array( 'ZA' );
