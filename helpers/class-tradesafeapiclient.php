@@ -17,7 +17,7 @@ class TradeSafeApiClient {
 	private string $apiDomain;
 	private string $authDomain;
 
-	private string $token;
+	private string $user_agent;
 
 	public function __construct() {
 		// Domains are in a separate file to help with internal development and testing.
@@ -30,6 +30,9 @@ class TradeSafeApiClient {
 		$this->clientRedirectUri = site_url( '/tradesafe/oauth/callback/' );
 
 		$this->authDomain = $auth_domain;
+
+		$url_parts        = parse_url( get_site_url() );
+		$this->user_agent = 'WC/' . WC_GATEWAY_TRADESAFE_VERSION . '/' . $url_parts['host'];
 
 		if ( tradesafe_is_prod() ) {
 			$this->apiDomain = $api_domains['prod'];
@@ -53,7 +56,7 @@ class TradeSafeApiClient {
 			'connect_timeout' => 5,
 			'timeout'         => 15,
 			'headers'         => array(
-				'User-Agent' => 'WooCommerce Plugin - ' . WC_GATEWAY_TRADESAFE_VERSION,
+				'User-Agent' => $this->user_agent,
 			),
 		);
 
@@ -80,6 +83,9 @@ class TradeSafeApiClient {
 				array(
 					'base_uri' => sprintf( '%s/', $this->apiDomain ),
 					'timeout'  => 2.0,
+					'headers'  => array(
+						'User-Agent' => $this->user_agent,
+					),
 				)
 			);
 
@@ -99,6 +105,9 @@ class TradeSafeApiClient {
 				array(
 					'base_uri' => sprintf( '%s/', $this->authDomain ),
 					'timeout'  => 2.0,
+					'headers'  => array(
+						'User-Agent' => $this->user_agent,
+					),
 				)
 			);
 
@@ -143,6 +152,14 @@ class TradeSafeApiClient {
 
 	public function generateToken( $force = false ) {
 		try {
+			$httpClient = new \GuzzleHttp\Client(
+				array(
+					'headers' => array(
+						'User-Agent' => $this->user_agent,
+					),
+				)
+			);
+
 			$provider = new \League\OAuth2\Client\Provider\GenericProvider(
 				array(
 					'clientId'                => $this->clientId,
@@ -150,6 +167,9 @@ class TradeSafeApiClient {
 					'urlAuthorize'            => $this->authDomain . '/oauth/authorize',
 					'urlAccessToken'          => $this->authDomain . '/oauth/token',
 					'urlResourceOwnerDetails' => $this->authDomain . '/oauth/resource',
+				),
+				array(
+					'httpClient' => $httpClient,
 				)
 			);
 
