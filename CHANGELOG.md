@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.6.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.6.1...v2.6.2) (2022-11-08)
+
+### Bug Fixes
+
+* Updated user agent string ([b90378](https://github.com/tradesafe/tradesafe-payment-gateway/commit/b90378c93ea9b69976ed333977e290d99aec0593))
+
+
+---
+
 ## [2.6.1](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.6.0...v2.6.1) (2022-11-07)
 
 ### Bug Fixes

@@ -76,6 +76,12 @@ Please do not hesitate to email [support@tradesafe.co.za](mailto:support@tradesa
 
 == Changelog ==
 
+= 2.6.2 2022-11-08 =
+
+### Bug Fixes
+
+* Updated user agent string
+
 = 2.6.1 2022-11-07 =
 
 ### Bug Fixes
