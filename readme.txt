@@ -2,9 +2,9 @@
 Contributors: richardnbanks, tradesafeops
 Tags: tradesafe, woocommerce, dokan, payment gateway, escrow, credit card, instant eft, bnpl
 Requires at least: 5.6
-Tested up to: 5.9
+Tested up to: 6.1
 Requires PHP: 7.4
-Stable tag: 2.6.1
+Stable tag: 2.6.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -75,6 +75,12 @@ For more information on how to install and configure the plugin, please refer to
 Please do not hesitate to email [support@tradesafe.co.za](mailto:support@tradesafe.co.za) or phone us on 010 020 3101. We are here to help you every step of the way.
 
 == Changelog ==
+
+= 2.6.3 2022-11-10 =
+
+### Bug Fixes
+
+* Changed how access tokens are stored for reuse
 
 = 2.6.2 2022-11-08 =
 

@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.6.3](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.6.2...v2.6.3) (2022-11-10)
+
+### Bug Fixes
+
+* Changed how access tokens are stored for reuse ([411b3e](https://github.com/tradesafe/tradesafe-payment-gateway/commit/411b3e89fd5a5a3c4b9ade2aa202b2ab34161113))
+
+
+---
+
 ## [2.6.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.6.1...v2.6.2) (2022-11-08)
 
 ### Bug Fixes
