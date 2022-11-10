@@ -10,6 +10,7 @@ use GraphQL\Variable;
 
 class TradeSafeApiClient {
 
+
 	private string $clientId;
 	private string $clientSecret;
 	private string $clientRedirectUri;
@@ -42,11 +43,7 @@ class TradeSafeApiClient {
 	}
 
 	public function client() {
-		$token = get_transient( 'tradesafe_client_token' );
-
-		if ( $token === false ) {
-			$this->generateToken();
-		}
+		$token = $this->generateToken();
 
 		$authorizationHeaders = array(
 			'Authorization' => 'Bearer ' . $token,
@@ -150,7 +147,15 @@ class TradeSafeApiClient {
 		}
 	}
 
-	public function generateToken( $force = false ) {
+	public function generateToken() {
+		$tradesafe_token = get_option( 'tradesafe_api_access' );
+
+		if ( is_array( $tradesafe_token )
+			&& isset( $tradesafe_token['expires'] )
+			&& $tradesafe_token['expires'] > ( time() - 120 ) ) {
+			return $tradesafe_token['token'];
+		}
+
 		try {
 			$httpClient = new \GuzzleHttp\Client(
 				array(
@@ -175,12 +180,19 @@ class TradeSafeApiClient {
 
 			$access_token = $provider->getAccessToken( 'client_credentials' );
 
-			$token = $access_token->getToken();
+			update_option(
+				'tradesafe_api_access',
+				array(
+					'token'   => $access_token->getToken(),
+					'expires' => $access_token->getExpires(),
+				)
+			);
 
-			$expires = $access_token->getExpires() - time() - 30;
-			set_transient( 'tradesafe_client_token', $token, $expires );
+			return $access_token->getToken();
 		} catch ( \Exception $e ) {
 			$this->error = $e->getMessage();
+
+			return null;
 		}
 	}
 
@@ -196,12 +208,12 @@ class TradeSafeApiClient {
 		$gql->setSelectionSet(
 			array(
 				( new Query( 'enumValues' ) )
-				->setSelectionSet(
-					array(
-						'name',
-						'description',
-					)
-				),
+					->setSelectionSet(
+						array(
+							'name',
+							'description',
+						)
+					),
 			)
 		);
 
@@ -244,17 +256,17 @@ class TradeSafeApiClient {
 			return get_transient( 'tradesafe_client_info' );
 		}
 
-			$gql = ( new Query( 'clientInfo' ) );
+		$gql = ( new Query( 'clientInfo' ) );
 
-			$gql->setSelectionSet(
-				array(
-					'id',
-					'name',
-					'callback',
-					'organizationId',
-					'production',
-				)
-			);
+		$gql->setSelectionSet(
+			array(
+				'id',
+				'name',
+				'callback',
+				'organizationId',
+				'production',
+			)
+		);
 
 		try {
 			$response = $this->client()->runQuery( $gql, true );
@@ -281,48 +293,48 @@ class TradeSafeApiClient {
 				'balance',
 				'valid',
 				( new Query( 'user' ) )
-				->setSelectionSet(
-					array(
-						'givenName',
-						'familyName',
-						'email',
-						'mobile',
-						'idNumber',
-						'idType',
-						'idCountry',
-					)
-				),
+					->setSelectionSet(
+						array(
+							'givenName',
+							'familyName',
+							'email',
+							'mobile',
+							'idNumber',
+							'idType',
+							'idCountry',
+						)
+					),
 				( new Query( 'organization' ) )
-				->setSelectionSet(
-					array(
-						'name',
-						'tradeName',
-						'type',
-						'registration',
-						'taxNumber',
-					)
-				),
+					->setSelectionSet(
+						array(
+							'name',
+							'tradeName',
+							'type',
+							'registration',
+							'taxNumber',
+						)
+					),
 				( new Query( 'bankAccount' ) )
-				->setSelectionSet(
-					array(
-						'accountNumber',
-						'accountType',
-						'bank',
-						'branchCode',
-						'bankName',
-					)
-				),
+					->setSelectionSet(
+						array(
+							'accountNumber',
+							'accountType',
+							'bank',
+							'branchCode',
+							'bankName',
+						)
+					),
 				( new Query( 'settings' ) )
-				->setSelectionSet(
-					array(
-						( new Query( 'payout' ) )
-							->setSelectionSet(
-								array(
-									'interval',
-								)
-							),
-					)
-				),
+					->setSelectionSet(
+						array(
+							( new Query( 'payout' ) )
+								->setSelectionSet(
+									array(
+										'interval',
+									)
+								),
+						)
+					),
 			)
 		);
 
@@ -367,35 +379,35 @@ class TradeSafeApiClient {
 				'balance',
 				'valid',
 				( new Query( 'user' ) )
-				->setSelectionSet(
-					array(
-						'givenName',
-						'familyName',
-						'email',
-						'mobile',
-						'idNumber',
-					)
-				),
+					->setSelectionSet(
+						array(
+							'givenName',
+							'familyName',
+							'email',
+							'mobile',
+							'idNumber',
+						)
+					),
 				( new Query( 'organization' ) )
-				->setSelectionSet(
-					array(
-						'name',
-						'tradeName',
-						'type',
-						'registration',
-						'taxNumber',
-					)
-				),
+					->setSelectionSet(
+						array(
+							'name',
+							'tradeName',
+							'type',
+							'registration',
+							'taxNumber',
+						)
+					),
 				( new Query( 'bankAccount' ) )
-				->setSelectionSet(
-					array(
-						'accountNumber',
-						'accountType',
-						'bank',
-						'branchCode',
-						'bankName',
-					)
-				),
+					->setSelectionSet(
+						array(
+							'accountNumber',
+							'accountType',
+							'bank',
+							'branchCode',
+							'bankName',
+						)
+					),
 			)
 		);
 
@@ -444,35 +456,35 @@ class TradeSafeApiClient {
 				'balance',
 				'valid',
 				( new Query( 'user' ) )
-				->setSelectionSet(
-					array(
-						'givenName',
-						'familyName',
-						'email',
-						'mobile',
-						'idNumber',
-					)
-				),
+					->setSelectionSet(
+						array(
+							'givenName',
+							'familyName',
+							'email',
+							'mobile',
+							'idNumber',
+						)
+					),
 				( new Query( 'organization' ) )
-				->setSelectionSet(
-					array(
-						'name',
-						'tradeName',
-						'type',
-						'registration',
-						'taxNumber',
-					)
-				),
+					->setSelectionSet(
+						array(
+							'name',
+							'tradeName',
+							'type',
+							'registration',
+							'taxNumber',
+						)
+					),
 				( new Query( 'bankAccount' ) )
-				->setSelectionSet(
-					array(
-						'accountNumber',
-						'accountType',
-						'bank',
-						'branchCode',
-						'bankName',
-					)
-				),
+					->setSelectionSet(
+						array(
+							'accountNumber',
+							'accountType',
+							'bank',
+							'branchCode',
+							'bankName',
+						)
+					),
 			)
 		);
 
@@ -492,12 +504,12 @@ class TradeSafeApiClient {
 				'id',
 				'state',
 				( new Query( 'allocations' ) )
-				->setSelectionSet(
-					array(
-						'id',
-						'state',
-					)
-				),
+					->setSelectionSet(
+						array(
+							'id',
+							'state',
+						)
+					),
 			)
 		);
 
@@ -612,142 +624,142 @@ class TradeSafeApiClient {
 				'industry',
 				'feeAllocation',
 				( new Query( 'parties' ) )
-				->setSelectionSet(
-					array(
-						'id',
-						'name',
-						'role',
-						( new Query( 'details' ) )
-						->setSelectionSet(
-							array(
-								( new Query( 'user' ) )
+					->setSelectionSet(
+						array(
+							'id',
+							'name',
+							'role',
+							( new Query( 'details' ) )
 								->setSelectionSet(
 									array(
-										'givenName',
-										'familyName',
-										'email',
+										( new Query( 'user' ) )
+											->setSelectionSet(
+												array(
+													'givenName',
+													'familyName',
+													'email',
+												)
+											),
+										( new Query( 'organization' ) )
+											->setSelectionSet(
+												array(
+													'name',
+													'tradeName',
+													'type',
+													'registration',
+													'taxNumber',
+												)
+											),
 									)
 								),
-								( new Query( 'organization' ) )
+							( new Query( 'calculation' ) )
 								->setSelectionSet(
 									array(
-										'name',
-										'tradeName',
-										'type',
-										'registration',
-										'taxNumber',
+										'payout',
+										'totalFee',
 									)
 								),
-							)
-						),
-						( new Query( 'calculation' ) )
-						->setSelectionSet(
-							array(
-								'payout',
-								'totalFee',
-							)
-						),
-						'fee',
-						'feeType',
-						'feeAllocation',
-					)
-				),
+							'fee',
+							'feeType',
+							'feeAllocation',
+						)
+					),
 				( new Query( 'allocations' ) )
-				->setSelectionSet(
-					array(
-						'id',
-						'title',
-						'description',
-						'value',
-						( new Query( 'amendments' ) )
-						->setSelectionSet(
-							array(
-								'id',
-								'value',
-							)
-						),
-					)
-				),
+					->setSelectionSet(
+						array(
+							'id',
+							'title',
+							'description',
+							'value',
+							( new Query( 'amendments' ) )
+								->setSelectionSet(
+									array(
+										'id',
+										'value',
+									)
+								),
+						)
+					),
 				( new Query( 'deposits' ) )
-				->setSelectionSet(
-					array(
-						'id',
-						'value',
-						'method',
-						'processed',
-						'paymentLink',
-					)
-				),
+					->setSelectionSet(
+						array(
+							'id',
+							'value',
+							'method',
+							'processed',
+							'paymentLink',
+						)
+					),
 				( new Query( 'calculation' ) )
-				->setSelectionSet(
-					array(
-						'baseValue',
-						'totalValue',
-						'totalDeposits',
-						'processingFeePercentage',
-						'processingFeeValue',
-						'processingFeeVat',
-						'processingFeeTotal',
-						( new Query( 'gatewayProcessingFees' ) )
-						->setSelectionSet(
-							array(
-								( new Query( 'manualEft' ) )
+					->setSelectionSet(
+						array(
+							'baseValue',
+							'totalValue',
+							'totalDeposits',
+							'processingFeePercentage',
+							'processingFeeValue',
+							'processingFeeVat',
+							'processingFeeTotal',
+							( new Query( 'gatewayProcessingFees' ) )
 								->setSelectionSet(
 									array(
-										'processingFee',
-										'totalValue',
+										( new Query( 'manualEft' ) )
+											->setSelectionSet(
+												array(
+													'processingFee',
+													'totalValue',
+												)
+											),
+										( new Query( 'ecentric' ) )
+											->setSelectionSet(
+												array(
+													'processingFee',
+													'totalValue',
+												)
+											),
+										( new Query( 'ozow' ) )
+											->setSelectionSet(
+												array(
+													'processingFee',
+													'totalValue',
+												)
+											),
+										( new Query( 'snapscan' ) )
+											->setSelectionSet(
+												array(
+													'processingFee',
+													'totalValue',
+												)
+											),
 									)
 								),
-								( new Query( 'ecentric' ) )
+							( new Query( 'parties' ) )
 								->setSelectionSet(
 									array(
+										'role',
+										'deposit',
+										'payout',
+										'commission',
 										'processingFee',
-										'totalValue',
+										'agentFee',
+										'beneficiaryFee',
+										'totalFee',
 									)
 								),
-								( new Query( 'ozow' ) )
+							( new Query( 'allocations' ) )
 								->setSelectionSet(
 									array(
+										'value',
+										'units',
+										'unitCost',
+										'refund',
+										'payout',
+										'fee',
 										'processingFee',
-										'totalValue',
 									)
 								),
-								( new Query( 'snapscan' ) )
-								->setSelectionSet(
-									array(
-										'processingFee',
-										'totalValue',
-									)
-								),
-							)
-						),
-						( new Query( 'parties' ) )
-						->setSelectionSet(
-							array(
-								'role',
-								'deposit',
-								'payout',
-								'commission',
-								'processingFee',
-								'agentFee',
-								'beneficiaryFee',
-								'totalFee',
-							)
-						),
-						( new Query( 'allocations' ) )
-						->setSelectionSet(
-							array(
-								'value',
-								'units',
-								'unitCost',
-								'refund',
-								'payout',
-								'fee',
-								'processingFee',
-							)
-						),
-					)
-				),
+						)
+					),
 				'createdAt',
 				'updatedAt',
 			)
