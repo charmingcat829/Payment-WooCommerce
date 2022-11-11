@@ -53,7 +53,8 @@ class TradeSafeApiClient {
 			'connect_timeout' => 5,
 			'timeout'         => 15,
 			'headers'         => array(
-				'User-Agent' => $this->user_agent,
+				'Accept-Encoding' => 'gzip',
+				'User-Agent'      => $this->user_agent,
 			),
 		);
 
@@ -81,7 +82,8 @@ class TradeSafeApiClient {
 					'base_uri' => sprintf( '%s/', $this->apiDomain ),
 					'timeout'  => 2.0,
 					'headers'  => array(
-						'User-Agent' => $this->user_agent,
+						'Accept-Encoding' => 'gzip',
+						'User-Agent'      => $this->user_agent,
 					),
 				)
 			);
@@ -103,7 +105,8 @@ class TradeSafeApiClient {
 					'base_uri' => sprintf( '%s/', $this->authDomain ),
 					'timeout'  => 2.0,
 					'headers'  => array(
-						'User-Agent' => $this->user_agent,
+						'Accept-Encoding' => 'gzip',
+						'User-Agent'      => $this->user_agent,
 					),
 				)
 			);
@@ -160,7 +163,8 @@ class TradeSafeApiClient {
 			$httpClient = new \GuzzleHttp\Client(
 				array(
 					'headers' => array(
-						'User-Agent' => $this->user_agent,
+						'Accept-Encoding' => 'gzip',
+						'User-Agent'      => $this->user_agent,
 					),
 				)
 			);
