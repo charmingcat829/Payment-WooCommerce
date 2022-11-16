@@ -24,6 +24,10 @@ class TradeSafeApiClient {
 		// Domains are in a separate file to help with internal development and testing.
 		require __DIR__ . '/../config.php';
 
+		if ( file_exists( __DIR__ . '/../config.local.php' ) ) {
+			require __DIR__ . '/../config.local.php';
+		}
+
 		$settings = get_option( 'woocommerce_tradesafe_settings', array() );
 
 		$this->clientId          = $settings['client_id'];
