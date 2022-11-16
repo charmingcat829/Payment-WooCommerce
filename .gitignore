@@ -11,7 +11,7 @@ ehthumbs.db
 Thumbs.db
 
 # Ignore config file
-config.php
+config.local.php
 
 # Ignore duplicate changelog
 changelog.txt
@@ -31,4 +31,3 @@ changelog.txt
 !CHANGELOG.md
 !composer.json
 !composer.lock
-!.husky
