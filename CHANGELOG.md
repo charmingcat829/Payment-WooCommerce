@@ -4,6 +4,19 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.7.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.6.3...v2.7.0) (2022-11-16)
+
+### Features
+
+* Added content encoding to api requests ([2ead02](https://github.com/tradesafe/tradesafe-payment-gateway/commit/2ead020a49ee9aaaa10731c28caec6ddfe6c706f))
+
+### Bug Fixes
+
+* Set order payment method title to prevent escaped html from showing in the payment method field ([3cfa01](https://github.com/tradesafe/tradesafe-payment-gateway/commit/3cfa01a8a2e835f22cf35158bfcb6259655d733a))
+
+
+---
+
 ## [2.6.3](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.6.2...v2.6.3) (2022-11-10)
 
 ### Bug Fixes
