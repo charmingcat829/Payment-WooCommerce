@@ -756,7 +756,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			$allocations[] = array(
 				'title'         => 'Order ' . $order->get_id(),
 				'description'   => implode( PHP_EOL, $item_list ),
-				'value'         => ( (float) $order->get_subtotal() - (float) $order->get_discount_total() + (float) $order->get_shipping_total() + (float) $order->get_total_tax() ),
+				'value'         => ( (float) $order->get_subtotal() + (float) $order->get_total_fees() - (float) $order->get_discount_total() + (float) $order->get_shipping_total() + (float) $order->get_total_tax() ),
 				'daysToDeliver' => 14,
 				'daysToInspect' => 7,
 			);
