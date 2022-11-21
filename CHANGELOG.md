@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.7.1](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.7.0...v2.7.1) (2022-11-21)
+
+### Bug Fixes
+
+* Added support for custom processing fees ([cfc3e1](https://github.com/tradesafe/tradesafe-payment-gateway/commit/cfc3e161bcf179982f2b254a63aca274b4f5d091))
+
+
+---
+
 ## [2.7.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.6.3...v2.7.0) (2022-11-16)
 
 ### Features
