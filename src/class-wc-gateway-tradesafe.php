@@ -11,8 +11,6 @@ defined( 'ABSPATH' ) || exit;
  * Class WC_Gateway_TradeSafe Implantation of WC_Payment_Gateway
  */
 class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
-
-
 	/**
 	 * Api Client
 	 *
@@ -33,7 +31,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	public function __construct() {
 		$this->id                 = 'tradesafe';
 		$this->method_title       = __( 'TradeSafe', 'tradesafe-payment-gateway' );
-		$this->method_description = __( 'TradeSafe, backed by Standard Bank, allows for your money to be kept safely until you receive what you ordered. Simply pay using Credit/Debit card, EFT, SnapScan, Ozow, or split your payment over three equal instalments with PayJustNow.', 'tradesafe-payment-gateway' );
+		$this->method_description = __( 'TradeSafe, backed by Standard Bank, allows for your money to be kept safely until you receive what you ordered. Simply pay using Credit/Debit card, EFT, SnapScan, Ozow, or buy it now and pay later with PayJustNow.', 'tradesafe-payment-gateway' );
 		$this->icon               = TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/images/logos.svg';
 
 		$this->client = new \TradeSafe\Helpers\TradeSafeApiClient();

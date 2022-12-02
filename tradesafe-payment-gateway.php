@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.0.0
  */
-function woocommerce_tradesafe_init() {
+function tradesafe_payment_gateway_init() {
 	if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
 		return;
 	}
@@ -74,7 +74,8 @@ function woocommerce_tradesafe_init() {
 	add_filter( 'woocommerce_payment_gateways', 'woocommerce_tradesafe_add_gateway' );
 }
 
-add_action( 'plugins_loaded', 'woocommerce_tradesafe_init', 0 );
+add_action( 'plugins_loaded', 'tradesafe_payment_gateway_init', 10 );
+add_action( 'plugins_loaded', 'tradesafe_payment_gateway_update_db_check', 15 );
 
 /**
  * Add action links to the entry on the plugin page.
@@ -336,4 +337,20 @@ function tradesafe_get_token( int $user_id ): ?array {
 	}
 
 	return null;
+}
+
+/**
+ * Ensure description is updated after plugin update.
+ *
+ * @return void
+ */
+function tradesafe_payment_gateway_update_db_check() {
+	if ( get_option( 'tradesafe_payment_gateway_version' ) != WC_GATEWAY_TRADESAFE_VERSION ) {
+		$settings = get_option( 'woocommerce_tradesafe_settings' );
+
+		$settings['description'] = __( 'TradeSafe, backed by Standard Bank, allows for your money to be kept safely until you receive what you ordered. Simply pay using Credit/Debit card, EFT, SnapScan, Ozow, or buy it now and pay later with PayJustNow.', 'tradesafe-payment-gateway' );
+
+		update_option( 'woocommerce_tradesafe_settings', apply_filters( 'woocommerce_settings_api_sanitized_fields_tradesafe', $settings ), 'yes' );
+		update_option( 'tradesafe_payment_gateway_version', WC_GATEWAY_TRADESAFE_VERSION );
+	}
 }
