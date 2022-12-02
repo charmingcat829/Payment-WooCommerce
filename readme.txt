@@ -4,7 +4,7 @@ Tags: tradesafe, woocommerce, dokan, payment gateway, escrow, credit card, insta
 Requires at least: 5.6
 Tested up to: 6.1
 Requires PHP: 7.4
-Stable tag: 2.7.2
+Stable tag: 2.8.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -76,24 +76,12 @@ Please do not hesitate to email [support@tradesafe.co.za](mailto:support@tradesa
 
 == Changelog ==
 
-= 2.7.2 2022-11-30 =
+= 2.8.0 2022-12-02 =
+
+### Features
+
+* Added function to update gateway description automatically
 
 ### Bug Fixes
 
 * Changed character decoding for line items
-
-= 2.7.1 2022-11-21 =
-
-### Bug Fixes
-
-* Added support for custom processing fees
-
-= 2.7.0 2022-11-16 =
-
-### Features
-
-* Added content encoding to api requests
-
-### Bug Fixes
-
-* Set order payment method title to prevent escaped html from showing in the payment method field

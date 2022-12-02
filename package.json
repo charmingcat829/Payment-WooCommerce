@@ -1,6 +1,6 @@
 {
     "name": "tradesafe-payment-gateway",
-    "version": "2.7.2",
+    "version": "2.8.0",
     "description": "TradeSafe Payment Gateway for WooCommerce",
     "repository": {
         "type": "git",

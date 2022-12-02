@@ -4,6 +4,19 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.8.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.7.1...v2.8.0) (2022-12-02)
+
+### Features
+
+* Added function to update gateway description automatically ([53d8d9](https://github.com/tradesafe/tradesafe-payment-gateway/commit/53d8d9dccbf5eee244cfc72ebdba3ca4fe0af4a3))
+
+### Bug Fixes
+
+* Changed character decoding for line items ([65670f](https://github.com/tradesafe/tradesafe-payment-gateway/commit/65670f0c1e6503be497886b7183d6456db491b43))
+
+
+---
+
 ## [2.7.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.7.1...v2.7.2) (2022-11-30)
 
 ### Bug Fixes
