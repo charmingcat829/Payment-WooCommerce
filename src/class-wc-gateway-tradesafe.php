@@ -167,20 +167,21 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			admin_url( 'admin.php' )
 		);
 
+		if ( isset( $profile['error'] ) ) {
+			echo '<div class="notice notice-error">
+                <h2>TradeSafe plugin cannot connect to the API!</h2>
+                <p>There is a problem connecting to the TradeSafe API please check that the client ID and client secred are correcctly configured. If the the problem persists please contact TradeSafe support.</p>
+                <p><strong>REASON:</strong> ' . $profile['error'] . '</p>
+                <p><a href="' . esc_url( $settings_url ) . '" class="button button-primary button-large">Take me to the settings page!</a></p>
+            </div>';
+		}
+
 		if ( true === $this->is_valid_for_use()
 			&& true === $client->production()
 			&& false === tradesafe_is_prod() ) {
 			echo '<div class="notice notice-warning is-dismissible">
                 <h2>Warning you are running the TradeSafe plugin in sandbox mode!</h2>
                 <p>Any users who crate orders while in this mode will not be charged! To fix this go to the TradeSafe settings page and change the environment to "Live".</p>
-                <p><a href="' . esc_url( $settings_url ) . '" class="button button-primary button-large">Take me to the settings page!</a></p>
-            </div>';
-		}
-
-		if ( isset( $profile['error'] ) ) {
-			echo '<div class="notice notice-error">
-                <h2>TradeSafe plugin cannot connect to the API!</h2>
-                <p>There is a problem connecting to the TradeSafe API please check that the client ID and client secred are correcctly configured. If the the problem persists please contact TradeSafe support.</p>
                 <p><a href="' . esc_url( $settings_url ) . '" class="button button-primary button-large">Take me to the settings page!</a></p>
             </div>';
 		}

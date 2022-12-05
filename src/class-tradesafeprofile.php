@@ -89,7 +89,7 @@ class TradeSafeProfile {
 		$token_data         = null;
 
 		if ( $token_id ) {
-			$token_data = $client->getToken( $token_id );
+			$token_data = $client->getToken( $token_id, true );
 		}
 
 		include_once dirname( __DIR__ ) . '/templates/myaccount/form-tradesafe-token-user.php';
@@ -283,7 +283,7 @@ class TradeSafeProfile {
 		$dir             = plugin_dir_path( __FILE__ );
 		$tokenId         = tradesafe_get_token_id( get_current_user_id() );
 		$client          = new \TradeSafe\Helpers\TradeSafeApiClient();
-		$token           = $client->getToken( $tokenId );
+		$token           = $client->getToken( $tokenId, true );
 		$form_errors     = null;
 		$is_organization = false;
 		$pending         = null;
@@ -485,7 +485,7 @@ class TradeSafeProfile {
 				</tr>
 				<tr id="bank_account">
 					<th><label>Has Bank Account assigned</label></th>
-					<td><?php echo ! empty( $token_data['bankAccount'] ) ? 'Yes' : 'No'; ?></td>
+					<td><?php echo $token_data['valid'] ? 'Yes' : 'No'; ?></td>
 				</tr>
 				<tr id="payout">
 					<th><label>Payout Method</label></th>

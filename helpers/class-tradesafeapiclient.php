@@ -11,6 +11,7 @@ use GraphQL\Variable;
 class TradeSafeApiClient {
 
 
+
 	private string $clientId;
 	private string $clientSecret;
 	private string $clientRedirectUri;
@@ -288,63 +289,66 @@ class TradeSafeApiClient {
 		}
 	}
 
-	public function getToken( $id ) {
+	public function getToken( $id, $bankAccount = false ) {
 		$gql = ( new Query( 'token' ) );
 
 		$gql->setArguments( array( 'id' => $id ) );
 
-		$gql->setSelectionSet(
-			array(
-				'id',
-				'name',
-				'reference',
-				'balance',
-				'valid',
-				( new Query( 'user' ) )
-					->setSelectionSet(
-						array(
-							'givenName',
-							'familyName',
-							'email',
-							'mobile',
-							'idNumber',
-							'idType',
-							'idCountry',
-						)
-					),
-				( new Query( 'organization' ) )
-					->setSelectionSet(
-						array(
-							'name',
-							'tradeName',
-							'type',
-							'registration',
-							'taxNumber',
-						)
-					),
-				( new Query( 'bankAccount' ) )
-					->setSelectionSet(
-						array(
-							'accountNumber',
-							'accountType',
-							'bank',
-							'branchCode',
-							'bankName',
-						)
-					),
-				( new Query( 'settings' ) )
-					->setSelectionSet(
-						array(
-							( new Query( 'payout' ) )
-								->setSelectionSet(
-									array(
-										'interval',
-									)
-								),
-						)
-					),
-			)
+		$query = array(
+			'id',
+			'name',
+			'reference',
+			'balance',
+			'valid',
+			( new Query( 'user' ) )
+				->setSelectionSet(
+					array(
+						'givenName',
+						'familyName',
+						'email',
+						'mobile',
+						'idNumber',
+						'idType',
+						'idCountry',
+					)
+				),
+			( new Query( 'organization' ) )
+				->setSelectionSet(
+					array(
+						'name',
+						'tradeName',
+						'type',
+						'registration',
+						'taxNumber',
+					)
+				),
+			( new Query( 'settings' ) )
+				->setSelectionSet(
+					array(
+						( new Query( 'payout' ) )
+							->setSelectionSet(
+								array(
+									'interval',
+								)
+							),
+					)
+				),
 		);
+
+		if ( $bankAccount ) {
+			$query[] = ( new Query( 'bankAccount' ) )
+				->setSelectionSet(
+					array(
+						'accountNumber',
+						'accountType',
+						'bank',
+						'branchCode',
+						'bankName',
+					)
+				);
+		}
+
+		$gql->setSelectionSet( $query );
 
 		try {
 			$response = $this->client()->runQuery( $gql, true );

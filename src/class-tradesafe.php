@@ -116,7 +116,7 @@ class TradeSafe {
 
 				switch ( $role ) {
 					case 'seller':
-						if ( isset( $token_data['bankAccount']['accountNumber'] ) && '' !== $token_data['bankAccount']['accountNumber'] ) {
+						if ( isset( $token_data['valid'] ) ) {
 							$valid = true;
 						}
 						break;
@@ -428,7 +428,7 @@ class TradeSafe {
 		}
         // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-		if ( WC()->cart->total !== 0 && WC()->cart->total < 50 ) {
+		if ( isset( WC()->cart->total ) && WC()->cart->total !== 0 && WC()->cart->total < 50 ) {
 			unset( $available_gateways['tradesafe'] );
 		}
 

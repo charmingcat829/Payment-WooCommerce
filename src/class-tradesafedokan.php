@@ -67,7 +67,7 @@ class TradeSafeDokan {
 		$intervals          = $client->getEnum( 'PayoutInterval' );
 
 		if ( $token_id ) {
-			$token_data = $client->getToken( $token_id );
+			$token_data = $client->getToken( $token_id, true );
 
 			$given_name  = $token_data['user']['givenName'] ?? '';
 			$family_name = $token_data['user']['familyName'] ?? '';
@@ -570,7 +570,7 @@ class TradeSafeDokan {
 		$token_id   = tradesafe_get_token_id( dokan_get_current_user_id() );
 		$token_data = $client->getToken( $token_id );
 
-		if ( ! empty( $token_data['bankAccount']['accountNumber'] ) ) {
+		if ( $token_data['valid'] ) {
 			array_push( $active_payment_methods, 'tradesafe' );
 		}
 
