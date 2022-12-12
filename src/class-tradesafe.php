@@ -341,10 +341,16 @@ class TradeSafe {
 		}
 
 		try {
+			$settings    = get_option( 'woocommerce_tradesafe_settings', array() );
 			$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
 
 			if ( 'INITIATED' === $transaction['allocations'][0]['state'] ) {
-				$client->allocationCompleteDelivery( $transaction['allocations'][0]['id'] );
+				if ( isset( $settings['delivery_delay_notification'] ) && 'yes' === $settings['delivery_delay_notification'] ) {
+					$client->allocationInTransit( $transaction['allocations'][0]['id'] );
+				} else {
+					$client->allocationCompleteDelivery( $transaction['allocations'][0]['id'] );
+				}
+
 				$order->set_status( 'delivered', null, false );
 			} elseif ( 'DELIVERED' === $transaction['allocations'][0]['state']
 				|| 'FUNDS_RELEASED' === $transaction['allocations'][0]['state']

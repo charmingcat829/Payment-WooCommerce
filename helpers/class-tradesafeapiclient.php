@@ -858,6 +858,24 @@ class TradeSafeApiClient {
 		return $result['allocationStartDelivery'];
 	}
 
+	public function allocationInTransit( $id ) {
+		$gql = ( new Mutation( 'allocationInTransit' ) );
+
+		$gql->setArguments( array( 'id' => $id ) );
+
+		$gql->setSelectionSet(
+			array(
+				'id',
+				'state',
+			)
+		);
+
+		$response = $this->client()->runQuery( $gql, true );
+		$result   = $response->getData();
+
+		return $result['allocationInTransit'];
+	}
+
 	public function allocationCompleteDelivery( $id ) {
 		$gql = ( new Mutation( 'allocationCompleteDelivery' ) );
 

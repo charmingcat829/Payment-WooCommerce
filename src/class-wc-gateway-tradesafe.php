@@ -158,8 +158,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			return;
 		}
 
-		$client       = new \TradeSafe\Helpers\TradeSafeApiClient();
-		$profile      = $client->profile();
 		$settings_url = add_query_arg(
 			array(
 				'page'    => 'wc-settings',
@@ -169,17 +167,19 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			admin_url( 'admin.php' )
 		);
 
+		 $client  = new \TradeSafe\Helpers\TradeSafeApiClient();
+		 $profile = $client->profile();
+
 		if ( isset( $profile['error'] ) ) {
 			echo '<div class="notice notice-error">
-                <h2>TradeSafe plugin cannot connect to the API!</h2>
-                <p>There is a problem connecting to the TradeSafe API please check that the client ID and client secred are correcctly configured. If the the problem persists please contact TradeSafe support.</p>
-                <p><strong>REASON:</strong> ' . $profile['error'] . '</p>
-                <p><a href="' . esc_url( $settings_url ) . '" class="button button-primary button-large">Take me to the settings page!</a></p>
-            </div>';
+		        <h2>TradeSafe plugin cannot connect to the API!</h2>
+		        <p>There is a problem connecting to the TradeSafe API please check that the client ID and client secret are correctly configured. If the problem persists please contact TradeSafe support.</p>
+		        <p><strong>REASON:</strong> ' . $profile['error'] . '</p>
+		        <p><a href="' . esc_url( $settings_url ) . '" class="button button-primary button-large">Take me to the settings page!</a></p>
+		    </div>';
 		}
 
 		if ( true === $this->is_valid_for_use()
-			&& true === $client->production()
 			&& false === tradesafe_is_prod() ) {
 			echo '<div class="notice notice-warning is-dismissible">
                 <h2>Warning you are running the TradeSafe plugin in sandbox mode!</h2>
@@ -288,6 +288,57 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				);
 			}
 		}
+
+		$form['delivery_section_title'] = array(
+			'title'       => __( 'Delivery Settings', 'tradesafe-payment-gateway' ),
+			'type'        => 'title',
+			'description' => __( 'Additional settings for deliveries', 'tradesafe-payment-gateway' ),
+		);
+
+		$form['delivery_delay_notification'] = array(
+			'title'       => __( 'Delay to Delivery Notification', 'tradesafe-payment-gateway' ),
+			'label'       => 'Delay Notification',
+			'type'        => 'checkbox',
+			'description' => __( 'TradeSafe sends an email and a SMS to the customer asking if they received what was ordered once the order has been marked as DELIVERED. Some courier companies, such as uAfrica, marks the order as COMPLETED (TradeSafe then marks as DELIVERED) once the order has been fulfilled and not when it has been delivered. This means that a customer might receive an email and a SMS before the goods were delivered. To prevent this, please specify the number of business days you would like to initiate the goods acceptance process after the order has been marked as DELIVERED.', 'tradesafe-payment-gateway' ),
+			'default'     => false,
+			'desc_tip'    => false,
+		);
+
+		$form['delivery_days'] = array(
+			'title'       => __( 'Days to Deliver', 'tradesafe-payment-gateway' ),
+			'type'        => 'select',
+			'description' => __( 'Number of days it takes to deliver the goods or service.', 'tradesafe-payment-gateway' ),
+			'default'     => '7',
+			'options'     => array(
+				'1'  => '1 Day',
+				'2'  => '2 Days',
+				'3'  => '3 Days',
+				'4'  => '4 Days',
+				'5'  => '5 Days',
+				'6'  => '6 Days',
+				'7'  => '1 Week',
+				'14' => '2 Weeks',
+				'21' => '3 Weeks',
+			),
+			'desc_tip'    => true,
+		);
+
+		// $form['inspection_days'] = array(
+		// 'title'       => __( 'Days to Inspect', 'tradesafe-payment-gateway' ),
+		// 'type'        => 'select',
+		// 'description' => __( 'Number of days for the buyer to inspect the goods or service.', 'tradesafe-payment-gateway' ),
+		// 'default'     => '1',
+		// 'options'     => array(
+		// '1' => '1 Day',
+		// '2' => '2 Days',
+		// '3' => '3 Days',
+		// '4' => '4 Days',
+		// '5' => '5 Days',
+		// '6' => '6 Days',
+		// '7' => '1 Week',
+		// ),
+		// 'desc_tip'    => true,
+		// );
 
 		$form['marketplace_section_title'] = array(
 			'title'       => __( 'Marketplace Settings', 'tradesafe-payment-gateway' ),
@@ -754,20 +805,28 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				$item_list[] = html_entity_decode( esc_attr( $item->get_name() ) . ': ' . strip_tags( wc_price( $order->get_line_subtotal( $item ), array( 'currency' => $order->get_currency() ) ) ) . ' (excl)' );
 			}
 
+			$payout_interval = 'IMMEDIATE';
+			$settings        = get_option( 'woocommerce_tradesafe_settings', array() );
+
+			if ( empty( $settings['payout_method'] ) ) {
+				$payout_interval = $settings['payout_method'];
+			}
+
+			if ( empty( $settings['delivery_days'] ) ) {
+				$settings['delivery_days'] = '7';
+			}
+
+			if ( empty( $settings['inspection_days'] ) ) {
+				$settings['inspection_days'] = '1';
+			}
+
 			$allocations[] = array(
 				'title'         => 'Order ' . $order->get_id(),
 				'description'   => implode( PHP_EOL, $item_list ),
 				'value'         => ( (float) $order->get_subtotal() + (float) $order->get_total_fees() - (float) $order->get_discount_total() + (float) $order->get_shipping_total() + (float) $order->get_total_tax() ),
-				'daysToDeliver' => 14,
-				'daysToInspect' => 7,
+				'daysToDeliver' => $settings['delivery_days'],
+				'daysToInspect' => $settings['inspection_days'],
 			);
-
-			$payout_interval = 'IMMEDIATE';
-			$settings        = get_option( 'woocommerce_tradesafe_settings', array() );
-
-			if ( isset( $settings['payout_method'] ) ) {
-				$payout_interval = $settings['payout_method'];
-			}
 
 			if ( $user->ID === 0 ) {
 				$userDetails = array(
