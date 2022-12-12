@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.9.1](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.9.0...v2.9.1) (2022-12-12)
+
+### Bug Fixes
+
+* Hide days for delay field if not used ([3ffd8f](https://github.com/tradesafe/tradesafe-payment-gateway/commit/3ffd8f5eb742f41449ea4916494a595de59bba1b))
+
+
+---
+
 ## [2.9.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.8.0...v2.9.0) (2022-12-12)
 
 ### Features
