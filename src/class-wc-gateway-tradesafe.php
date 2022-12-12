@@ -587,7 +587,8 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	 * @return false|string
 	 */
 	public function generate_application_details_html( $key, $data ) {
-		$profile = $this->client->profile();
+		$profile    = $this->client->profile();
+		$production = $this->client->production();
 
 		if ( isset( $profile['error'] ) ) {
 			$body  = "<tr><th scope='row'>Error:</th><td> Could not connect to server</td></tr>";
@@ -604,7 +605,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			$body .= "<tr><th scope='row'>Email:</th><td>" . esc_attr( $profile['user']['email'] ) . '</td></tr>';
 			$body .= "<tr><th scope='row'>Mobile:</th><td>" . esc_attr( $profile['user']['mobile'] ) . '</td></tr>';
 
-			$body .= "<tr><th scope='row'>Go-Live Completed:</th><td>" . esc_attr( $this->client->production() ? 'Yes' : 'No' ) . '</td></tr>';
+			$body .= "<tr><th scope='row'>Go-Live Completed:</th><td>" . esc_attr( $production ? 'Yes' : 'No' ) . '</td></tr>';
 		}
 
 		ob_start();
@@ -612,9 +613,9 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		<tr>
 			<td colspan="2" id="tradesafe-application-details" class="details">
 				<div class="details-box application-details">
-					<h3><?php esc_attr_e( $data['title'] ); ?></h3>
+					<h3><?php esc_attr_e( $data['title'] ); ?> <small>(<a href="#" class="toggle-application-details"><?php print $production ? 'show' : 'hide'; ?></a>)</small></h3>
 					<p><?php esc_attr_e( $data['description'] ); ?></p>
-					<table class="form-table">
+					<table class="form-table" style="<?php print $production ? 'display: none' : 'display: table'; ?>">
 						<tbody>
 						<?php echo $body; ?>
 						</tbody>
