@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.9.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.9.1...v2.9.2) (2022-12-12)
+
+### Bug Fixes
+
+* Added check for update function to avoid undefined constant ([6c6e73](https://github.com/tradesafe/tradesafe-payment-gateway/commit/6c6e73f211447d0cdb6deb9ec98282df61e1ced6))
+
+
+---
+
 ## [2.9.1](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.9.0...v2.9.1) (2022-12-12)
 
 ### Bug Fixes
