@@ -345,7 +345,7 @@ function tradesafe_get_token( int $user_id ): ?array {
  * @return void
  */
 function tradesafe_payment_gateway_update_db_check() {
-	if ( get_option( 'tradesafe_payment_gateway_version' ) != WC_GATEWAY_TRADESAFE_VERSION ) {
+	if ( defined( 'WC_GATEWAY_TRADESAFE_VERSION' ) && get_option( 'tradesafe_payment_gateway_version' ) !== WC_GATEWAY_TRADESAFE_VERSION ) {
 		$settings = get_option( 'woocommerce_tradesafe_settings' );
 
 		$settings['description'] = __( 'TradeSafe, backed by Standard Bank, allows for your money to be kept safely until you receive what you ordered. Simply pay using Credit/Debit card, EFT, SnapScan, Ozow, or buy it now and pay later with PayJustNow.', 'tradesafe-payment-gateway' );
