@@ -208,7 +208,7 @@ class TradeSafe {
 							$order->update_status( 'on-hold', __( 'Awaiting Manual EFT payment.', 'tradesafe-payment-gateway' ) );
 						}
 
-						if ( ( $order->has_status( 'on-hold' ) || $order->has_status( 'pending' ) || $order->has_status( 'failed' ) ) && 'FUNDS_RECEIVED' === $data['state'] ) {
+						if ( ( $order->has_status( 'on-hold' ) || $order->has_status( 'pending' ) || $order->has_status( 'failed' ) || $order->has_status( 'cancelled' ) ) && 'FUNDS_RECEIVED' === $data['state'] ) {
 							$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 
 							$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
