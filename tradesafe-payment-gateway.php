@@ -71,7 +71,7 @@ function tradesafe_payment_gateway_init() {
 	add_action( 'init', array( 'TradeSafeDokan', 'init' ) );
 
 	load_plugin_textdomain( 'tradesafe-payment-gateway', false, trailingslashit( dirname( plugin_basename( __FILE__ ) ) ) );
-	add_filter( 'woocommerce_payment_gateways', 'woocommerce_tradesafe_add_gateway' );
+	add_filter( 'woocommerce_payment_gateways', 'tradesafe_payment_gateway_add' );
 }
 
 add_action( 'plugins_loaded', 'tradesafe_payment_gateway_init', 10 );
@@ -131,7 +131,7 @@ add_filter( 'plugin_row_meta', 'tradesafe_payment_gateway_plugin_row_meta', 10, 
  * @param array $methods Array of payment gateway methods.
  * @since 1.0.0
  */
-function woocommerce_tradesafe_add_gateway( $methods ) {
+function tradesafe_payment_gateway_add( $methods ) {
 	$methods[] = 'WC_Gateway_TradeSafe';
 	return $methods;
 }
