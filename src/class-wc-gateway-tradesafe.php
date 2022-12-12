@@ -296,7 +296,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		);
 
 		$form['delivery_delay_notification'] = array(
-			'title'       => __( 'Delay to Delivery Notification', 'tradesafe-payment-gateway' ),
+			'title'       => __( 'Delivery Notification', 'tradesafe-payment-gateway' ),
 			'label'       => 'Delay Notification',
 			'type'        => 'checkbox',
 			'description' => __( 'TradeSafe sends an email and a SMS to the customer asking if they received what was ordered once the order has been marked as DELIVERED. Some courier companies, such as uAfrica, marks the order as COMPLETED (TradeSafe then marks as DELIVERED) once the order has been fulfilled and not when it has been delivered. This means that a customer might receive an email and a SMS before the goods were delivered. To prevent this, please specify the number of business days you would like to initiate the goods acceptance process after the order has been marked as DELIVERED.', 'tradesafe-payment-gateway' ),
@@ -305,10 +305,11 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		);
 
 		$form['delivery_days'] = array(
-			'title'       => __( 'Days to Deliver', 'tradesafe-payment-gateway' ),
+			'title'       => __( 'Days to Delay', 'tradesafe-payment-gateway' ),
 			'type'        => 'select',
 			'description' => __( 'Number of days it takes to deliver the goods or service.', 'tradesafe-payment-gateway' ),
 			'default'     => '7',
+			'class'       => 'delivery',
 			'options'     => array(
 				'1'  => '1 Day',
 				'2'  => '2 Days',

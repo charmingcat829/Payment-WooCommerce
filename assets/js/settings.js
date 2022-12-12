@@ -52,5 +52,21 @@ jQuery( document ).ready(
 				return false;
 			}
 		)
+
+		if ( $( '#woocommerce_tradesafe_delivery_delay_notification' ).is( ':checked' ) ) {
+			$( 'select.delivery' ).parent().parent().parent().removeClass( 'hidden' )
+		} else {
+			$( 'select.delivery' ).parent().parent().parent().addClass( 'hidden' )
+		}
+
+		$( '#woocommerce_tradesafe_delivery_delay_notification' ).click(
+			function () {
+				if ( $( this ).is( ':checked' ) ) {
+					$( 'select.delivery' ).parent().parent().parent().removeClass( 'hidden' )
+				} else {
+					$( 'select.delivery' ).parent().parent().parent().addClass( 'hidden' )
+				}
+			}
+		)
 	}
 )
