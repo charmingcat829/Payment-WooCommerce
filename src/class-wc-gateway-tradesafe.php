@@ -46,9 +46,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			'pre-orders',
 		);
 
-		$this->init_form_fields();
-		$this->init_settings();
-
 		// Setup default merchant data.
 		$this->has_fields  = true;
 		$this->enabled     = $this->is_valid_for_use() ? 'yes' : 'no'; // Check if the base currency supports this gateway.
@@ -62,6 +59,11 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		if ( is_admin() ) {
 			wp_enqueue_script( 'tradesafe-payment-gateway-settings', TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/js/settings.js', array( 'jquery' ), WC_GATEWAY_TRADESAFE_VERSION, true );
 			wp_enqueue_style( 'tradesafe-payment-gateway-settings', TRADESAFE_PAYMENT_GATEWAY_BASE_DIR . '/assets/css/style.css', array(), WC_GATEWAY_TRADESAFE_VERSION );
+
+			if ( isset( $_GET['page'] ) && isset( $_GET['tab'] ) && isset( $_GET['section'] ) && $_GET['page'] === 'wc-settings' && $_GET['tab'] === 'checkout' && $_GET['section'] === 'tradesafe' ) {
+				$this->init_form_fields();
+				$this->init_settings();
+			}
 		}
 	}
 
@@ -191,7 +193,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	 * Define Gateway settings fields.
 	 */
 	public function init_form_fields() {
-		delete_transient( 'tradesafe_client_info' );
 		$settings = get_option( 'woocommerce_tradesafe_settings', array() );
 
 		$form = array(
