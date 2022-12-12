@@ -160,7 +160,7 @@ class TradeSafeApiClient {
 
 		if ( is_array( $tradesafe_token )
 			&& isset( $tradesafe_token['expires'] )
-			&& $tradesafe_token['expires'] > ( time() - 120 ) ) {
+			&& $tradesafe_token['expires'] > ( time() + 120 ) ) {
 			return $tradesafe_token['token'];
 		}
 
