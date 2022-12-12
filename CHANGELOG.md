@@ -4,6 +4,23 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.9.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.8.0...v2.9.0) (2022-12-12)
+
+### Features
+
+* Added option to defer delivery notifications ([6d7205](https://github.com/tradesafe/tradesafe-payment-gateway/commit/6d720538b15f6542ae9e1831c03dc7d387f2914a))
+
+### Bug Fixes
+
+* Allow cancelled orders to be reactivated ([28f2e2](https://github.com/tradesafe/tradesafe-payment-gateway/commit/28f2e2248ca6fbd8d367056f166b6ab22ef0efcf))
+* Changed how the token expiry date is checked ([96470a](https://github.com/tradesafe/tradesafe-payment-gateway/commit/96470a81ae3e3dcb26f0847c58e9e0e6f11d7e93))
+* Don't init form on every page load ([0839cf](https://github.com/tradesafe/tradesafe-payment-gateway/commit/0839cfcd8cc5a8dd2fd76ef0ddaeba219224fc5d))
+* Hide application details if authenticated ([312105](https://github.com/tradesafe/tradesafe-payment-gateway/commit/3121055e61a902f7a8c93a85285cdeeff6c9c07f))
+* Reduce number of queries retrieving bank account details ([fa1c08](https://github.com/tradesafe/tradesafe-payment-gateway/commit/fa1c08baa58981208ac71fac3a42cbf332762e34))
+
+
+---
+
 ## [2.8.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.7.1...v2.8.0) (2022-12-02)
 
 ### Features
