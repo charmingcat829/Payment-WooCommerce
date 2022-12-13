@@ -937,6 +937,31 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 				}
 			}
 
+			// TODO: Add check for Gobuddy once plugin is avaliable
+			$custom_parties = apply_filters( 'tradesafe_payment_gateway_add_parties', array() );
+
+			foreach ( $custom_parties as $party ) {
+				if ( empty( $party['role'] ) && ! in_array( $party['role'], array( 'BENEFICIARY_ADVISER', 'BENEFICIARY_CONSULTANT', 'BENEFICIARY_DELIVERY_COMPANY', 'BENEFICIARY_FINANCIAL_INSTITUTION', 'BENEFICIARY_INTERMEDIARY', 'BENEFICIARY_LEGAL_COUNSEL', 'BENEFICIARY_SUB_AGENT', 'BENEFICIARY_WHOLESALER', 'BENEFICIARY_OTHER' ) ) ) {
+					break;
+				}
+
+				if ( empty( $party['token_id'] ) && is_string( $party['token_id'] ) ) {
+					break;
+				}
+
+				if ( empty( $party['fee'] ) && is_float( $party['fee'] ) ) {
+					break;
+				}
+
+				$parties[] = array(
+					'role'          => $party['role'],
+					'token'         => $party['token_id'],
+					'fee'           => $party['fee'],
+					'feeType'       => 'FLAT',
+					'feeAllocation' => 'SELLER',
+				);
+			}
+
 			$transaction = $client->createTransaction(
 				array(
 					'title'         => 'Order ' . $order->get_id(),
