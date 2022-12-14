@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.10.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.9.2...v2.10.0) (2022-12-14)
+
+### Features
+
+* Added filter to add parties to a transaction ([415318](https://github.com/tradesafe/tradesafe-payment-gateway/commit/415318c8d1256784719a6d6341050e02a7f5107b))
+
+
+---
+
 ## [2.9.2](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.9.1...v2.9.2) (2022-12-12)
 
 ### Bug Fixes
