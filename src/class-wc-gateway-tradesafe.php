@@ -53,7 +53,9 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		$this->description = $this->get_option( 'description' );
 
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+		add_action( 'woocommerce_admin_order_data_after_order_details', array( $this, 'tradesafe_payment_gateway_admin_order_data_after_order_details' ) );
 		add_action( 'woocommerce_receipt_tradesafe', array( $this, 'receipt_page' ) );
+		add_action( 'post_action_tradesafe_deliver', array( $this, 'tradesafe_payment_gateway_admin_post_action_deliver' ) );
 		add_action( 'admin_notices', array( $this, 'tradesafe_payment_gateway_admin_notice' ), 1 );
 
 		if ( is_admin() ) {
@@ -993,5 +995,72 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			'result'   => 'success',
 			'redirect' => $client->getTransactionDepositLink( $transaction_id ),
 		);
+	}
+
+	/**
+	 * Add complete order button to order page if transaction is in transit.
+	 *
+	 * @param $order
+	 * @return void
+	 */
+	public function tradesafe_payment_gateway_admin_order_data_after_order_details( $order ) {
+		if ( ! $order instanceof WC_Order || ! $order->get_id() ) {
+			return;
+		}
+
+		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
+		$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
+
+        if ('IN_TRANSIT'!== $transaction['allocations'][0]['state']) {
+	        $url = add_query_arg(
+		        array(
+			        'post'   => $order->get_id(),
+			        'action' => 'tradesafe_deliver',
+		        ),
+		        admin_url( 'post.php' )
+	        );
+
+	        ob_start();
+	        ?>
+            <p class="form-field form-field-wide tradesafe-complete-order">
+                <a href="<?php echo esc_url( $url ); ?>" class="button button-secondary button-large">Mark as Delivered</a>
+            </p>
+	        <?php
+	        ob_end_flush();
+        }
+	}
+
+	/**
+     *
+	 * @param $post_id
+	 * @return void
+	 */
+	public function tradesafe_payment_gateway_admin_post_action_deliver( $post_id ) {
+		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
+		$order  = new WC_Order( $post_id );
+
+		$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
+
+		try {
+			$client->allocationCompleteDelivery( $transaction['allocations'][0]['id'] );
+		} catch ( \Exception $e ) {
+			$logger = wc_get_logger();
+			$logger->error( $e->getMessage() . ': ' . $e->getErrorDetails()['message'] ?? null, array( 'source' => 'tradesafe-payment-gateway' ) );
+
+            $message = sprintf('Order could not be marked as delivered. Reason: %s', $e->getMessage());
+
+            $order->add_order_note($message);
+		}
+
+		$url = add_query_arg(
+			array(
+				'post'   => $post_id,
+				'action' => 'edit',
+			),
+			admin_url( 'post.php' )
+		);
+
+		wp_redirect( $url );
+        exit;
 	}
 }
