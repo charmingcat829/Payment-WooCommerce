@@ -1008,30 +1008,30 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			return;
 		}
 
-		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
+		$client      = new \TradeSafe\Helpers\TradeSafeApiClient();
 		$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
 
-        if ('IN_TRANSIT'!== $transaction['allocations'][0]['state']) {
-	        $url = add_query_arg(
-		        array(
-			        'post'   => $order->get_id(),
-			        'action' => 'tradesafe_deliver',
-		        ),
-		        admin_url( 'post.php' )
-	        );
+		if ( 'IN_TRANSIT' !== $transaction['allocations'][0]['state'] ) {
+			$url = add_query_arg(
+				array(
+					'post'   => $order->get_id(),
+					'action' => 'tradesafe_deliver',
+				),
+				admin_url( 'post.php' )
+			);
 
-	        ob_start();
-	        ?>
-            <p class="form-field form-field-wide tradesafe-complete-order">
-                <a href="<?php echo esc_url( $url ); ?>" class="button button-secondary button-large">Mark as Delivered</a>
-            </p>
-	        <?php
-	        ob_end_flush();
-        }
+			ob_start();
+			?>
+			<p class="form-field form-field-wide tradesafe-complete-order">
+				<a href="<?php echo esc_url( $url ); ?>" class="button button-secondary button-large">Mark as Delivered</a>
+			</p>
+			<?php
+			ob_end_flush();
+		}
 	}
 
 	/**
-     *
+	 *
 	 * @param $post_id
 	 * @return void
 	 */
@@ -1047,9 +1047,9 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			$logger = wc_get_logger();
 			$logger->error( $e->getMessage() . ': ' . $e->getErrorDetails()['message'] ?? null, array( 'source' => 'tradesafe-payment-gateway' ) );
 
-            $message = sprintf('Order could not be marked as delivered. Reason: %s', $e->getMessage());
+			$message = sprintf( 'Order could not be marked as delivered. Reason: %s', $e->getMessage() );
 
-            $order->add_order_note($message);
+			$order->add_order_note( $message );
 		}
 
 		$url = add_query_arg(
@@ -1061,6 +1061,6 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 		);
 
 		wp_redirect( $url );
-        exit;
+		exit;
 	}
 }
