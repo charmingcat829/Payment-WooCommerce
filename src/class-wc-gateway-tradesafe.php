@@ -1008,10 +1008,17 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			return;
 		}
 
+		$settings = get_option( 'woocommerce_tradesafe_settings', array() );
+
+		if ( ! isset( $settings['delivery_delay_notification'] )
+			 || 'yes' !== $settings['delivery_delay_notification'] ) {
+			return;
+		}
+
 		$client      = new \TradeSafe\Helpers\TradeSafeApiClient();
 		$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
 
-		if ( 'IN_TRANSIT' !== $transaction['allocations'][0]['state'] ) {
+		if ( 'IN_TRANSIT' === $transaction['allocations'][0]['state'] ) {
 			$url = add_query_arg(
 				array(
 					'post'   => $order->get_id(),

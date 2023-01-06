@@ -396,9 +396,17 @@ class TradeSafe {
 		}
 
 		try {
+			$settings    = get_option( 'woocommerce_tradesafe_settings', array() );
 			$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
 
-			if ( 'PENDING_ACCEPTANCE' !== $transaction['allocations'][0]['state'] ) {
+			if ( 'INITIATED' !== $transaction['allocations'][0]['state'] ) {
+				return;
+			}
+
+			if ( isset( $settings['delivery_delay_notification'] )
+					 && 'yes' === $settings['delivery_delay_notification'] ) {
+				$client->allocationInTransit( $transaction['allocations'][0]['id'] );
+			} else {
 				$client->allocationCompleteDelivery( $transaction['allocations'][0]['id'] );
 			}
 		} catch ( Exception $e ) {
