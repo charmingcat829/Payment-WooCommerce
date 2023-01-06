@@ -4,6 +4,19 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.11.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.10.0...v2.11.0) (2023-01-06)
+
+### Features
+
+* Added button to mark in transit orders as delivered ([0af891](https://github.com/tradesafe/tradesafe-payment-gateway/commit/0af891779db4c2a0f02e5aa4de8f659ca8d63696))
+
+### Bug Fixes
+
+* Do not load transaction on order page if notification delay is not enabled ([799bb3](https://github.com/tradesafe/tradesafe-payment-gateway/commit/799bb3207015c5efd97b1b8d238b56bcd1913a04))
+
+
+---
+
 ## [2.10.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.9.2...v2.10.0) (2022-12-14)
 
 ### Features

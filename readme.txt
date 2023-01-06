@@ -4,7 +4,7 @@ Tags: tradesafe, woocommerce, dokan, payment gateway, escrow, credit card, insta
 Requires at least: 5.6
 Tested up to: 6.1
 Requires PHP: 7.4
-Stable tag: 2.10.0
+Stable tag: 2.11.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -76,8 +76,12 @@ Please do not hesitate to email [support@tradesafe.co.za](mailto:support@tradesa
 
 == Changelog ==
 
-= 2.10.0 2022-12-14 =
+= 2.11.0 2023-01-06 =
 
 ### Features
 
-* Added filter to add parties to a transaction
+* Added button to mark in transit orders as delivered
+
+### Bug Fixes
+
+* Do not load transaction on order page if notification delay is not enabled
