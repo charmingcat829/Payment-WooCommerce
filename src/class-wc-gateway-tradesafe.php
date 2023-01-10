@@ -310,7 +310,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			'title'       => __( 'Days to Delay', 'tradesafe-payment-gateway' ),
 			'type'        => 'select',
 			'description' => __( 'Number of days it takes to deliver the goods or service.', 'tradesafe-payment-gateway' ),
-			'default'     => '7',
+			'default'     => '5',
 			'class'       => 'delivery',
 			'options'     => array(
 				'1'  => '1 Day',
@@ -816,7 +816,7 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			}
 
 			if ( empty( $settings['delivery_days'] ) ) {
-				$settings['delivery_days'] = '7';
+				$settings['delivery_days'] = '5';
 			}
 
 			if ( empty( $settings['inspection_days'] ) ) {
