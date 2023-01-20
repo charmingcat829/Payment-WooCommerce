@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.11.1](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.11.0...v2.11.1) (2023-01-20)
+
+### Bug Fixes
+
+* Changed error handeling for mark as delivered button ([bcbca8](https://github.com/tradesafe/tradesafe-payment-gateway/commit/bcbca88860ab1348792cd7fc2036644a9745896d))
+* Reduce the delivery days from 7 days to 5 ([bf5d47](https://github.com/tradesafe/tradesafe-payment-gateway/commit/bf5d470f5d4061fc6d823ff4e633c0285015613d))
+
+
+---
+
 ## [2.11.0](https://github.com/tradesafe/tradesafe-payment-gateway/compare/v2.10.0...v2.11.0) (2023-01-06)
 
 ### Features
