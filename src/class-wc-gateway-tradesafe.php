@@ -1008,6 +1008,10 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			return;
 		}
 
+		if ( ! $order->meta_exists( 'tradesafe_transaction_id' ) ) {
+			return;
+		}
+
 		$settings = get_option( 'woocommerce_tradesafe_settings', array() );
 
 		if ( ! isset( $settings['delivery_delay_notification'] )
@@ -1015,25 +1019,38 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 			return;
 		}
 
-		$client      = new \TradeSafe\Helpers\TradeSafeApiClient();
-		$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
+		try {
+			$client      = new \TradeSafe\Helpers\TradeSafeApiClient();
+			$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
 
-		if ( 'IN_TRANSIT' === $transaction['allocations'][0]['state'] ) {
-			$url = add_query_arg(
-				array(
-					'post'   => $order->get_id(),
-					'action' => 'tradesafe_deliver',
-				),
-				admin_url( 'post.php' )
-			);
+			if ( 'IN_TRANSIT' === $transaction['allocations'][0]['state'] ) {
+				$url = add_query_arg(
+					array(
+						'post'   => $order->get_id(),
+						'action' => 'tradesafe_deliver',
+					),
+					admin_url( 'post.php' )
+				);
 
-			ob_start();
-			?>
-			<p class="form-field form-field-wide tradesafe-complete-order">
-				<a href="<?php echo esc_url( $url ); ?>" class="button button-secondary button-large">Mark as Delivered</a>
-			</p>
-			<?php
-			ob_end_flush();
+				ob_start();
+				?>
+				<p class="form-field form-field-wide tradesafe-complete-order">
+					<a href="<?php echo esc_url( $url ); ?>" class="button button-secondary button-large">Mark as Delivered</a>
+				</p>
+				<?php
+				ob_end_flush();
+			}
+		} catch ( \Exception $e ) {
+			$error_message = $e->getMessage();
+
+			if ( WP_DEBUG ) {
+				$error_message .= "\n\n<pre>" . json_encode( $e->getErrorDetails(), JSON_PRETTY_PRINT ) . '</pre>';
+			}
+
+			$logger = wc_get_logger();
+			$logger->error( $error_message, array( 'source' => 'tradesafe-payment-gateway' ) );
+
+			return;
 		}
 	}
 
@@ -1045,6 +1062,10 @@ class WC_Gateway_TradeSafe extends WC_Payment_Gateway {
 	public function tradesafe_payment_gateway_admin_post_action_deliver( $post_id ) {
 		$client = new \TradeSafe\Helpers\TradeSafeApiClient();
 		$order  = new WC_Order( $post_id );
+
+		if ( ! $order->meta_exists( 'tradesafe_transaction_id' ) ) {
+			return;
+		}
 
 		$transaction = $client->getTransaction( $order->get_meta( 'tradesafe_transaction_id', true ) );
 
